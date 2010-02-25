@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2007-2009, Troy D. Hanson
+Copyright (c) 2007-2010, Troy D. Hanson
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -24,7 +24,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef UTLIST_H
 #define UTLIST_H
 
-#define UTLIST_VERSION 1.8
+#define UTLIST_VERSION 1.9
 
 /* 
  * This file contains macros to manipulate singly and doubly-linked lists.
@@ -263,6 +263,9 @@ do {                                                                            
 #define LL_FOREACH(head,el)                                                      \
     for(el=head;el;el=el->next)
 
+#define LL_FOREACH_SAFE(head,el,tmp)                                             \
+  for((el)=(head);(el) && (tmp = (el)->next, 1); (el) = tmp)
+
 /******************************************************************************
  * doubly linked list macros (non-circular)                                   *
  *****************************************************************************/
@@ -313,6 +316,10 @@ do {                                                                            
 #define DL_FOREACH(head,el)                                                      \
     for(el=head;el;el=el->next)
 
+/* this version is safe for deleting the elements during iteration */
+#define DL_FOREACH_SAFE(head,el,tmp)                                             \
+  for((el)=(head);(el) && (tmp = (el)->next, 1); (el) = tmp)
+
 /******************************************************************************
  * circular doubly linked list macros                                         *
  *****************************************************************************/
@@ -342,8 +349,12 @@ do {                                                                            
 } while (0);
 
 #define CDL_FOREACH(head,el)                                                     \
-    for(el=head;el;el= (el->next==head ? 0L : el->next)) 
+    for(el=head;el;el=(el->next==head ? 0L : el->next)) 
 
+#define CDL_FOREACH_SAFE(head,el,tmp1,tmp2)                                       \
+  for((el)=(head), ((tmp1)=(head)?((head)->prev):NULL); \
+      (el) && ((tmp2)=(el)->next, 1); \
+      ((el) = (((el)==(tmp1)) ? 0L : (tmp2))))
 
 #endif /* UTLIST_H */
 

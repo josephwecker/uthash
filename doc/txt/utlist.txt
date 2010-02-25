@@ -94,7 +94,7 @@ List operations
 The lists support inserting or deleting elements, sorting the elements and 
 iterating over them.
 
-[width="90%",cols="10^m,10^m,10^m",grid="cols",options="header"]
+[width="100%",cols="10<m,10<m,10<m",grid="cols",options="header"]
 |===============================================================================
 |Singly-linked             | Doubly-linked              | Circular, doubly-linked
 |LL_PREPEND(head,add);     | DL_PREPEND(head,add);      | CDL_PREPEND(head,add;
@@ -102,6 +102,7 @@ iterating over them.
 |LL_DELETE(head,del);      | DL_DELETE(head,del);       | CDL_DELETE(head,del);
 |LL_SORT(head,cmp);        | DL_SORT(head,cmp);         | CDL_SORT(head,cmp);
 |LL_FOREACH(head,elt) {...}| DL_FOREACH(head,elt) {...} | CDL_FOREACH(head,elt) {...}
+|LL_FOREACH_SAFE(head,elt,tmp) {...}| DL_FOREACH_SAFE(head,elt,tmp) {...} | CDL_FOREACH_SAFE(head,elt,tmp1,tmp2) {...}
 |===============================================================================
 
 'Prepend' means to insert an element in front of the existing list head (if any),
@@ -115,6 +116,8 @@ the sort operation can change the list head to point to a new element.
 The 'foreach' operation is for easy iteration over the list from the head to the
 tail. A usage example is shown below. You can of course just use the `prev` and
 `next` pointers directly instead of using the 'foreach' macros.
+The 'foreach_safe' operation should be used if you plan to delete any of the list
+elements while iterating. 
 
 The parameters shown in the table above are explained here:
 
@@ -133,6 +136,8 @@ cmp::
   must return an `int` that is negative, zero, or positive, which specifies
   whether the first item should sort before, equal to, or after the second item,
   respectively. (In other words, the same convention that is used by `strcmp`).
+tmp::
+  A pointer of the same type as `elt`. Used internally. Need not be initialized.
 
 Example
 ~~~~~~~
@@ -160,7 +165,7 @@ int namecmp(el *a, el *b) {
 el *head = NULL; /* important- initialize to NULL! */
 
 int main(int argc, char *argv[]) {
-    el *name, *tmp;
+    el *name, *elt, *tmp;
 
     char linebuf[BUFLEN];
     FILE *file;
@@ -176,7 +181,12 @@ int main(int argc, char *argv[]) {
         DL_APPEND(head, name);
     }
     DL_SORT(head, namecmp);
-    DL_FOREACH(head,tmp) printf("%s", tmp->bname);
+    DL_FOREACH(head,elt) printf("%s", elt->bname);
+
+    /* now delete each element, use the safe iterator */
+    DL_FOREACH_SAFE(head,elt,tmp) {
+      DL_DELETE(head,elt);
+    }
 
     fclose(file);
 
@@ -184,5 +194,5 @@ int main(int argc, char *argv[]) {
 }
 --------------------------------------------------------------------------------
 
-// vim: set tw=80 wm=2 syntax=asciidoc: 
+// vim: set nowrap syntax=asciidoc: 
 

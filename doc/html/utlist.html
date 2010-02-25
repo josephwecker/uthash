@@ -208,7 +208,7 @@ anything. <strong>It must be initialized to <tt>NULL</tt></strong>.</p></div>
 iterating over them.</p></div>
 <div class="tableblock">
 <table rules="cols"
-width="90%"
+width="100%"
 frame="border"
 cellspacing="0" cellpadding="4">
 <col width="33%" />
@@ -216,36 +216,41 @@ cellspacing="0" cellpadding="4">
 <col width="33%" />
 <thead valign="top">
 <tr>
-<th align="center">Singly-linked             </th>
-<th align="center"> Doubly-linked              </th>
-<th align="center"> Circular, doubly-linked</th>
+<th align="left">Singly-linked             </th>
+<th align="left"> Doubly-linked              </th>
+<th align="left"> Circular, doubly-linked</th>
 </tr>
 </thead>
 <tbody valign="top">
 <tr>
-<td align="center"><p class="table"><tt>LL_PREPEND(head,add);</tt></p></td>
-<td align="center"><p class="table"><tt>DL_PREPEND(head,add);</tt></p></td>
-<td align="center"><p class="table"><tt>CDL_PREPEND(head,add;</tt></p></td>
+<td align="left"><p class="table"><tt>LL_PREPEND(head,add);</tt></p></td>
+<td align="left"><p class="table"><tt>DL_PREPEND(head,add);</tt></p></td>
+<td align="left"><p class="table"><tt>CDL_PREPEND(head,add;</tt></p></td>
 </tr>
 <tr>
-<td align="center"><p class="table"><tt>LL_APPEND(head,add);</tt></p></td>
-<td align="center"><p class="table"><tt>DL_APPEND(head,add);</tt></p></td>
-<td align="center"><p class="table"><tt></tt></p></td>
+<td align="left"><p class="table"><tt>LL_APPEND(head,add);</tt></p></td>
+<td align="left"><p class="table"><tt>DL_APPEND(head,add);</tt></p></td>
+<td align="left"><p class="table"><tt></tt></p></td>
 </tr>
 <tr>
-<td align="center"><p class="table"><tt>LL_DELETE(head,del);</tt></p></td>
-<td align="center"><p class="table"><tt>DL_DELETE(head,del);</tt></p></td>
-<td align="center"><p class="table"><tt>CDL_DELETE(head,del);</tt></p></td>
+<td align="left"><p class="table"><tt>LL_DELETE(head,del);</tt></p></td>
+<td align="left"><p class="table"><tt>DL_DELETE(head,del);</tt></p></td>
+<td align="left"><p class="table"><tt>CDL_DELETE(head,del);</tt></p></td>
 </tr>
 <tr>
-<td align="center"><p class="table"><tt>LL_SORT(head,cmp);</tt></p></td>
-<td align="center"><p class="table"><tt>DL_SORT(head,cmp);</tt></p></td>
-<td align="center"><p class="table"><tt>CDL_SORT(head,cmp);</tt></p></td>
+<td align="left"><p class="table"><tt>LL_SORT(head,cmp);</tt></p></td>
+<td align="left"><p class="table"><tt>DL_SORT(head,cmp);</tt></p></td>
+<td align="left"><p class="table"><tt>CDL_SORT(head,cmp);</tt></p></td>
 </tr>
 <tr>
-<td align="center"><p class="table"><tt>LL_FOREACH(head,elt) {&#8230;}</tt></p></td>
-<td align="center"><p class="table"><tt>DL_FOREACH(head,elt) {&#8230;}</tt></p></td>
-<td align="center"><p class="table"><tt>CDL_FOREACH(head,elt) {&#8230;}</tt></p></td>
+<td align="left"><p class="table"><tt>LL_FOREACH(head,elt) {&#8230;}</tt></p></td>
+<td align="left"><p class="table"><tt>DL_FOREACH(head,elt) {&#8230;}</tt></p></td>
+<td align="left"><p class="table"><tt>CDL_FOREACH(head,elt) {&#8230;}</tt></p></td>
+</tr>
+<tr>
+<td align="left"><p class="table"><tt>LL_FOREACH_SAFE(head,elt,tmp) {&#8230;}</tt></p></td>
+<td align="left"><p class="table"><tt>DL_FOREACH_SAFE(head,elt,tmp) {&#8230;}</tt></p></td>
+<td align="left"><p class="table"><tt>CDL_FOREACH_SAFE(head,elt,tmp1,tmp2) {&#8230;}</tt></p></td>
 </tr>
 </tbody>
 </table>
@@ -258,7 +263,9 @@ the list order by altering the <tt>prev</tt> and <tt>next</tt> pointers in each 
 the sort operation can change the list head to point to a new element.</p></div>
 <div class="paragraph"><p>The <em>foreach</em> operation is for easy iteration over the list from the head to the
 tail. A usage example is shown below. You can of course just use the <tt>prev</tt> and
-<tt>next</tt> pointers directly instead of using the <em>foreach</em> macros.</p></div>
+<tt>next</tt> pointers directly instead of using the <em>foreach</em> macros.
+The <em>foreach_safe</em> operation should be used if you plan to delete any of the list
+elements while iterating.</p></div>
 <div class="paragraph"><p>The parameters shown in the table above are explained here:</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
@@ -306,6 +313,14 @@ cmp
   respectively. (In other words, the same convention that is used by <tt>strcmp</tt>).
 </p>
 </dd>
+<dt class="hdlist1">
+tmp
+</dt>
+<dd>
+<p>
+  A pointer of the same type as <tt>elt</tt>. Used internally. Need not be initialized.
+</p>
+</dd>
 </dl></div>
 <h3 id="_example">Example</h3><div style="clear:left"></div>
 <div class="paragraph"><p>This example program reads names from a text file (one name per line), and
@@ -332,7 +347,7 @@ int namecmp(el *a, el *b) {
 el *head = NULL; /* important- initialize to NULL! */
 
 int main(int argc, char *argv[]) {
-    el *name, *tmp;
+    el *name, *elt;
 
     char linebuf[BUFLEN];
     FILE *file;
@@ -348,7 +363,12 @@ int main(int argc, char *argv[]) {
         DL_APPEND(head, name);
     }
     DL_SORT(head, namecmp);
-    DL_FOREACH(head,tmp) printf("%s", tmp-&gt;bname);
+    DL_FOREACH(head,elt) printf("%s", elt-&gt;bname);
+
+    /* now delete each element, use the safe iterator */
+    DL_FOREACH_SAFE(head,elt,tmp) {
+      DL_DELETE(head,elt);
+    }
 
     fclose(file);
 
@@ -359,7 +379,7 @@ int main(int argc, char *argv[]) {
 <div id="footer">
 <div id="footer-text">
 Version 1.8<br />
-Last updated 2009-08-31 17:10:01 EDT
+Last updated 2010-02-24 19:07:34 EDT
 </div>
 </div>
 </body>

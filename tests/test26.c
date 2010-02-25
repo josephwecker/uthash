@@ -7,17 +7,17 @@
 
 typedef struct el {
     char bname[BUFLEN];
-    struct el *next;
+    struct el *next, *prev;
 } el;
 
 int namecmp(el *a, el *b) {
     return strcmp(a->bname,b->bname);
 }
 
-el *head = NULL;
+el *head = NULL; /* important- initialize to NULL! */
 
 int main(int argc, char *argv[]) {
-    el *name, *tmp;
+    el *name, *elt, *tmp;
 
     char linebuf[BUFLEN];
     FILE *file;
@@ -30,10 +30,15 @@ int main(int argc, char *argv[]) {
     while (fgets(linebuf,BUFLEN,file) != NULL) {
         if ( (name = (el*)malloc(sizeof(el))) == NULL) exit(-1);
         strncpy(name->bname,linebuf,BUFLEN);
-        LL_APPEND(head, name);
+        DL_APPEND(head, name);
     }
-    LL_SORT(head, namecmp);
-    LL_FOREACH(head,tmp) printf("%s", tmp->bname);
+    DL_SORT(head, namecmp);
+    DL_FOREACH(head,elt) printf("%s", elt->bname);
+
+    /* now delete each element, use the safe iterator */
+    DL_FOREACH_SAFE(head,elt,tmp) {
+      DL_DELETE(head,elt);
+    }
 
     fclose(file);
 
