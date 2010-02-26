@@ -109,7 +109,7 @@ function generate_TOC() {
 }
 </script>
 <div class="paragraph"><p>A set of general-purpose <em>linked list</em> macros for C structures are included with
-uthash in <tt>src/utlist.h</tt>.  To use these macros in your own C program, just
+uthash in <tt>utlist.h</tt>.  To use these macros in your own C program, just
 copy <tt>utlist.h</tt> into your source directory and use it in your programs.</p></div>
 <div class="literalblock">
 <div class="content">
@@ -118,15 +118,8 @@ copy <tt>utlist.h</tt> into your source directory and use it in your programs.</
 <div class="paragraph"><p>These macros support the basic linked list operations: adding and deleting
 elements, sorting them and iterating over them.</p></div>
 <h3 id="_download">Download</h3><div style="clear:left"></div>
-<div class="paragraph"><p>To download the <tt>utlist.h</tt> header file, follow the link to download on the
-<a href="http://uthash.sourceforge.net">uthash home page</a>. Untar the package, and
-look in the <tt>src/</tt> directory for <tt>utlist.h</tt>.</p></div>
-<div class="literalblock">
-<div class="content">
-<pre><tt>tar -xjf uthash-1.8.tar.bz2
-cd uthash-1.8/src
-cp utlist.h &lt;destdir&gt;</tt></pre>
-</div></div>
+<div class="paragraph"><p>To download the <tt>utlist.h</tt> header file, follow the link on the
+<a href="http://uthash.sourceforge.net">uthash home page</a>.</p></div>
 <h3 id="_bsd_licensed">BSD licensed</h3><div style="clear:left"></div>
 <div class="paragraph"><p>This software is made available under the
 <a href="license.html">revised BSD license</a>.
@@ -146,13 +139,10 @@ Mac OS X, and
 </li>
 <li>
 <p>
-Windows, using Cygwin or MinGW.
+Windows, using Visual Studio 2008, Visual Studio 2010, or Cygwin/MinGW.
 </p>
 </li>
 </ul></div>
-<div class="paragraph"><p>Some of the macros use the <tt><em>typeof</em></tt> extension. This is supported by the GNU
-compilers as well as some others. Portability may not extend to all C compilers
-however.</p></div>
 </div>
 <h2 id="_using_utlist">Using utlist</h2>
 <div class="sectionbody">
@@ -181,7 +171,8 @@ constant-time operations. Appending to a singly-linked list is an <em>O(n)</em>
 operation but appending to a doubly-linked list is constant time using these
 macros.  (This is because, in the utlist implementation of the doubly-linked
 list, the head element&#8217;s <tt>prev</tt> member points back to the list tail, even when
-the list is non-circular). Sorting is an <em>O(n log(n))</em> operation.</p></div>
+the list is non-circular). Sorting is an <em>O(n log(n))</em> operation. Iteration
+and searching are <tt>O(n)</tt> for all list types.</p></div>
 <h3 id="_list_elements">List elements</h3><div style="clear:left"></div>
 <div class="paragraph"><p>You can use any structure with these macros, as long as the structure
 contains a <tt>next</tt> pointer. If you want to make a doubly-linked list,
@@ -252,6 +243,16 @@ cellspacing="0" cellpadding="4">
 <td align="left"><p class="table"><tt>DL_FOREACH_SAFE(head,elt,tmp) {&#8230;}</tt></p></td>
 <td align="left"><p class="table"><tt>CDL_FOREACH_SAFE(head,elt,tmp1,tmp2) {&#8230;}</tt></p></td>
 </tr>
+<tr>
+<td align="left"><p class="table"><tt>LL_SEARCH_SCALAR(head,elt,mbr,val);</tt></p></td>
+<td align="left"><p class="table"><tt>DL_SEARCH_SCALAR(head,elt,mbr,val);</tt></p></td>
+<td align="left"><p class="table"><tt>CDL_SEARCH_SCALAR(head,elt,mbr,val);</tt></p></td>
+</tr>
+<tr>
+<td align="left"><p class="table"><tt>LL_SEARCH(head,elt,like,cmp);</tt></p></td>
+<td align="left"><p class="table"><tt>DL_SEARCH(head,elt,like,cmp);</tt></p></td>
+<td align="left"><p class="table"><tt>CDL_SEARCH(head,elt,like,cmp);</tt></p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -266,6 +267,11 @@ tail. A usage example is shown below. You can of course just use the <tt>prev</t
 <tt>next</tt> pointers directly instead of using the <em>foreach</em> macros.
 The <em>foreach_safe</em> operation should be used if you plan to delete any of the list
 elements while iterating.</p></div>
+<div class="paragraph"><p>The <em>search</em> operation is a shortcut for iteration in search of a particular
+element. It is not any faster than manually iterating and testing each element.
+There are two forms: the "scalar" version searches for an element using a
+simple equality test on a given structure member, while the general version takes an
+element to which all others in the list will be compared using a <tt>cmp</tt> function.</p></div>
 <div class="paragraph"><p>The parameters shown in the table above are explained here:</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
@@ -298,7 +304,18 @@ elt
 <dd>
 <p>
   A pointer that will be assigned to each list element in succession (see
-  example).
+  example) in the case of iteration macros; also, the output pointer from
+  the search macros.
+</p>
+</dd>
+<dt class="hdlist1">
+like
+</dt>
+<dd>
+<p>
+  An element pointer, having the same type as <tt>elt</tt>, for which the search macro
+  seeks a match (if found, the match is stored in <tt>elt</tt>). A match is determined
+  by the given <tt>cmp</tt> function.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -319,6 +336,24 @@ tmp
 <dd>
 <p>
   A pointer of the same type as <tt>elt</tt>. Used internally. Need not be initialized.
+</p>
+</dd>
+<dt class="hdlist1">
+mbr
+</dt>
+<dd>
+<p>
+  In the scalar search macro, the name of a member within the <tt>elt</tt> structure which
+  will be tested (using <tt>==</tt>) for equality with the value <tt>val</tt>.
+</p>
+</dd>
+<dt class="hdlist1">
+val
+</dt>
+<dd>
+<p>
+  In the scalar search macro, specifies the value of (of structure member
+  <tt>field</tt>) of the element being sought.
 </p>
 </dd>
 </dl></div>
@@ -347,7 +382,7 @@ int namecmp(el *a, el *b) {
 el *head = NULL; /* important- initialize to NULL! */
 
 int main(int argc, char *argv[]) {
-    el *name, *elt;
+    el *name, *elt, *tmp, etmp;
 
     char linebuf[BUFLEN];
     FILE *file;
@@ -365,6 +400,10 @@ int main(int argc, char *argv[]) {
     DL_SORT(head, namecmp);
     DL_FOREACH(head,elt) printf("%s", elt-&gt;bname);
 
+    memcpy(&amp;etmp.bname, "WES\n", 5);
+    DL_SEARCH(head,elt,&amp;etmp,namecmp);
+    if (elt) printf("found %s\n", elt-&gt;bname);
+
     /* now delete each element, use the safe iterator */
     DL_FOREACH_SAFE(head,elt,tmp) {
       DL_DELETE(head,elt);
@@ -379,7 +418,7 @@ int main(int argc, char *argv[]) {
 <div id="footer">
 <div id="footer-text">
 Version 1.8<br />
-Last updated 2010-02-24 19:07:34 EDT
+Last updated 2010-02-25 18:08:06 EDT
 </div>
 </div>
 </body>

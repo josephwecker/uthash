@@ -266,6 +266,20 @@ do {                                                                            
 #define LL_FOREACH_SAFE(head,el,tmp)                                             \
   for((el)=(head);(el) && (tmp = (el)->next, 1); (el) = tmp)
 
+#define LL_SEARCH_SCALAR(head,out,field,val) \
+do { \
+    LL_FOREACH(head,out) { \
+      if ((out)->field == (val)) break; \
+    } \
+} while(0) 
+
+#define LL_SEARCH(head,out,elt,cmp) \
+do { \
+    LL_FOREACH(head,out) { \
+      if ((cmp(out,elt))==0) break; \
+    } \
+} while(0) 
+
 /******************************************************************************
  * doubly linked list macros (non-circular)                                   *
  *****************************************************************************/
@@ -320,6 +334,10 @@ do {                                                                            
 #define DL_FOREACH_SAFE(head,el,tmp)                                             \
   for((el)=(head);(el) && (tmp = (el)->next, 1); (el) = tmp)
 
+/* these are identical to their singly-linked list counterparts */
+#define DL_SEARCH_SCALAR LL_SEARCH_SCALAR
+#define DL_SEARCH LL_SEARCH
+
 /******************************************************************************
  * circular doubly linked list macros                                         *
  *****************************************************************************/
@@ -355,6 +373,20 @@ do {                                                                            
   for((el)=(head), ((tmp1)=(head)?((head)->prev):NULL); \
       (el) && ((tmp2)=(el)->next, 1); \
       ((el) = (((el)==(tmp1)) ? 0L : (tmp2))))
+
+#define CDL_SEARCH_SCALAR(head,out,field,val) \
+do { \
+    CDL_FOREACH(head,out) { \
+      if ((out)->field == (val)) break; \
+    } \
+} while(0) 
+
+#define CDL_SEARCH(head,out,elt,cmp) \
+do { \
+    CDL_FOREACH(head,out) { \
+      if ((cmp(out,elt))==0) break; \
+    } \
+} while(0) 
 
 #endif /* UTLIST_H */
 

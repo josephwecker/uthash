@@ -43,6 +43,7 @@ test38: find-or-add test on integer keys in short loop
 test39: HASH_ADD_KEYPTR then HASH_FIND using array element as key pointer
 test40: HASH_ADD_KEYPTR on string keys; pointer equivalent to test15.c
 test41: test LL_FOREACH_SAFE,DL_FOREACH_SAFE,CDL_FOREACH_SAFE
+test42: test LL_SEARCH, LL_SEARCH_SCALAR, and DL and CDL counterparts
 
 Other Make targets
 ================================================================================

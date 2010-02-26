@@ -17,7 +17,7 @@ int namecmp(el *a, el *b) {
 el *head = NULL; /* important- initialize to NULL! */
 
 int main(int argc, char *argv[]) {
-    el *name, *elt, *tmp;
+    el *name, *elt, *tmp, etmp;
 
     char linebuf[BUFLEN];
     FILE *file;
@@ -34,6 +34,10 @@ int main(int argc, char *argv[]) {
     }
     DL_SORT(head, namecmp);
     DL_FOREACH(head,elt) printf("%s", elt->bname);
+
+    memcpy(&etmp.bname, "WES\n", 5);
+    DL_SEARCH(head,elt,&etmp,namecmp);
+    if (elt) printf("found %s\n", elt->bname);
 
     /* now delete each element, use the safe iterator */
     DL_FOREACH_SAFE(head,elt,tmp) {
