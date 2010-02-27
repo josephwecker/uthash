@@ -10,8 +10,8 @@ int main(int argc, char *argv[] ) {
   }
   char *file1 = argv[1];
   char *file2 = argv[2];
-  ifstream is1(file1, ios::binary);
-  ifstream is2(file2, ios::binary);
+  ifstream is1(file1, ios::in);
+  ifstream is2(file2, ios::in);
   if (is1.fail()) {cerr << "failed to open " << file1 << "\n"; goto done;}
   if (is2.fail()) {cerr << "failed to open " << file2 << "\n"; goto done;}
   char d1[256], d2[256];
