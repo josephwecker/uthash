@@ -194,23 +194,13 @@ OpenBSD
 </li>
 <li>
 <p>
-Cygwin
-</p>
-</li>
-<li>
-<p>
-MinGW
+Windows (Visual Studio 2008, Visual Studio 2010, Cygwin, MinGW)
 </p>
 </li>
 </ul></div>
-<h4 id="_non_gnu_c_compilers">Non-GNU C++ compilers</h4>
-<div class="paragraph"><p>When compiling C++ code it may be necessary to use the GNU compiler, g++, which
-supports the <tt>typeof</tt> extension. Alternatively some users of non-GNU C++
-compilers simply hardcode the <tt>TYPEOF</tt> macro in <tt>uthash.h</tt> to the data type they
-want to use.</p></div>
 <h4 id="_test_suite">Test suite</h4>
 <div class="paragraph"><p>You can run the test suite on these platforms, or any prospective Unix-like
-platform, in this way:</p></div>
+platform, in this way. Download the full uthash tarball, then:</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><tt>cd tests/
@@ -246,6 +236,15 @@ Linked list macros
  uthash includes a separate, standalone header called <a href="utlist.html">utlist.h</a>
  which has <em>linked list macros</em> for C structures, similar in style to the
  hash macros
+</p>
+</dd>
+<dt class="hdlist1">
+Dynamic array macros
+</dt>
+<dd>
+<p>
+ uthash also includes a third standalone header called <a href="utarray.html">utarray.h</a>
+ which implements a dynamic array for structures.
 </p>
 </dd>
 </dl></div>
@@ -964,9 +963,9 @@ easy iteration in two different sort orders.</p></div>
 <div class="paragraph"><p>Programs that generate a fair miss rate (<tt>HASH_FIND</tt> that result in <tt>NULL</tt>) may
 benefit from the built-in Bloom filter support. This is disabled by default,
 because programs that generate only hits would incur a slight penalty from it.
-Also, programs that do deletes should not use the Bloom filter-- while the
-program would operate correctly, the deletes diminish the benefit of the filter.</p></div>
-<div class="paragraph"><p>To enable the Bloom filter, simply compile with <tt>-DHASH_BLOOM=n</tt> like:</p></div>
+Also, programs that do deletes should not use the Bloom filter. While the
+program would operate correctly, deletes diminish the benefit of the filter.
+To enable the Bloom filter, simply compile with <tt>-DHASH_BLOOM=n</tt> like:</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><tt>-DHASH_BLOOM=27</tt></pre>
@@ -986,7 +985,7 @@ cellspacing="0" cellpadding="4">
 <thead valign="top">
 <tr>
 <th align="left"> n   </th>
-<th align="left"> Bloom filter memory used per hash table</th>
+<th align="left"> Bloom filter size (per hash table)</th>
 </tr>
 </thead>
 <tbody valign="top">
@@ -1275,7 +1274,7 @@ approaches 100%, the hash table approaches constant-time lookup performance.</p>
 </div></div>
 <h3 id="hashscan">hashscan</h3><div style="clear:left"></div>
 <div class="paragraph"><p>A <strong>Linux-only</strong> utility called <tt>hashscan</tt> is included in the <tt>tests/</tt> directory. It
-is built built automatically when you run <tt>make</tt> in that directory. This tool
+is built automatically when you run <tt>make</tt> in that directory. This tool
 examines a running process and reports on the uthash tables that it finds in
 that program&#8217;s memory. It can also save the keys from each table in a format
 that can be fed into <tt>keystats</tt>.</p></div>
@@ -1820,7 +1819,7 @@ condition
 <div id="footer">
 <div id="footer-text">
 Version 1.8<br />
-Last updated 2009-09-08 22:04:10 EDT
+Last updated 2010-02-25 08:11:39 EDT
 </div>
 </div>
 </body>

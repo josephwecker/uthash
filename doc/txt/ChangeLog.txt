@@ -5,6 +5,13 @@ include::sflogo.txt[]
 
 Click to return to the link:index.html[uthash home page].
 
+Version 1.9 (2010-03-01)
+--------------------------
+* _SEARCH and _SEARCH_SCALAR
+* _FOREACH and _FOREACH_SAFE
+* uthash,utlist VS2008/2010 compat.
+* utarray?
+
 Version 1.8 (2009-09-08)
 --------------------------
 * Added the `hashscan` utility that can report on the size and quality of 

@@ -1,7 +1,7 @@
 utlist: linked list macros for C structures
 ===========================================
 Troy D. Hanson <thanson@users.sourceforge.net>
-v1.8, September 2009
+v1.9, March 2010
 
 include::sflogo.txt[]
 include::topnav_utlist.txt[]

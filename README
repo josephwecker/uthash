@@ -13,15 +13,14 @@ USAGE
 ============
 The only file you need to use uthash in your own application is
 
-    src/uthash.h
+    src/uthash.h, or
+    src/utlist.h
 
 
 SELF-TESTS
 ============
-The automated self-test can be run by doing:
-
-    cd tests
-    make
+The automated self-test can be from the tests/ directory by running
+make on a unix platform, or by running do_tests_win32.cmd on Windows.
 
 
 LICENSE
@@ -33,5 +32,5 @@ CONTACT
 ============
 Feel free to send me questions, comments, ideas for improvements or bug reports.
 
-Troy D. Hanson, May 8, 2009
+Troy D. Hanson, March 2, 2010
 thanson@users.sourceforge.net

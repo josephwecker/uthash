@@ -1,7 +1,7 @@
 uthash User Guide
 =================
 Troy D. Hanson <thanson@users.sourceforge.net>
-v1.8, September 2009
+v1.9, March 2010
 
 include::sflogo.txt[]
 include::topnav.txt[]
@@ -55,24 +55,14 @@ This software can be used in C and C++ programs.  It has been tested on:
  * Mac OS X
  * Solaris 
  * OpenBSD
- * Cygwin
- * MinGW
-
-Non-GNU C++ compilers
-^^^^^^^^^^^^^^^^^^^^^
-When compiling C\+\+ code it may be necessary to use the GNU compiler, g\+\+, which
-supports the `typeof` extension. Alternatively some users of non-GNU C++
-compilers simply hardcode the `TYPEOF` macro in `uthash.h` to the data type they
-want to use.
+ * Windows (Visual Studio 2008, Visual Studio 2010, Cygwin, MinGW)
 
 Test suite
 ^^^^^^^^^^
-You can run the test suite on these platforms, or any prospective Unix-like
-platform, in this way:
-
-  cd tests/
-  make
-
+To run the test suite, look in the `tests` directory and either run `make` on
+unix platforms or on Windows run the "do_tests_win32.cmd" batch file (if you
+have Visual Studio 2008 or 2010 installed in a non-standard location you may
+have to edit the batch file).
 
 BSD licensed
 ~~~~~~~~~~~~
@@ -98,11 +88,14 @@ Linked list macros::
  uthash includes a separate, standalone header called link:utlist.html[utlist.h]
  which has 'linked list macros' for C structures, similar in style to the
  hash macros
+Dynamic array macros::
+ uthash also includes a third standalone header called link:utarray.html[utarray.h]
+ which implements a dynamic array for structures.
 
 Who's using it?
 ~~~~~~~~~~~~~~~
 Since releasing uthash in 2006, it has been downloaded thousands of times,
-incorporated into commerical software, academic research, and into other
+incorporated into commercial software, academic research, and into other
 open-source software.  
 
 Your structure

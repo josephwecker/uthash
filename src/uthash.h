@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2003-2009, Troy D. Hanson     http://uthash.sourceforge.net
+Copyright (c) 2003-2010, Troy D. Hanson     http://uthash.sourceforge.net
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -26,17 +26,43 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <string.h>   /* memcmp,strlen */
 #include <stddef.h>   /* ptrdiff_t */
-#include <inttypes.h> /* uint32_t etc */
 
-#define UTHASH_VERSION 1.8
-
-/* C++ requires extra stringent casting */
-#if defined __cplusplus
-#define TYPEOF(x) (typeof(x))
-#else
-#define TYPEOF(x)
+/* These macros use decltype or the earlier __typeof GNU extension.
+   But decltype is only available in newer compilers (VS2010 or gcc 4.3+
+   when compiling c++ source in the -stdc++0x option as of this writing).
+   For VS2008 where neither is available the code uses casting workarounds. */
+#ifdef _MSC_VER         /* MS compiler */
+#if _MSC_VER <= 1500    /* VS2008 or older */
+#define NO_DECLTYPE
+#define DECLTYPE(x)
+#else                   /* VS2010+ */
+#define DECLTYPE(x) (decltype(x))
+#endif
+#else                   /* GNU, Sun and other compilers */
+#define DECLTYPE(x) (__typeof(x))
 #endif
 
+#ifdef NO_DECLTYPE
+#define DECLTYPE_ASSIGN(dst,src) \
+do { \
+  char **_da_dst = (char**)(&(dst)); \
+  *_da_dst = (char*)(src);  \
+} while(0)
+#else 
+#define DECLTYPE_ASSIGN(dst,src) \
+do { \
+  (dst) = DECLTYPE(dst)(src); \
+} while(0)
+#endif
+
+/* a number of the hash function use uint32_t which isn't defined on win32 */
+#ifdef _MSC_VER
+typedef unsigned int uint32_t;
+#else
+#include <inttypes.h>   /* uint32_t */
+#endif
+
+#define UTHASH_VERSION 1.9
 
 #define uthash_fatal(msg) exit(-1)        /* fatal error (out of memory,etc) */
 #define uthash_malloc(sz) malloc(sz)      /* malloc fcn                      */
@@ -51,12 +77,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define HASH_BKT_CAPACITY_THRESH 10      /* expand when bucket count reaches */
 
 /* calculate the element whose hash handle address is hhe */
-#define ELMT_FROM_HH(tbl,hhp) ((void*)(((char*)hhp) - (tbl)->hho))
+#define ELMT_FROM_HH(tbl,hhp) ((void*)(((char*)(hhp)) - ((tbl)->hho)))
 
 #define HASH_FIND(hh,head,keyptr,keylen,out)                                    \
 do {                                                                            \
   unsigned _hf_bkt,_hf_hashv;                                                   \
-  out=TYPEOF(out)NULL;                                                          \
+  out=NULL;                                                                     \
   if (head) {                                                                   \
      HASH_FCN(keyptr,keylen, (head)->hh.tbl->num_buckets, _hf_hashv, _hf_bkt);  \
      if (HASH_BLOOM_TEST((head)->hh.tbl, _hf_hashv)) {                          \
@@ -159,7 +185,7 @@ do {                                                                            
  *  HASH_DELETE(hh,users,users);
  * We want that to work, but by changing the head (users) below
  * we were forfeiting our ability to further refer to the deletee (users)
- * in the patch-up process. Solution: use scratch space in the table to
+ * in the patch-up process. Solution: use scratch space to
  * copy the deletee pointer, then the latter references are via that
  * scratch pointer rather than through the repointed (users) symbol.
  */
@@ -183,7 +209,7 @@ do {                                                                            
             ((UT_hash_handle*)((char*)((delptr)->hh.prev) +                     \
                     (head)->hh.tbl->hho))->next = (delptr)->hh.next;            \
         } else {                                                                \
-            head = TYPEOF(head)((delptr)->hh.next);                             \
+            DECLTYPE_ASSIGN(head,(delptr)->hh.next); \
         }                                                                       \
         if (_hd_hh_del->next) {                                                 \
             ((UT_hash_handle*)((char*)_hd_hh_del->next +                        \
@@ -603,14 +629,17 @@ do {                                                                            
 
 /* iterate over items in a known bucket to find desired item */
 #define HASH_FIND_IN_BKT(tbl,hh,head,keyptr,keylen_in,out)                      \
-out = TYPEOF(out)((head.hh_head) ? ELMT_FROM_HH(tbl,head.hh_head) : NULL);      \
-while (out) {                                                                   \
+do { \
+ if (head.hh_head) DECLTYPE_ASSIGN(out,ELMT_FROM_HH(tbl,head.hh_head)); \
+ else out=NULL; \
+ while (out) {                                                                  \
     if (out->hh.keylen == keylen_in) {                                          \
         if ((HASH_KEYCMP(out->hh.key,keyptr,keylen_in)) == 0) break;            \
     }                                                                           \
-    out= TYPEOF(out)((out->hh.hh_next) ?                                        \
-                     ELMT_FROM_HH(tbl,out->hh.hh_next) : NULL);                 \
-}
+    if (out->hh.hh_next) DECLTYPE_ASSIGN(out,ELMT_FROM_HH(tbl,out->hh.hh_next));\
+    else out = NULL; \
+ } \
+} while(0)
 
 /* add an item to a bucket  */
 #define HASH_ADD_TO_BKT(head,addhh)                                             \
@@ -761,8 +790,8 @@ do {                                                                            
                               (head)->hh.tbl->hho)) : NULL);                    \
                       _hs_psize--;                                              \
                   } else if ((                                                  \
-                      cmpfcn(TYPEOF(head)(ELMT_FROM_HH((head)->hh.tbl,_hs_p)),  \
-                            TYPEOF(head)(ELMT_FROM_HH((head)->hh.tbl,_hs_q)))   \
+                      cmpfcn(DECLTYPE(head)(ELMT_FROM_HH((head)->hh.tbl,_hs_p)),  \
+                             DECLTYPE(head)(ELMT_FROM_HH((head)->hh.tbl,_hs_q)))   \
                              ) <= 0) {                                          \
                       _hs_e = _hs_p;                                            \
                       _hs_p = (UT_hash_handle*)((_hs_p->next) ?                 \
@@ -792,7 +821,7 @@ do {                                                                            
           if ( _hs_nmerges <= 1 ) {                                             \
               _hs_looping=0;                                                    \
               (head)->hh.tbl->tail = _hs_tail;                                  \
-              (head) = TYPEOF(head)ELMT_FROM_HH((head)->hh.tbl, _hs_list);      \
+              DECLTYPE_ASSIGN(head,ELMT_FROM_HH((head)->hh.tbl, _hs_list)); \
           }                                                                     \
           _hs_insize *= 2;                                                      \
       }                                                                         \
@@ -826,7 +855,7 @@ do {                                                                            
             _dst_hh->next = NULL;                                               \
             if (_last_elt_hh) { _last_elt_hh->next = _elt; }                    \
             if (!dst) {                                                         \
-              dst = TYPEOF(dst)_elt;                                            \
+              DECLTYPE_ASSIGN(dst,_elt); \
               HASH_MAKE_TABLE(hh_dst,dst);                                      \
             } else {                                                            \
               _dst_hh->tbl = (dst)->hh_dst.tbl;                                 \
