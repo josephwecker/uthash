@@ -54,7 +54,7 @@ endif
 
 #detect Linux (platform specific utilities)
 ifneq ($(strip $(shell $(CC) -v 2>&1 |grep "linux")),)
-  PLAT_UTILS = hashscan test_sleep
+  PLAT_UTILS = hashscan sleep_test
 endif
 
 
@@ -80,7 +80,7 @@ $(PROGS) $(UTILS) : $(HASHDIR)/uthash.h
 hashscan : $(HASHDIR)/uthash.h
 	$(CC) $(CFLAGS) $(MUR_CFLAGS) -o $@ $(@).c 
 
-test_sleep : $(HASHDIR)/uthash.h 
+sleep_test : $(HASHDIR)/uthash.h 
 	$(CC) $(CFLAGS) -DHASH_BLOOM=16 -o $@ $(@).c 
 
 $(FUNCS) : $(HASHDIR)/uthash.h

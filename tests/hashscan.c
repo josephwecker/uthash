@@ -155,11 +155,11 @@ void found(int fd, char* peer_sig, pid_t pid) {
 
   vvv("scanning %u peer buckets\n", tbl->num_buckets);
   for(i=0; i < tbl->num_buckets; i++) {
-    vvv("bucket %u has %u items\n",  i, bkts[i].count);
+    vvv("bucket %u has %u items\n",  (unsigned)i, (unsigned)(bkts[i].count));
     if (bkts[i].count > max_chain) max_chain = bkts[i].count;
-    if (bkts[i].expand_mult) vvv("  bucket %u has expand_mult %u\n",  i, bkts[i].expand_mult);
+    if (bkts[i].expand_mult) vvv("  bucket %u has expand_mult %u\n",  (unsigned)i, (unsigned)(bkts[i].expand_mult));
 
-    vvv("scanning bucket %u chain:\n",  i);
+    vvv("scanning bucket %u chain:\n",  (unsigned)i);
     peer_hh = (char*)bkts[i].hh_head;
     while(peer_hh) {
       if (read_mem(&hh, fd, (off_t)peer_hh, sizeof(hh)) != 0) {
