@@ -57,13 +57,37 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * The sort macro is O(n log(n)) for all types of single/double/circular lists.
  */
 
+/* These macros use decltype or the earlier __typeof GNU extension.
+   But decltype is only available in newer compilers (VS2010 or gcc 4.3+).
+   For VS2008 where neither is available the code uses casting workarounds. */
+#ifdef _MSC_VER         /* MS compiler */
+#if _MSC_VER <= 1500    /* VS2008 or older */
+#define NO_DECLTYPE
+#define DECLTYPE(x) char*
+#else                   /* VS2010+ */
+#define DECLTYPE(x) decltype(x)
+#endif
+#else                   /* GNU, Sun and other compilers */
+#define DECLTYPE(x) __typeof(x)
+#endif
+
 /******************************************************************************
  * The sort macro is an adaptation of Simon Tatham's O(n log(n)) mergesort    *
  * Unwieldy variable names used here to avoid shadowing passed-in variables.  *
  *****************************************************************************/
+#ifdef NO_DECLTYPE
+#define _SV(elt) _tmp = (char*)(list); (char*)(list)=(elt)
+#define _NEXT(elt) ((char*)((list)->next))
+#define _RS (char*)(list)=_tmp
+#else 
+#define _SV(elt)
+#define _NEXT(elt) ((elt)->next)
+#define _RS
+#endif
+
 #define LL_SORT(list, cmp)                             \
 do {                                                                             \
-  __typeof__(list) _ls_p, _ls_q, _ls_e, _ls_tail, _ls_oldhead;              \
+  DECLTYPE(list) _ls_p, _ls_q, _ls_e, _ls_tail, _ls_oldhead, _tmp;              \
   int _ls_insize, _ls_nmerges, _ls_psize, _ls_qsize, _ls_i, _ls_looping;         \
   if (list) {                                                                    \
     _ls_insize = 1;                                                              \
@@ -80,22 +104,22 @@ do {                                                                            
         _ls_psize = 0;                                                           \
         for (_ls_i = 0; _ls_i < _ls_insize; _ls_i++) {                           \
           _ls_psize++;                                                           \
-          _ls_q = _ls_q->next;                                             \
+          _SV(_ls_q); _ls_q = _NEXT(_ls_q); _RS; \
           if (!_ls_q) break;                                                     \
         }                                                                        \
         _ls_qsize = _ls_insize;                                                  \
         while (_ls_psize > 0 || (_ls_qsize > 0 && _ls_q)) {                      \
           if (_ls_psize == 0) {                                                  \
-            _ls_e = _ls_q; _ls_q = _ls_q->next; _ls_qsize--;                 \
+            _ls_e = _ls_q; _SV(_ls_q); _ls_q = _NEXT(_ls_q); _RS; _ls_qsize--;                 \
           } else if (_ls_qsize == 0 || !_ls_q) {                                 \
-            _ls_e = _ls_p; _ls_p = _ls_p->next; _ls_psize--;                 \
+            _ls_e = _ls_p; _SV(_ls_p); _ls_p = _NEXT(_ls_p); _RS; _ls_psize--;                 \
           } else if (cmp(_ls_p,_ls_q) <= 0) {          \
-            _ls_e = _ls_p; _ls_p = _ls_p->next; _ls_psize--;                 \
+            _ls_e = _ls_p; _SV(_ls_p); _ls_p = _NEXT(_ls_p); _RS; _ls_psize--;                 \
           } else {                                                               \
-            _ls_e = _ls_q; _ls_q = _ls_q->next; _ls_qsize--;                 \
+            _ls_e = _ls_q; _SV(_ls_q); _ls_q = _NEXT(_ls_q); _RS; _ls_qsize--;                 \
           }                                                                      \
           if (_ls_tail) {                                                        \
-            _ls_tail->next = _ls_e;                                   \
+            _SV(_ls_tail); _NEXT(_ls_tail) = _ls_e; _RS;                              \
           } else {                                                               \
             list = _ls_e;                                           \
           }                                                                      \
@@ -103,7 +127,7 @@ do {                                                                            
         }                                                                        \
         _ls_p = _ls_q;                                                           \
       }                                                                          \
-      _ls_tail->next = NULL;                                               \
+      _SV(_ls_tail); _NEXT(_ls_tail) = NULL; _RS;                                          \
       if (_ls_nmerges <= 1) {                                                    \
         _ls_looping=0;                                                           \
       }                                                                          \
@@ -114,7 +138,7 @@ do {                                                                            
 
 #define DL_SORT(list, cmp)                             \
 do {                                                                             \
-  __typeof__(list) _ls_p, _ls_q, _ls_e, _ls_tail, _ls_oldhead;              \
+  DECLTYPE(list) _ls_p, _ls_q, _ls_e, _ls_tail, _ls_oldhead;              \
   int _ls_insize, _ls_nmerges, _ls_psize, _ls_qsize, _ls_i, _ls_looping;         \
   if (list) {                                                                    \
     _ls_insize = 1;                                                              \
@@ -167,7 +191,7 @@ do {                                                                            
 
 #define CDL_SORT(list, cmp)                             \
 do {                                                                             \
-  __typeof__(list) _ls_p, _ls_q, _ls_e, _ls_tail, _ls_oldhead;              \
+  DECLTYPE(list) _ls_p, _ls_q, _ls_e, _ls_tail, _ls_oldhead;              \
   int _ls_insize, _ls_nmerges, _ls_psize, _ls_qsize, _ls_i, _ls_looping;         \
   if (list) {                                                                    \
     _ls_insize = 1;                                                              \
@@ -233,7 +257,7 @@ do {                                                                            
 
 #define LL_APPEND(head,add)                                                      \
 do {                                                                             \
-  __typeof__(head) _tmp;                                                         \
+  DECLTYPE(head) _tmp;                                                         \
   (add)->next=NULL;                                                              \
   if (head) {                                                                    \
     _tmp = head;                                                                 \
@@ -246,7 +270,7 @@ do {                                                                            
 
 #define LL_DELETE(head,del)                                                      \
 do {                                                                             \
-  __typeof__(head) _tmp;                                                         \
+  DECLTYPE(head) _tmp;                                                         \
   if ((head) == (del)) {                                                         \
     (head)=(head)->next;                                                         \
   } else {                                                                       \
