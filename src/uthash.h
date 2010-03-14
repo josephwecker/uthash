@@ -28,15 +28,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stddef.h>   /* ptrdiff_t */
 
 /* These macros use decltype or the earlier __typeof GNU extension.
-   But decltype is only available in newer compilers (VS2010 or gcc 4.3+
-   when compiling c++ source in the -stdc++0x option as of this writing).
-   For VS2008 where neither is available the code uses casting workarounds. */
+   As decltype is only available in newer compilers (VS2010 or gcc 4.3+
+   when compiling c++ source) this code uses whatever method is needed
+   or, for VS2008 where neither is available, uses casting workarounds. */
 #ifdef _MSC_VER         /* MS compiler */
-#if _MSC_VER <= 1500    /* VS2008 or older */
+#if _MSC_VER >= 1600 && __cplusplus  /* VS2010 or newer in C++ mode */
+#define DECLTYPE(x) (decltype(x))
+#else                   /* VS2008 or older (or VS2010 in C mode) */
 #define NO_DECLTYPE
 #define DECLTYPE(x)
-#else                   /* VS2010+ */
-#define DECLTYPE(x) (decltype(x))
 #endif
 #else                   /* GNU, Sun and other compilers */
 #define DECLTYPE(x) (__typeof(x))

@@ -58,43 +58,54 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 /* These macros use decltype or the earlier __typeof GNU extension.
-   But decltype is only available in newer compilers (VS2010 or gcc 4.3+).
-   For VS2008 where neither is available the code uses casting workarounds. */
-#ifdef _MSC_VER         /* MS compiler */
-#if _MSC_VER <= 1500    /* VS2008 or older */
+   As decltype is only available in newer compilers (VS2010 or gcc 4.3+
+   when compiling c++ code), this code uses whatever method is needed
+   or, for VS2008 where neither is available, uses casting workarounds. */
+#ifdef _MSC_VER            /* MS compiler */
+#if _MSC_VER >= 1600 && __cplusplus  /* VS2010 and newer in C++ mode */
+#define DECLTYPE(x) decltype(x)
+#else                     /* VS2008 or older (or VS2010 in C mode) */
 #define NO_DECLTYPE
 #define DECLTYPE(x) char*
-#else                   /* VS2010+ */
-#define DECLTYPE(x) decltype(x)
 #endif
-#else                   /* GNU, Sun and other compilers */
+#else                      /* GNU, Sun and other compilers */
 #define DECLTYPE(x) __typeof(x)
+#endif
+
+/* for VS2008 we use some workarounds to get around the lack of decltype,
+ * namely, we always reassign our tmp variable to the list head if we need
+ * to dereference its prev/next pointers, and save/restore the real head.*/
+#ifdef NO_DECLTYPE
+#define _SV(elt,list) _tmp = (char*)(list); (char*)(list)=(elt)
+#define _NEXT(elt,list) ((char*)((list)->next))
+#define _PREV(elt,list) ((char*)((list)->prev))
+#define _RS(list) (char*)(list)=_tmp
+#else 
+#define _SV(elt,list)
+#define _NEXT(elt,list) ((elt)->next)
+#define _PREV(elt,list) ((elt)->prev)
+#define _RS(list)
 #endif
 
 /******************************************************************************
  * The sort macro is an adaptation of Simon Tatham's O(n log(n)) mergesort    *
  * Unwieldy variable names used here to avoid shadowing passed-in variables.  *
  *****************************************************************************/
-#ifdef NO_DECLTYPE
-#define _SV(elt) _tmp = (char*)(list); (char*)(list)=(elt)
-#define _NEXT(elt) ((char*)((list)->next))
-#define _RS (char*)(list)=_tmp
-#else 
-#define _SV(elt)
-#define _NEXT(elt) ((elt)->next)
-#define _RS
-#endif
-
 #define LL_SORT(list, cmp)                             \
 do {                                                                             \
-  DECLTYPE(list) _ls_p, _ls_q, _ls_e, _ls_tail, _ls_oldhead, _tmp;              \
+  DECLTYPE(list) _ls_p;              \
+  DECLTYPE(list) _ls_q;              \
+  DECLTYPE(list) _ls_e;              \
+  DECLTYPE(list) _ls_tail;              \
+  DECLTYPE(list) _ls_oldhead;              \
+  DECLTYPE(list) _tmp;              \
   int _ls_insize, _ls_nmerges, _ls_psize, _ls_qsize, _ls_i, _ls_looping;         \
   if (list) {                                                                    \
     _ls_insize = 1;                                                              \
     _ls_looping = 1;                                                             \
     while (_ls_looping) {                                                        \
-      _ls_p = list;                                                              \
-      _ls_oldhead = list;                                                        \
+      (char*)_ls_p = (char*)list;                                                              \
+      (char*)_ls_oldhead = (char*)list;                                                        \
       list = NULL;                                                               \
       _ls_tail = NULL;                                                           \
       _ls_nmerges = 0;                                                           \
@@ -104,30 +115,30 @@ do {                                                                            
         _ls_psize = 0;                                                           \
         for (_ls_i = 0; _ls_i < _ls_insize; _ls_i++) {                           \
           _ls_psize++;                                                           \
-          _SV(_ls_q); _ls_q = _NEXT(_ls_q); _RS; \
+          _SV(_ls_q,list); _ls_q = _NEXT(_ls_q,list); _RS(list); \
           if (!_ls_q) break;                                                     \
         }                                                                        \
         _ls_qsize = _ls_insize;                                                  \
         while (_ls_psize > 0 || (_ls_qsize > 0 && _ls_q)) {                      \
           if (_ls_psize == 0) {                                                  \
-            _ls_e = _ls_q; _SV(_ls_q); _ls_q = _NEXT(_ls_q); _RS; _ls_qsize--;                 \
+            _ls_e = _ls_q; _SV(_ls_q,list); _ls_q = _NEXT(_ls_q,list); _RS(list); _ls_qsize--;                 \
           } else if (_ls_qsize == 0 || !_ls_q) {                                 \
-            _ls_e = _ls_p; _SV(_ls_p); _ls_p = _NEXT(_ls_p); _RS; _ls_psize--;                 \
+            _ls_e = _ls_p; _SV(_ls_p,list); _ls_p = _NEXT(_ls_p,list); _RS(list); _ls_psize--;                 \
           } else if (cmp(_ls_p,_ls_q) <= 0) {          \
-            _ls_e = _ls_p; _SV(_ls_p); _ls_p = _NEXT(_ls_p); _RS; _ls_psize--;                 \
+            _ls_e = _ls_p; _SV(_ls_p,list); _ls_p = _NEXT(_ls_p,list); _RS(list); _ls_psize--;                 \
           } else {                                                               \
-            _ls_e = _ls_q; _SV(_ls_q); _ls_q = _NEXT(_ls_q); _RS; _ls_qsize--;                 \
+            _ls_e = _ls_q; _SV(_ls_q,list); _ls_q = _NEXT(_ls_q,list); _RS(list); _ls_qsize--;                 \
           }                                                                      \
           if (_ls_tail) {                                                        \
-            _SV(_ls_tail); _NEXT(_ls_tail) = _ls_e; _RS;                              \
+            _SV(_ls_tail,list); _NEXT(_ls_tail,list) = _ls_e; _RS(list);                              \
           } else {                                                               \
-            list = _ls_e;                                           \
+            (char*)(list) = (char*)_ls_e;                                           \
           }                                                                      \
           _ls_tail = _ls_e;                                                      \
         }                                                                        \
         _ls_p = _ls_q;                                                           \
       }                                                                          \
-      _SV(_ls_tail); _NEXT(_ls_tail) = NULL; _RS;                                          \
+      _SV(_ls_tail,list); _NEXT(_ls_tail,list) = NULL; _RS(list);                                          \
       if (_ls_nmerges <= 1) {                                                    \
         _ls_looping=0;                                                           \
       }                                                                          \
@@ -138,14 +149,19 @@ do {                                                                            
 
 #define DL_SORT(list, cmp)                             \
 do {                                                                             \
-  DECLTYPE(list) _ls_p, _ls_q, _ls_e, _ls_tail, _ls_oldhead;              \
+  DECLTYPE(list) _ls_p;              \
+  DECLTYPE(list) _ls_q;              \
+  DECLTYPE(list) _ls_e;              \
+  DECLTYPE(list) _ls_tail;              \
+  DECLTYPE(list) _ls_oldhead;              \
+  DECLTYPE(list) _tmp; \
   int _ls_insize, _ls_nmerges, _ls_psize, _ls_qsize, _ls_i, _ls_looping;         \
   if (list) {                                                                    \
     _ls_insize = 1;                                                              \
     _ls_looping = 1;                                                             \
     while (_ls_looping) {                                                        \
-      _ls_p = list;                                                              \
-      _ls_oldhead = list;                                                        \
+      (char*)_ls_p = (char*)(list);                                                              \
+      (char*)_ls_oldhead = (char*)(list);                                                        \
       list = NULL;                                                               \
       _ls_tail = NULL;                                                           \
       _ls_nmerges = 0;                                                           \
@@ -155,32 +171,32 @@ do {                                                                            
         _ls_psize = 0;                                                           \
         for (_ls_i = 0; _ls_i < _ls_insize; _ls_i++) {                           \
           _ls_psize++;                                                           \
-          _ls_q = _ls_q->next;                                             \
+          _SV(_ls_q,list); _ls_q = _NEXT(_ls_q,list); _RS(list); \
           if (!_ls_q) break;                                                     \
         }                                                                        \
         _ls_qsize = _ls_insize;                                                  \
         while (_ls_psize > 0 || (_ls_qsize > 0 && _ls_q)) {                      \
           if (_ls_psize == 0) {                                                  \
-            _ls_e = _ls_q; _ls_q = _ls_q->next; _ls_qsize--;                 \
+            _ls_e = _ls_q; _SV(_ls_q,list); _ls_q = _NEXT(_ls_q,list); _RS(list); _ls_qsize--;                 \
           } else if (_ls_qsize == 0 || !_ls_q) {                                 \
-            _ls_e = _ls_p; _ls_p = _ls_p->next; _ls_psize--;                 \
+            _ls_e = _ls_p; _SV(_ls_p,list); _ls_p = _NEXT(_ls_p,list); _RS(list); _ls_psize--;                 \
           } else if (cmp(_ls_p,_ls_q) <= 0) {          \
-            _ls_e = _ls_p; _ls_p = _ls_p->next; _ls_psize--;                 \
+            _ls_e = _ls_p; _SV(_ls_p,list); _ls_p = _NEXT(_ls_p,list); _RS(list); _ls_psize--;                 \
           } else {                                                               \
-            _ls_e = _ls_q; _ls_q = _ls_q->next; _ls_qsize--;                 \
+            _ls_e = _ls_q; _SV(_ls_q,list); _ls_q = _NEXT(_ls_q,list); _RS(list); _ls_qsize--;                 \
           }                                                                      \
           if (_ls_tail) {                                                        \
-            _ls_tail->next = _ls_e;                                   \
+            _SV(_ls_tail,list); _NEXT(_ls_tail,list) = _ls_e; _RS(list);                        \
           } else {                                                               \
-            list = _ls_e;                                           \
+            (char*)(list) = (char*)_ls_e;                                           \
           }                                                                      \
-          _ls_e->prev = _ls_tail;                                   \
+          _SV(_ls_e,list); _PREV(_ls_e,list) = _ls_tail; _RS(list); \
           _ls_tail = _ls_e;                                                      \
         }                                                                        \
         _ls_p = _ls_q;                                                           \
       }                                                                          \
-      list->prev = _ls_tail;                                      \
-      _ls_tail->next = NULL;                                               \
+      (char*)(list->prev) = (char*)_ls_tail;                                      \
+      _SV(_ls_tail,list); _NEXT(_ls_tail,list) = NULL; _RS(list); \
       if (_ls_nmerges <= 1) {                                                    \
         _ls_looping=0;                                                           \
       }                                                                          \
@@ -191,14 +207,20 @@ do {                                                                            
 
 #define CDL_SORT(list, cmp)                             \
 do {                                                                             \
-  DECLTYPE(list) _ls_p, _ls_q, _ls_e, _ls_tail, _ls_oldhead;              \
+  DECLTYPE(list) _ls_p;              \
+  DECLTYPE(list) _ls_q;              \
+  DECLTYPE(list) _ls_e;              \
+  DECLTYPE(list) _ls_tail;              \
+  DECLTYPE(list) _ls_oldhead;              \
+  DECLTYPE(list) _tmp; \
+  char *_tmp2; \
   int _ls_insize, _ls_nmerges, _ls_psize, _ls_qsize, _ls_i, _ls_looping;         \
   if (list) {                                                                    \
     _ls_insize = 1;                                                              \
     _ls_looping = 1;                                                             \
     while (_ls_looping) {                                                        \
-      _ls_p = list;                                                              \
-      _ls_oldhead = list;                                                        \
+      (char*)_ls_p = (char*)(list);                                                              \
+      (char*)_ls_oldhead = (char*)(list);                                                        \
       list = NULL;                                                               \
       _ls_tail = NULL;                                                           \
       _ls_nmerges = 0;                                                           \
@@ -208,36 +230,43 @@ do {                                                                            
         _ls_psize = 0;                                                           \
         for (_ls_i = 0; _ls_i < _ls_insize; _ls_i++) {                           \
           _ls_psize++;                                                           \
-          _ls_q = ((_ls_q->next == _ls_oldhead) ? NULL : _ls_q->next); \
+ 	  _SV(_ls_q,list); \
+          if (_NEXT(_ls_q,list) == _ls_oldhead) { \
+		  _ls_q = NULL; \
+	  } else { \
+		  _ls_q = _NEXT(_ls_q,list); \
+	  } \
+  	  _RS(list); \
           if (!_ls_q) break;                                                     \
         }                                                                        \
         _ls_qsize = _ls_insize;                                                  \
         while (_ls_psize > 0 || (_ls_qsize > 0 && _ls_q)) {                      \
           if (_ls_psize == 0) {                                                  \
-            _ls_e = _ls_q; _ls_q = _ls_q->next; _ls_qsize--;                 \
+            _ls_e = _ls_q; _SV(_ls_q,list); _ls_q = _NEXT(_ls_q,list); _RS(list); _ls_qsize--;                 \
             if (_ls_q == _ls_oldhead) { _ls_q = NULL; }           \
           } else if (_ls_qsize == 0 || !_ls_q) {                                 \
-            _ls_e = _ls_p; _ls_p = _ls_p->next; _ls_psize--;                 \
+            _ls_e = _ls_p; _SV(_ls_p,list); _ls_p = _NEXT(_ls_p,list); _RS(list); _ls_psize--;                 \
             if (_ls_p == _ls_oldhead) { _ls_p = NULL; }         \
           } else if (cmp(_ls_p,_ls_q) <= 0) {          \
-            _ls_e = _ls_p; _ls_p = _ls_p->next; _ls_psize--;                 \
+            _ls_e = _ls_p; _SV(_ls_p,list); _ls_p = _NEXT(_ls_p,list); _RS(list); _ls_psize--;                 \
             if (_ls_p == _ls_oldhead) { _ls_p = NULL; }         \
           } else {                                                               \
-            _ls_e = _ls_q; _ls_q = _ls_q->next; _ls_qsize--;                 \
+            _ls_e = _ls_q; _SV(_ls_q,list); _ls_q = _NEXT(_ls_q,list); _RS(list); _ls_qsize--;                 \
             if (_ls_q == _ls_oldhead) { _ls_q = NULL; }         \
           }                                                                      \
           if (_ls_tail) {                                                        \
-            _ls_tail->next = _ls_e;                                   \
+            _SV(_ls_tail,list); _NEXT(_ls_tail,list) = _ls_e; _RS(list);                                  \
           } else {                                                               \
-            list = _ls_e;                                           \
+            (char*)(list) = (char*)_ls_e;                                           \
           }                                                                      \
-          _ls_e->prev = _ls_tail;                                   \
+          _SV(_ls_e,list); _PREV(_ls_e,list) = _ls_tail; _RS(list);                                  \
           _ls_tail = _ls_e;                                                      \
         }                                                                        \
         _ls_p = _ls_q;                                                           \
       }                                                                          \
-      list->prev = _ls_tail;                                      \
-      _ls_tail->next = list;                                        \
+      (char*)(list->prev) = (char*)(_ls_tail);                                      \
+      _tmp2 = (char*)(list); \
+      _SV(_ls_tail,list); (char*)(_NEXT(_ls_tail,list)) = _tmp2; _RS(list); \
       if (_ls_nmerges <= 1) {                                                    \
         _ls_looping=0;                                                           \
       }                                                                          \
@@ -257,30 +286,29 @@ do {                                                                            
 
 #define LL_APPEND(head,add)                                                      \
 do {                                                                             \
-  DECLTYPE(head) _tmp;                                                         \
-  (add)->next=NULL;                                                              \
   if (head) {                                                                    \
-    _tmp = head;                                                                 \
-    while (_tmp->next) { _tmp = _tmp->next; }         \
-    _tmp->next=(add);                                         \
+    (add)->next = head;                                                                 \
+    while ((add)->next->next) { (add)->next = (add)->next->next; }         \
+    (add)->next->next=(add);                                         \
   } else {                                                                       \
     (head)=(add);                                                                \
   }                                                                              \
+  (add)->next=NULL;                                                              \
 } while (0)
 
 #define LL_DELETE(head,del)                                                      \
 do {                                                                             \
-  DECLTYPE(head) _tmp;                                                         \
   if ((head) == (del)) {                                                         \
     (head)=(head)->next;                                                         \
   } else {                                                                       \
-    _tmp = head;                                                                 \
-    while (_tmp->next && (_tmp->next != (del))) { \
-      _tmp = _tmp->next;                                         \
+    char *_tmp = (char*)(head); \
+    while (head->next && (head->next != (del))) { \
+      head = head->next;                                         \
     }                                                                            \
-    if (_tmp->next) {                                                \
-      _tmp->next = ((del)->next);                             \
+    if (head->next) {                                                \
+      head->next = ((del)->next);                             \
     }                                                                            \
+    (char*)(head)=_tmp; \
   }                                                                              \
 } while (0)
 
