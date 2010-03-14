@@ -80,7 +80,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _NEXT(elt,list) ((char*)((list)->next))
 #define _PREV(elt,list) ((char*)((list)->prev))
 #define _RS(list) (char*)(list)=_tmp
-#define _CASTASGN(a,b) (char*)(a)=(char*)(b)
+#define _CASTASGN(a,b) { char **_alias = (char**)&(a); *_alias=(char*)(b); }
 #else 
 #define _SV(elt,list)
 #define _NEXT(elt,list) ((elt)->next)
@@ -340,7 +340,10 @@ do {                                                                            
     if (head->next) {                                                \
       head->next = ((del)->next);                             \
     }                                                                            \
-    (char*)(head)=_tmp; \
+    { \
+      char **_head_alias = (char**)&(head); \
+      *head_alias = _tmp; \
+    } \
   }                                                                              \
 } while (0)
 #ifdef NO_DECLTYPE
