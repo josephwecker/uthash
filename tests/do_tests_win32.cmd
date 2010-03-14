@@ -5,6 +5,7 @@ call "C:\Program Files\Microsoft Visual Studio 9.0\VC\bin\vcvars32.bat" > vc.out
 set "COMPILE=cl.exe /I ..\src /EHsc /nologo"
 echo compiling...
 %COMPILE% tdiff.cpp > compile.out
+::for %%f in (test*.c) do %COMPILE% /Tp %%f >> compile.out
 for %%f in (test*.c) do %COMPILE% /Tc %%f >> compile.out
 echo running tests...
 for %%f in (test*.exe) do %%f > %%~nf.out

@@ -76,15 +76,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * namely, we always reassign our tmp variable to the list head if we need
  * to dereference its prev/next pointers, and save/restore the real head.*/
 #ifdef NO_DECLTYPE
-#define _SV(elt,list) _tmp = (char*)(list); (char*)(list)=(elt)
+#define _SV(elt,list) _tmp = (char*)(list); {char **_alias = (char**)&(list); *_alias = (elt); }
 #define _NEXT(elt,list) ((char*)((list)->next))
+#define _NEXTASGN(elt,list,to) { char **_alias = (char**)&((list)->next); *_alias=(char*)(to); }
 #define _PREV(elt,list) ((char*)((list)->prev))
-#define _RS(list) (char*)(list)=_tmp
+#define _PREVASGN(elt,list,to) { char **_alias = (char**)&((list)->prev); *_alias=(char*)(to); }
+#define _RS(list) { char **_alias = (char**)&(list); *_alias=_tmp; }
 #define _CASTASGN(a,b) { char **_alias = (char**)&(a); *_alias=(char*)(b); }
 #else 
 #define _SV(elt,list)
 #define _NEXT(elt,list) ((elt)->next)
+#define _NEXTASGN(elt,list,to) ((elt)->next)=(to)
 #define _PREV(elt,list) ((elt)->prev)
+#define _PREVASGN(elt,list,to) ((elt)->prev)=(to)
 #define _RS(list)
 #define _CASTASGN(a,b) (a)=(b)
 #endif
@@ -132,15 +136,15 @@ do {                                                                            
             _ls_e = _ls_q; _SV(_ls_q,list); _ls_q = _NEXT(_ls_q,list); _RS(list); _ls_qsize--;                 \
           }                                                                      \
           if (_ls_tail) {                                                        \
-            _SV(_ls_tail,list); _NEXT(_ls_tail,list) = _ls_e; _RS(list);                              \
+            _SV(_ls_tail,list); _NEXTASGN(_ls_tail,list,_ls_e); _RS(list);                              \
           } else {                                                               \
-            (char*)(list) = (char*)_ls_e;                                           \
+	    _CASTASGN(list,_ls_e); \
           }                                                                      \
           _ls_tail = _ls_e;                                                      \
         }                                                                        \
         _ls_p = _ls_q;                                                           \
       }                                                                          \
-      _SV(_ls_tail,list); _NEXT(_ls_tail,list) = NULL; _RS(list);                                          \
+      _SV(_ls_tail,list); _NEXTASGN(_ls_tail,list,NULL); _RS(list);                                          \
       if (_ls_nmerges <= 1) {                                                    \
         _ls_looping=0;                                                           \
       }                                                                          \
@@ -188,17 +192,17 @@ do {                                                                            
             _ls_e = _ls_q; _SV(_ls_q,list); _ls_q = _NEXT(_ls_q,list); _RS(list); _ls_qsize--;                 \
           }                                                                      \
           if (_ls_tail) {                                                        \
-            _SV(_ls_tail,list); _NEXT(_ls_tail,list) = _ls_e; _RS(list);                        \
+            _SV(_ls_tail,list); _NEXTASGN(_ls_tail,list,_ls_e); _RS(list);                        \
           } else {                                                               \
             _CASTASGN(list,_ls_e); \
           }                                                                      \
-          _SV(_ls_e,list); _PREV(_ls_e,list) = _ls_tail; _RS(list); \
+          _SV(_ls_e,list); _PREVASGN(_ls_e,list,_ls_tail); _RS(list); \
           _ls_tail = _ls_e;                                                      \
         }                                                                        \
         _ls_p = _ls_q;                                                           \
       }                                                                          \
       _CASTASGN(list->prev, _ls_tail); \
-      _SV(_ls_tail,list); _NEXT(_ls_tail,list) = NULL; _RS(list); \
+      _SV(_ls_tail,list); _NEXTASGN(_ls_tail,list,NULL); _RS(list); \
       if (_ls_nmerges <= 1) {                                                    \
         _ls_looping=0;                                                           \
       }                                                                          \
@@ -257,18 +261,18 @@ do {                                                                            
             if (_ls_q == _ls_oldhead) { _ls_q = NULL; }         \
           }                                                                      \
           if (_ls_tail) {                                                        \
-            _SV(_ls_tail,list); _NEXT(_ls_tail,list) = _ls_e; _RS(list);                                  \
+            _SV(_ls_tail,list); _NEXTASGN(_ls_tail,list,_ls_e); _RS(list);                                  \
           } else {                                                               \
             _CASTASGN(list,_ls_e); \
           }                                                                      \
-          _SV(_ls_e,list); _PREV(_ls_e,list) = _ls_tail; _RS(list);                                  \
+          _SV(_ls_e,list); _PREVASGN(_ls_e,list,_ls_tail); _RS(list);                                  \
           _ls_tail = _ls_e;                                                      \
         }                                                                        \
         _ls_p = _ls_q;                                                           \
       }                                                                          \
       _CASTASGN(list->prev,_ls_tail); \
       _CASTASGN(_tmp2,list); \
-      _SV(_ls_tail,list); _CASTASGN(_NEXT(_ls_tail,list),_tmp2); _RS(list); \
+      _SV(_ls_tail,list); _NEXTASGN(_ls_tail,list,_tmp2); _RS(list); \
       if (_ls_nmerges <= 1) {                                                    \
         _ls_looping=0;                                                           \
       }                                                                          \
@@ -342,7 +346,7 @@ do {                                                                            
     }                                                                            \
     { \
       char **_head_alias = (char**)&(head); \
-      *head_alias = _tmp; \
+      *_head_alias = _tmp; \
     } \
   }                                                                              \
 } while (0)
