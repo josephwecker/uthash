@@ -80,11 +80,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _NEXT(elt,list) ((char*)((list)->next))
 #define _PREV(elt,list) ((char*)((list)->prev))
 #define _RS(list) (char*)(list)=_tmp
+#define _CASTASGN(a,b) (char*)(a)=(char*)(b)
 #else 
 #define _SV(elt,list)
 #define _NEXT(elt,list) ((elt)->next)
 #define _PREV(elt,list) ((elt)->prev)
 #define _RS(list)
+#define _CASTASGN(a,b) (a)=(b)
 #endif
 
 /******************************************************************************
@@ -104,8 +106,8 @@ do {                                                                            
     _ls_insize = 1;                                                              \
     _ls_looping = 1;                                                             \
     while (_ls_looping) {                                                        \
-      (char*)_ls_p = (char*)list;                                                              \
-      (char*)_ls_oldhead = (char*)list;                                                        \
+      _CASTASGN(_ls_p,list); \
+      _CASTASGN(_ls_oldhead,list); \
       list = NULL;                                                               \
       _ls_tail = NULL;                                                           \
       _ls_nmerges = 0;                                                           \
@@ -144,7 +146,7 @@ do {                                                                            
       }                                                                          \
       _ls_insize *= 2;                                                           \
     }                                                                            \
-  }                                                                              \
+  } else _tmp=NULL; /* quiet gcc unused variable warning */                       \
 } while (0)
 
 #define DL_SORT(list, cmp)                             \
@@ -160,8 +162,8 @@ do {                                                                            
     _ls_insize = 1;                                                              \
     _ls_looping = 1;                                                             \
     while (_ls_looping) {                                                        \
-      (char*)_ls_p = (char*)(list);                                                              \
-      (char*)_ls_oldhead = (char*)(list);                                                        \
+      _CASTASGN(_ls_p,list); \
+      _CASTASGN(_ls_oldhead,list); \
       list = NULL;                                                               \
       _ls_tail = NULL;                                                           \
       _ls_nmerges = 0;                                                           \
@@ -188,21 +190,21 @@ do {                                                                            
           if (_ls_tail) {                                                        \
             _SV(_ls_tail,list); _NEXT(_ls_tail,list) = _ls_e; _RS(list);                        \
           } else {                                                               \
-            (char*)(list) = (char*)_ls_e;                                           \
+            _CASTASGN(list,_ls_e); \
           }                                                                      \
           _SV(_ls_e,list); _PREV(_ls_e,list) = _ls_tail; _RS(list); \
           _ls_tail = _ls_e;                                                      \
         }                                                                        \
         _ls_p = _ls_q;                                                           \
       }                                                                          \
-      (char*)(list->prev) = (char*)_ls_tail;                                      \
+      _CASTASGN(list->prev, _ls_tail); \
       _SV(_ls_tail,list); _NEXT(_ls_tail,list) = NULL; _RS(list); \
       if (_ls_nmerges <= 1) {                                                    \
         _ls_looping=0;                                                           \
       }                                                                          \
       _ls_insize *= 2;                                                           \
     }                                                                            \
-  }                                                                              \
+  } else _tmp=NULL; /* quiet gcc unused variable warning */                       \
 } while (0)
 
 #define CDL_SORT(list, cmp)                             \
@@ -213,14 +215,14 @@ do {                                                                            
   DECLTYPE(list) _ls_tail;              \
   DECLTYPE(list) _ls_oldhead;              \
   DECLTYPE(list) _tmp; \
-  char *_tmp2; \
+  DECLTYPE(list) _tmp2; \
   int _ls_insize, _ls_nmerges, _ls_psize, _ls_qsize, _ls_i, _ls_looping;         \
   if (list) {                                                                    \
     _ls_insize = 1;                                                              \
     _ls_looping = 1;                                                             \
     while (_ls_looping) {                                                        \
-      (char*)_ls_p = (char*)(list);                                                              \
-      (char*)_ls_oldhead = (char*)(list);                                                        \
+      _CASTASGN(_ls_p,list); \
+      _CASTASGN(_ls_oldhead,list); \
       list = NULL;                                                               \
       _ls_tail = NULL;                                                           \
       _ls_nmerges = 0;                                                           \
@@ -257,22 +259,22 @@ do {                                                                            
           if (_ls_tail) {                                                        \
             _SV(_ls_tail,list); _NEXT(_ls_tail,list) = _ls_e; _RS(list);                                  \
           } else {                                                               \
-            (char*)(list) = (char*)_ls_e;                                           \
+            _CASTASGN(list,_ls_e); \
           }                                                                      \
           _SV(_ls_e,list); _PREV(_ls_e,list) = _ls_tail; _RS(list);                                  \
           _ls_tail = _ls_e;                                                      \
         }                                                                        \
         _ls_p = _ls_q;                                                           \
       }                                                                          \
-      (char*)(list->prev) = (char*)(_ls_tail);                                      \
-      _tmp2 = (char*)(list); \
-      _SV(_ls_tail,list); (char*)(_NEXT(_ls_tail,list)) = _tmp2; _RS(list); \
+      _CASTASGN(list->prev,_ls_tail); \
+      _CASTASGN(_tmp2,list); \
+      _SV(_ls_tail,list); _CASTASGN(_NEXT(_ls_tail,list),_tmp2); _RS(list); \
       if (_ls_nmerges <= 1) {                                                    \
         _ls_looping=0;                                                           \
       }                                                                          \
       _ls_insize *= 2;                                                           \
     }                                                                            \
-  }                                                                              \
+  } else _tmp=NULL; /* quiet gcc unused variable warning */                       \
 } while (0)
 
 /******************************************************************************
@@ -286,8 +288,38 @@ do {                                                                            
 
 #define LL_APPEND(head,add)                                                      \
 do {                                                                             \
+  DECLTYPE(head) _tmp;                                                         \
+  (add)->next=NULL;                                                              \
   if (head) {                                                                    \
-    (add)->next = head;                                                                 \
+    _tmp = head;                                                                 \
+    while (_tmp->next) { _tmp = _tmp->next; }         \
+    _tmp->next=(add);                                         \
+  } else {                                                                       \
+    (head)=(add);                                                                \
+  }                                                                              \
+} while (0)
+
+#define LL_DELETE(head,del)                                                      \
+do {                                                                             \
+  DECLTYPE(head) _tmp;                                                         \
+  if ((head) == (del)) {                                                         \
+    (head)=(head)->next;                                                         \
+  } else {                                                                       \
+    _tmp = head;                                                                 \
+    while (_tmp->next && (_tmp->next != (del))) { \
+      _tmp = _tmp->next;                                         \
+    }                                                                            \
+    if (_tmp->next) {                                                \
+      _tmp->next = ((del)->next);                             \
+    }                                                                            \
+  }                                                                              \
+} while (0)
+
+/* Here are VS2008 replacements for LL_APPEND and LL_DELETE */
+#define LL_APPEND_VS2008(head,add)                                                      \
+do {                                                                             \
+  if (head) {                                                                    \
+    (add)->next = head;     /* use add->next as a temp variable */                      \
     while ((add)->next->next) { (add)->next = (add)->next->next; }         \
     (add)->next->next=(add);                                         \
   } else {                                                                       \
@@ -296,7 +328,7 @@ do {                                                                            
   (add)->next=NULL;                                                              \
 } while (0)
 
-#define LL_DELETE(head,del)                                                      \
+#define LL_DELETE_VS2008(head,del)                                                      \
 do {                                                                             \
   if ((head) == (del)) {                                                         \
     (head)=(head)->next;                                                         \
@@ -311,6 +343,12 @@ do {                                                                            
     (char*)(head)=_tmp; \
   }                                                                              \
 } while (0)
+#ifdef NO_DECLTYPE
+#undef LL_APPEND
+#define LL_APPEND LL_APPEND_VS2008
+#define LL_DELETE LL_DELETE_VS2008
+#endif
+/* end VS2008 replacements */
 
 #define LL_FOREACH(head,el)                                                      \
     for(el=head;el;el=el->next)
