@@ -142,6 +142,8 @@ cmp::
   must return an `int` that is negative, zero, or positive, which specifies
   whether the first item should sort before, equal to, or after the second item,
   respectively. (In other words, the same convention that is used by `strcmp`).
+  Note that under Visual Studio 2008 you may need to declare the two arguments
+  as `void *` and then cast them back to their actual types.
 tmp::
   A pointer of the same type as `elt`. Used internally. Need not be initialized.
 mbr::
