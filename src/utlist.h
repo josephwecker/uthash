@@ -346,6 +346,7 @@ do {                                                                            
 #ifdef NO_DECLTYPE
 #undef LL_APPEND
 #define LL_APPEND LL_APPEND_VS2008
+#undef LL_DELETE
 #define LL_DELETE LL_DELETE_VS2008
 #endif
 /* end VS2008 replacements */
