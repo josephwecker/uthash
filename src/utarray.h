@@ -138,7 +138,9 @@ typedef struct {
 
 #define utarray_erase(a,pos,len) do { \
   if ((a)->icd->dtor) { (a)->icd->dtor( _utarray_eltptr(a,pos), len ); } \
-  if ((a)->i > (pos+len)) { memmove( _utarray_eltptr(a,pos), _utarray_eltptr(a,pos+len), (len)*((a)->icd->sz)); } \
+  if ((a)->i > (pos+len)) {  \
+    memmove( _utarray_eltptr(a,pos), _utarray_eltptr(a,pos+len), ((a->i)-(pos+len))*((a)->icd->sz)); \
+  } \
   (a)->i -= (len); \
 } while(0)
 
