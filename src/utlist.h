@@ -138,7 +138,7 @@ do {                                                                            
           if (_ls_tail) {                                                                      \
             _SV(_ls_tail,list); _NEXTASGN(_ls_tail,list,_ls_e); _RS(list);                     \
           } else {                                                                             \
-            _CASTASGN(list,_ls_e);                                                                    \
+            _CASTASGN(list,_ls_e);                                                             \
           }                                                                                    \
           _ls_tail = _ls_e;                                                                    \
         }                                                                                      \
@@ -236,13 +236,13 @@ do {                                                                            
         _ls_psize = 0;                                                                         \
         for (_ls_i = 0; _ls_i < _ls_insize; _ls_i++) {                                         \
           _ls_psize++;                                                                         \
-          _SV(_ls_q,list);                                                                           \
+          _SV(_ls_q,list);                                                                     \
           if (_NEXT(_ls_q,list) == _ls_oldhead) {                                              \
-            _ls_q = NULL;                                                                              \
-          } else {                                                                                    \
-            _ls_q = _NEXT(_ls_q,list);                                                                 \
-          }                                                                                           \
-          _RS(list);                                                                                \
+            _ls_q = NULL;                                                                      \
+          } else {                                                                             \
+            _ls_q = _NEXT(_ls_q,list);                                                         \
+          }                                                                                    \
+          _RS(list);                                                                           \
           if (!_ls_q) break;                                                                   \
         }                                                                                      \
         _ls_qsize = _ls_insize;                                                                \
