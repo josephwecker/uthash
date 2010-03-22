@@ -42,7 +42,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define oom() exit(-1)
 
 typedef void (ctor_f)(void *dst, const void *src);
-typedef void (dtor_f)(void *elt, size_t num_elts);
+typedef void (dtor_f)(void *elt);
 typedef void (init_f)(void *elt);
 typedef struct {
     size_t sz;
@@ -64,9 +64,15 @@ typedef struct {
 
 #define utarray_done(a) do {                                                    \
   if ((a)->n) {                                                             \
-    if ((a)->i && (a)->icd->dtor) { (a)->icd->dtor((a)->d, (a)->i); }           \
+    if ((a)->icd->dtor) { \
+      int _ut_i; \
+      for(_ut_i=0; _ut_i < (a)->i; _ut_i++) { \
+        (a)->icd->dtor(utarray_eltptr(a,_ut_i)); \
+      } \
+    } \
     free((a)->d);                                                       \
   }                                                                         \
+  (a)->n=0; \
 } while(0)
 
 #define utarray_new(a,_icd) do { \
@@ -93,7 +99,7 @@ typedef struct {
 } while(0)
 
 #define utarray_pop_back(a) do {                                                  \
-  if ((a)->icd->dtor) { (a)->icd->dtor( _utarray_eltptr(a,--((a)->i)), 1); }  \
+  if ((a)->icd->dtor) { (a)->icd->dtor( _utarray_eltptr(a,--((a)->i))); }  \
   else { (a)->i--; }                     \
 } while(0)
 
@@ -141,8 +147,17 @@ typedef struct {
   (a)->i += utarray_len(w);                                                     \
 } while(0)
 
+#define utarray_concat(a,b) do { \
+  utarray_inserta(a,b,utarray_len(a)); \
+} while(0)
+
 #define utarray_erase(a,pos,len) do { \
-  if ((a)->icd->dtor) { (a)->icd->dtor( _utarray_eltptr(a,pos), len ); } \
+  if ((a)->icd->dtor) { \
+    int _ut_i; \
+    for(_ut_i=0; _ut_i < len; _ut_i++) { \
+      (a)->icd->dtor(utarray_eltptr(a,pos+_ut_i)); \
+    } \
+  } \
   if ((a)->i > (pos+len)) {  \
     memmove( _utarray_eltptr(a,pos), _utarray_eltptr(a,pos+len), ((a->i)-(pos+len))*((a)->icd->sz)); \
   } \
@@ -151,7 +166,12 @@ typedef struct {
 
 #define utarray_clear(a) do { \
   if ((a)->i > 0) { \
-    if ((a)->icd->dtor) { (a)->icd->dtor( _utarray_eltptr(a,0), (a)->i); }  \
+    if ((a)->icd->dtor) { \
+      int _ut_i; \
+      for(_ut_i=0; _ut_i < (a)->i; _ut_i++) {  \
+        (a)->icd->dtor(utarray_eltptr(a,_ut_i)); \
+      } \
+    } \
     (a)->i = 0; \
   } \
 } while(0)
@@ -183,12 +203,9 @@ static void utarray_str_cpy(void *dst, const void *src) {
   char **_src = (char**)src, **_dst = (char**)dst;
   *_dst = (*_src == NULL) ? NULL : strdup(*_src);
 }
-static void utarray_str_dtor(void *elt, size_t num_elts) {
+static void utarray_str_dtor(void *elt) {
   char **eltc = (char**)elt;
-  while(num_elts--) {
-      if (*eltc) free(*eltc);
-      eltc++;
-  }
+  if (*eltc) free(*eltc);
 }
 static UT_icd ut_str_icd _UNUSED_ = {sizeof(char*),NULL,utarray_str_cpy,utarray_str_dtor};
 static UT_icd ut_int_icd _UNUSED_ = {sizeof(int),NULL,NULL,NULL};

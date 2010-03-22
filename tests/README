@@ -47,6 +47,7 @@ test42: test LL_SEARCH, LL_SEARCH_SCALAR, and DL and CDL counterparts
 test43: test utarray with intpair objects
 test44: test utarray with int objects
 test45: test utarray with int objects
+test46: test utarray with char* objects
 
 Other Make targets
 ================================================================================
