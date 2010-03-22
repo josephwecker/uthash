@@ -2,8 +2,8 @@
 #include "utarray.h"
 
 int reverse(const void *a,const void*b) {
-    int *_a = (int*)a;
-    int *_b = (int*)b;
+    int _a = *(int*)a;
+    int _b = *(int*)b;
     return _b - _a;
 }
 
