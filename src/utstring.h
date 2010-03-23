@@ -42,7 +42,7 @@ typedef struct {
 
 #define utstring_reserve(s,amt) \
 do {   \
-  if (((s)->n - (s)->i) < amt) { \
+  if (((s)->n - (s)->i) < (size_t)(amt)) { \
      s->d = (char*)realloc((s)->d, (s)->n + amt); \
      if (s->d == NULL) oom(); \
      s->n += amt; \
@@ -113,7 +113,7 @@ static void utstring_printf_va(UT_string *s, const char *fmt, va_list ap) {
       n = vsnprintf (&s->d[s->i], s->n-s->i, fmt, cp);
       va_end(cp);
 
-      if ((n > -1) && (n < (s->n-s->i))) {
+      if ((n > -1) && (n < (int)(s->n-s->i))) {
         s->i += n;
         return;
       }

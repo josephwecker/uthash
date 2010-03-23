@@ -65,7 +65,7 @@ typedef struct {
 #define utarray_done(a) do {                                                    \
   if ((a)->n) {                                                             \
     if ((a)->icd->dtor) { \
-      int _ut_i; \
+      unsigned _ut_i; \
       for(_ut_i=0; _ut_i < (a)->i; _ut_i++) { \
         (a)->icd->dtor(utarray_eltptr(a,_ut_i)); \
       } \
@@ -105,9 +105,9 @@ typedef struct {
 
 #define utarray_extend_back(a) do { \
   utarray_reserve(a,1); \
+  if ((a)->icd->init) { (a)->icd->init(_utarray_eltptr(a,(a)->i)); } \
+  else { memset(_utarray_eltptr(a,(a)->i),0,(a)->icd->sz); } \
   (a)->i++; \
-  if ((a)->icd->init) { (a)->icd->init(utarray_back(a)); } \
-  else { memset(utarray_back(a),0,(a)->icd->sz); } \
 } while(0)
 
 #define utarray_len(a) ((a)->i)
@@ -136,7 +136,7 @@ typedef struct {
             ((a)->i - (j))*((a)->icd->sz));        \
   }                                                \
   if (a->icd->copy) { \
-    int _ut_i; \
+    unsigned _ut_i; \
     for(_ut_i=0;_ut_i<(w)->i;_ut_i++) { \
       (a)->icd->copy(_utarray_eltptr(a,j+_ut_i), _utarray_eltptr(w,_ut_i)); \
     } \
@@ -152,7 +152,7 @@ typedef struct {
 
 #define utarray_erase(a,pos,len) do { \
   if ((a)->icd->dtor) { \
-    int _ut_i; \
+    unsigned _ut_i; \
     for(_ut_i=0; _ut_i < len; _ut_i++) { \
       (a)->icd->dtor(utarray_eltptr(a,pos+_ut_i)); \
     } \
@@ -166,7 +166,7 @@ typedef struct {
 #define utarray_clear(a) do { \
   if ((a)->i > 0) { \
     if ((a)->icd->dtor) { \
-      int _ut_i; \
+      unsigned _ut_i; \
       for(_ut_i=0; _ut_i < (a)->i; _ut_i++) {  \
         (a)->icd->dtor(utarray_eltptr(a,_ut_i)); \
       } \
@@ -178,7 +178,7 @@ typedef struct {
 #define utarray_cpy(dst,src) do { \
   utarray_reserve(dst,src->i); \
   if (src->icd->copy) { \
-    int _ut_i; \
+    unsigned _ut_i; \
     for(_ut_i=0; _ut_i<(src)->i; _ut_i++) {  \
       (src)->icd->copy(_utarray_eltptr((dst),_ut_i), _utarray_eltptr((src),_ut_i)); \
     } \
