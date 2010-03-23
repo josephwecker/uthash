@@ -48,6 +48,7 @@ test43: test utarray with intpair objects
 test44: test utarray with int objects
 test45: test utarray with int objects
 test46: test utarray with char* objects
+test47: test utstring
 
 Other Make targets
 ================================================================================

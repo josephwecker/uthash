@@ -29,10 +29,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define UTARRAY_VERSION 1.9
 
-#ifdef _MSC_VER            /* MS compiler */
-#define _UNUSED_ 
-#else
+#ifdef __GNUC__
 #define _UNUSED_ __attribute__ ((__unused__)) 
+#else
+#define _UNUSED_ 
 #endif
 
 #include <stddef.h>  /* size_t */
@@ -88,7 +88,7 @@ typedef struct {
 #define utarray_reserve(a,by) do {                                                     \
   if (((a)->i+by) > ((a)->n)) {                                             \
     while(((a)->i+by) > ((a)->n)) { (a)->n = ((a)->n ? (2*(a)->n) : 8); }   \
-    if ( ((a)->d=realloc((a)->d, (a)->n*(a)->icd->sz)) == NULL) oom();\
+    if ( ((a)->d=(char*)realloc((a)->d, (a)->n*(a)->icd->sz)) == NULL) oom();\
   }                                                                         \
 } while(0)
 
@@ -103,18 +103,17 @@ typedef struct {
   else { (a)->i--; }                     \
 } while(0)
 
-#define utarray_extend_back(a,x) do { \
+#define utarray_extend_back(a) do { \
   utarray_reserve(a,1); \
   (a)->i++; \
-  x = utarray_back(a); \
-  if ((a)->icd->init) { (a)->icd->init(x); } \
-  else { memset(x,0,(a)->icd->sz); } \
+  if ((a)->icd->init) { (a)->icd->init(utarray_back(a)); } \
+  else { memset(utarray_back(a),0,(a)->icd->sz); } \
 } while(0)
 
 #define utarray_len(a) ((a)->i)
 
 #define utarray_eltptr(a,j) (((j) < (a)->i) ? _utarray_eltptr(a,j) : NULL)
-#define _utarray_eltptr(a,j) ((void*)((a)->d + ((a)->icd->sz*(j) )))
+#define _utarray_eltptr(a,j) ((char*)((a)->d + ((a)->icd->sz*(j) )))
 
 #define utarray_insert(a,p,j) do {                                                 \
   utarray_reserve(a,1);                                                                \
