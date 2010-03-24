@@ -1,0 +1,287 @@
+utarray: dynamic array macros for C structures
+==============================================
+Troy D. Hanson <thanson@users.sourceforge.net>
+v1.9, March 2010
+
+include::sflogo.txt[]
+include::topnav_utarray.txt[]
+
+Introduction
+------------
+include::toc.txt[]
+
+A set of general-purpose dynamic array macros for C structures are included with
+uthash in `utarray.h`.  To use these macros in your own C program, just
+copy `utarray.h` into your source directory and use it in your programs.
+
+  #include "utarray.h"
+
+The dynamic array supports basic operations such as push, pop, and erase on the
+array elements (which can be any structure or simple datatype). The operations,
+based very loosely on the C++ STL vector methods, are listed in full below.
+
+Internally the dynamic array contains a contiguous memory region into which
+data is copied. This buffer is grown using `realloc` as needed to accomodate
+all the data that is pushed into it.
+
+Download
+~~~~~~~~
+To download the `utarray.h` header file, follow the link on the
+http://uthash.sourceforge.net[uthash home page]. 
+
+BSD licensed
+~~~~~~~~~~~~
+This software is made available under the 
+link:license.html[revised BSD license]. 
+It is free and open source. 
+
+Platforms
+~~~~~~~~~
+The 'utarray' macros have been tested on:
+
+ * Linux, 
+ * Mac OS X, 
+ * Windows, using Visual Studio 2008 and Visual Studio 2010
+
+Using utarray
+------------
+
+UT_array
+~~~~~~~~
+The array itself has the data type `UT_array` regardless of the type of
+elements to be stored in it. It is declared like,
+
+  UT_array *a;
+
+The examples below assume we've declared `UT_array *nums;` and `UT_array *strs;`.
+
+Array elements
+~~~~~~~~~~~~~~
+
+Integers and strings
+^^^^^^^^^^^^^^^^^^^^
+Here are two examples of how we could now initialize `a` to store either
+integers or strings,
+
+  utarray_new(nums,&ut_int_icd);  /* to store integers */
+  utarray_new(strs,&ut_str_icd);  /* to store strings */
+
+Support for arrays of integers and strings uses these predefined `ut_int_icd`
+and `ut_str_icd` structures. One way to push data into the array is to use the
+"push back" macro. 
+
+  int i;
+  for(i=0; i < 10; i++) utarray_push_back(nums,&i);
+
+An array of strings can be used like this,
+
+  char *s;
+  s = "hello"; utarray_push_back(strs, &s);
+  s = "world"; utarray_push_back(strs, &s);
+
+Note that the second argument is always a pointer to the type (so a literal
+cannot be used). So in the case of strings, we are passing a `char**`.
+
+Other element types
+^^^^^^^^^^^^^^^^^^^
+Of course, arrays can hold any type of element, not just integers and strings.
+The elements can be other basic types or structures. You need to supply the
+C functions to initialize an empty element, to copy an element and to destruct
+an element. Any or all of these can be `NULL` to use default behavior explained
+below. And the size of the element must be provided so that the array can be
+managed automatically. These C function pointers and size are passed together
+as a `UT_icd` structure.
+
+UT_icd
+++++++
+For example, to have a utarray of `long` we'd declare a `UT_icd` and use it like this,
+
+  UT_icd long_icd = {sizeof(long), NULL, NULL, NULL };
+  utarray_new(nums, &long_icd);
+
+Looking at the four members of `long_icd`, we have:
+ - the element size first,
+ - then the initializor function (here `NULL` which zero fills new elements using memset),
+ - then the copy function (here `NULL` which simply does a `memcpy`), and
+ - the destructor function (here `NULL`, which means no cleanup is needed)
+
+In fact, those defaults (initialize using memset-to-zero, copy using memcpy,
+and do nothing for destruction) are often sufficient. If you had a structure of
+`int` pairs called `intpair_t` as shown below, you could make a utarray of them using,
+
+  typedef struct {
+    int a;
+    int b;
+  } intpair_t;
+
+  UT_icd intpair_icd = {sizeof(intpair_t), NULL, NULL, NULL};
+  UT_array *pairs;
+  utarray_new(pairs,&intpair_icd);
+
+But let's take an example where we use non- `NULL` values in the `UT_icd`.
+Suppose we plan to make a utarray of this structure,
+
+  typedef struct {
+    int a;
+    char *s;
+  } intchar_t;
+
+Now we'll need to specifically use functions to "deep copy" and "deep free"
+this structure so that `s` does not leak or get shared by elements. We would do,
+
+void intchar_copy(void *_dst, void *_src) {
+  intchar_t *dst = (intchar_t*)_dst, *src = (intchar_t*)_src;
+  dst->a = src->a;
+  dst->s = strdup(src->s);
+}
+void intchar_dtor(void *_elt) {
+  intchar_t *elt = (intchar_t*)_elt;
+  free(dst->s);
+}
+
+You can use any structure with these macros, as long as the structure 
+contains a `next` pointer. If you want to make a doubly-linked list, 
+the element also needs to have a `prev` pointer.
+
+  typedef struct {
+      char *name;
+      struct element *prev; /* needed for a doubly-linked list only */
+      struct element *next; /* needed for singly- or doubly-linked lists */
+  } element;
+
+You can name your structure anything. In the example above it is called `element`.
+Within a particular list, all elements must be of the same type. 
+
+List operations
+~~~~~~~~~~~~~~~
+The lists support inserting or deleting elements, sorting the elements and 
+iterating over them.
+
+[width="100%",cols="10<m,10<m,10<m",grid="cols",options="header"]
+|===============================================================================
+|Singly-linked             | Doubly-linked              | Circular, doubly-linked
+|LL_PREPEND(head,add);     | DL_PREPEND(head,add);      | CDL_PREPEND(head,add;
+|LL_APPEND(head,add);      | DL_APPEND(head,add);       | 
+|LL_DELETE(head,del);      | DL_DELETE(head,del);       | CDL_DELETE(head,del);
+|LL_SORT(head,cmp);        | DL_SORT(head,cmp);         | CDL_SORT(head,cmp);
+|LL_FOREACH(head,elt) {...}| DL_FOREACH(head,elt) {...} | CDL_FOREACH(head,elt) {...}
+|LL_FOREACH_SAFE(head,elt,tmp) {...}| DL_FOREACH_SAFE(head,elt,tmp) {...} | CDL_FOREACH_SAFE(head,elt,tmp1,tmp2) {...}
+|LL_SEARCH_SCALAR(head,elt,mbr,val);| DL_SEARCH_SCALAR(head,elt,mbr,val); | CDL_SEARCH_SCALAR(head,elt,mbr,val);
+|LL_SEARCH(head,elt,like,cmp);| DL_SEARCH(head,elt,like,cmp); | CDL_SEARCH(head,elt,like,cmp);
+|===============================================================================
+
+'Prepend' means to insert an element in front of the existing list head (if any),
+changing the list head to the new element. 'Append' means to add an element at the
+end of the list, so it becomes the new tail element.  
+
+The 'sort' operation never moves the elements in memory; rather it only adjusts
+the list order by altering the `prev` and `next` pointers in each element. Also
+the sort operation can change the list head to point to a new element.
+
+The 'foreach' operation is for easy iteration over the list from the head to the
+tail. A usage example is shown below. You can of course just use the `prev` and
+`next` pointers directly instead of using the 'foreach' macros.
+The 'foreach_safe' operation should be used if you plan to delete any of the list
+elements while iterating. 
+
+The 'search' operation is a shortcut for iteration in search of a particular
+element. It is not any faster than manually iterating and testing each element.
+There are two forms: the "scalar" version searches for an element using a
+simple equality test on a given structure member, while the general version takes an
+element to which all others in the list will be compared using a `cmp` function.
+
+
+The parameters shown in the table above are explained here:
+
+head::
+  The list head (a pointer to your list element structure).
+add::
+  A pointer to the list element structure you are adding to the list.
+del::
+  A pointer to the list element structure you are deleting from the list.
+elt::
+  A pointer that will be assigned to each list element in succession (see
+  example) in the case of iteration macros; also, the output pointer from
+  the search macros.
+like::
+  An element pointer, having the same type as `elt`, for which the search macro 
+  seeks a match (if found, the match is stored in `elt`). A match is determined
+  by the given `cmp` function.
+cmp::
+  pointer to comparison function which accepts two arguments-- these are
+  pointers to two element structures to be compared. The comparison function
+  must return an `int` that is negative, zero, or positive, which specifies
+  whether the first item should sort before, equal to, or after the second item,
+  respectively. (In other words, the same convention that is used by `strcmp`).
+  Note that under Visual Studio 2008 you may need to declare the two arguments
+  as `void *` and then cast them back to their actual types.
+tmp::
+  A pointer of the same type as `elt`. Used internally. Need not be initialized.
+mbr::
+  In the scalar search macro, the name of a member within the `elt` structure which
+  will be tested (using `==`) for equality with the value `val`.
+val::
+  In the scalar search macro, specifies the value of (of structure member
+  `field`) of the element being sought.
+
+Example
+~~~~~~~
+This example program reads names from a text file (one name per line), and
+appends each name to a doubly-linked list. Then it sorts and prints them.
+
+.A doubly-linked list
+--------------------------------------------------------------------------------
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "utlist.h"
+
+#define BUFLEN 20
+
+typedef struct el {
+    char bname[BUFLEN];
+    struct el *next, *prev;
+} el;
+
+int namecmp(el *a, el *b) {
+    return strcmp(a->bname,b->bname);
+}
+
+el *head = NULL; /* important- initialize to NULL! */
+
+int main(int argc, char *argv[]) {
+    el *name, *elt, *tmp, etmp;
+
+    char linebuf[BUFLEN];
+    FILE *file;
+
+    if ( (file = fopen( "test11.dat", "r" )) == NULL ) {
+        perror("can't open: "); 
+        exit(-1);
+    }
+
+    while (fgets(linebuf,BUFLEN,file) != NULL) {
+        if ( (name = (el*)malloc(sizeof(el))) == NULL) exit(-1);
+        strncpy(name->bname,linebuf,BUFLEN);
+        DL_APPEND(head, name);
+    }
+    DL_SORT(head, namecmp);
+    DL_FOREACH(head,elt) printf("%s", elt->bname);
+
+    memcpy(&etmp.bname, "WES\n", 5);
+    DL_SEARCH(head,elt,&etmp,namecmp);
+    if (elt) printf("found %s\n", elt->bname);
+
+    /* now delete each element, use the safe iterator */
+    DL_FOREACH_SAFE(head,elt,tmp) {
+      DL_DELETE(head,elt);
+    }
+
+    fclose(file);
+
+    return 0;
+}
+--------------------------------------------------------------------------------
+
+// vim: set nowrap syntax=asciidoc: 
+
