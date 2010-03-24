@@ -5,14 +5,17 @@ include::sflogo.txt[]
 
 Click to return to the link:index.html[uthash home page].
 
-Version 1.9 (2010-03-14)
+Version 1.9 (2010-03-23)
 --------------------------
-* uthash and utlist are now Visual Studio 2008/2010 compatible
-* utlist now includes a few new macros suggested by Charalampos Pournasis:
-  there are now "deletion-safe" iterator macros (`LL_FOREACH_SAFE`, etc),
-	and there are new search macros (`LL_SEARCH`, `LL_SEARCH_SCALAR`, etc)
-	which make iterating in search of a particular element more convenient.
-* utarray?
+* uthash now supports Visual Studio 2008 and 2010 in C or C++ code!
+* utarray and utstring are now included. These independent header files
+	are for dynamic arrays of structures and dynamic strings, respectively.
+* utlist now includes "deletion-safe" iterator macros (`LL_FOREACH_SAFE`, 
+  etc) and search macros (`LL_SEARCH`, `LL_SEARCH_SCALAR`, etc) that 
+	make it more convenient to iterate in search of a particular element (thanks
+	Charalampos Pournasis!)
+* the test suite now runs under Visual Studio (thanks degski!)
+* uthash has been downloaded 9,506 times
 
 Version 1.8 (2009-09-08)
 --------------------------

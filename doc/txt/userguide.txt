@@ -53,14 +53,14 @@ This software can be used in C and C++ programs.  It has been tested on:
 
  * Linux
  * Mac OS X
+ * Windows (Visual Studio 2008 and 2010, Cygwin, MinGW)
  * Solaris 
  * OpenBSD
- * Windows (Visual Studio 2008, Visual Studio 2010, Cygwin, MinGW)
 
 Test suite
 ^^^^^^^^^^
 To run the test suite, look in the `tests` directory and either run `make` on
-unix platforms or on Windows run the "do_tests_win32.cmd" batch file (if you
+Unix platforms, or on Windows run the "do_tests_win32.cmd" batch file (if you
 have Visual Studio 2008 or 2010 installed in a non-standard location you may
 have to edit the batch file).
 
@@ -82,15 +82,25 @@ thanson@users.sourceforge.net.
 
 Resources
 ~~~~~~~~~
+Users of uthash may wish to follow the news feed for information about new
+releases. Also, there are three extra headers included with uthash that provide
+macro implementations for linked lists, dynamic arrays and strings. These are
+totally independent from uthash. They are included with uthash because users
+have asked for these and it seemed easier than making separate projects.
+
 News::
  The author has a news feed for http://troydhanson.wordpress.com/feed/[software updates] image:img/rss.png[(RSS)].
 Linked list macros::
- uthash includes a separate, standalone header called link:utlist.html[utlist.h]
- which has 'linked list macros' for C structures, similar in style to the
- hash macros
+ Included with uthash is a separate header called link:utlist.html[utlist.h]
+ providing 'linked list macros' for C structures, similar to the hash macros
 Dynamic array macros::
- uthash also includes a third standalone header called link:utarray.html[utarray.h]
- which implements a dynamic array for structures.
+ Also included with uthash is a header called link:utarray.html[utarray.h] 
+ for manipulating dynamic arrays of your structures using basic operations
+ like push, pop, etc.
+Dynamic string macros::
+  Lastly, uthash includes a header called link:utstring.html[utstring.h]
+  which implements a basic dynamic string.  You can printf or append data into
+  this string without managing its internal memory yourself.
 
 Who's using it?
 ~~~~~~~~~~~~~~~
