@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.3.4" />
+<meta name="generator" content="AsciiDoc 8.5.0" />
 <title>utlist: linked list macros for C structures</title>
 <link rel="stylesheet" href="./tdh.css" type="text/css" />
 <link rel="stylesheet" href="./tdh-quirks.css" type="text/css" />
@@ -13,8 +13,8 @@
 <h1>utlist: linked list macros for C structures</h1>
 <span id="author">Troy D. Hanson</span><br />
 <span id="email"><tt>&lt;<a href="mailto:thanson@users.sourceforge.net">thanson@users.sourceforge.net</a>&gt;</tt></span><br />
-<span id="revision">version 1.8,</span>
-September 2009
+<span id="revnumber">version 1.9,</span>
+<span id="revdate">March 2010</span>
 </div>
 <div id="preamble">
 <div class="sectionbody">
@@ -205,53 +205,53 @@ cellspacing="0" cellpadding="4">
 <col width="33%" />
 <col width="33%" />
 <col width="33%" />
-<thead valign="top">
+<thead>
 <tr>
-<th align="left">Singly-linked             </th>
-<th align="left"> Doubly-linked              </th>
-<th align="left"> Circular, doubly-linked</th>
+<th align="left" valign="top">Singly-linked             </th>
+<th align="left" valign="top"> Doubly-linked              </th>
+<th align="left" valign="top"> Circular, doubly-linked</th>
 </tr>
 </thead>
-<tbody valign="top">
+<tbody>
 <tr>
-<td align="left"><p class="table"><tt>LL_PREPEND(head,add);</tt></p></td>
-<td align="left"><p class="table"><tt>DL_PREPEND(head,add);</tt></p></td>
-<td align="left"><p class="table"><tt>CDL_PREPEND(head,add;</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>LL_PREPEND(head,add);</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>DL_PREPEND(head,add);</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>CDL_PREPEND(head,add;</tt></p></td>
 </tr>
 <tr>
-<td align="left"><p class="table"><tt>LL_APPEND(head,add);</tt></p></td>
-<td align="left"><p class="table"><tt>DL_APPEND(head,add);</tt></p></td>
-<td align="left"><p class="table"><tt></tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>LL_APPEND(head,add);</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>DL_APPEND(head,add);</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt></tt></p></td>
 </tr>
 <tr>
-<td align="left"><p class="table"><tt>LL_DELETE(head,del);</tt></p></td>
-<td align="left"><p class="table"><tt>DL_DELETE(head,del);</tt></p></td>
-<td align="left"><p class="table"><tt>CDL_DELETE(head,del);</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>LL_DELETE(head,del);</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>DL_DELETE(head,del);</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>CDL_DELETE(head,del);</tt></p></td>
 </tr>
 <tr>
-<td align="left"><p class="table"><tt>LL_SORT(head,cmp);</tt></p></td>
-<td align="left"><p class="table"><tt>DL_SORT(head,cmp);</tt></p></td>
-<td align="left"><p class="table"><tt>CDL_SORT(head,cmp);</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>LL_SORT(head,cmp);</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>DL_SORT(head,cmp);</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>CDL_SORT(head,cmp);</tt></p></td>
 </tr>
 <tr>
-<td align="left"><p class="table"><tt>LL_FOREACH(head,elt) {&#8230;}</tt></p></td>
-<td align="left"><p class="table"><tt>DL_FOREACH(head,elt) {&#8230;}</tt></p></td>
-<td align="left"><p class="table"><tt>CDL_FOREACH(head,elt) {&#8230;}</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>LL_FOREACH(head,elt) {&#8230;}</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>DL_FOREACH(head,elt) {&#8230;}</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>CDL_FOREACH(head,elt) {&#8230;}</tt></p></td>
 </tr>
 <tr>
-<td align="left"><p class="table"><tt>LL_FOREACH_SAFE(head,elt,tmp) {&#8230;}</tt></p></td>
-<td align="left"><p class="table"><tt>DL_FOREACH_SAFE(head,elt,tmp) {&#8230;}</tt></p></td>
-<td align="left"><p class="table"><tt>CDL_FOREACH_SAFE(head,elt,tmp1,tmp2) {&#8230;}</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>LL_FOREACH_SAFE(head,elt,tmp) {&#8230;}</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>DL_FOREACH_SAFE(head,elt,tmp) {&#8230;}</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>CDL_FOREACH_SAFE(head,elt,tmp1,tmp2) {&#8230;}</tt></p></td>
 </tr>
 <tr>
-<td align="left"><p class="table"><tt>LL_SEARCH_SCALAR(head,elt,mbr,val);</tt></p></td>
-<td align="left"><p class="table"><tt>DL_SEARCH_SCALAR(head,elt,mbr,val);</tt></p></td>
-<td align="left"><p class="table"><tt>CDL_SEARCH_SCALAR(head,elt,mbr,val);</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>LL_SEARCH_SCALAR(head,elt,mbr,val);</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>DL_SEARCH_SCALAR(head,elt,mbr,val);</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>CDL_SEARCH_SCALAR(head,elt,mbr,val);</tt></p></td>
 </tr>
 <tr>
-<td align="left"><p class="table"><tt>LL_SEARCH(head,elt,like,cmp);</tt></p></td>
-<td align="left"><p class="table"><tt>DL_SEARCH(head,elt,like,cmp);</tt></p></td>
-<td align="left"><p class="table"><tt>CDL_SEARCH(head,elt,like,cmp);</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>LL_SEARCH(head,elt,like,cmp);</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>DL_SEARCH(head,elt,like,cmp);</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>CDL_SEARCH(head,elt,like,cmp);</tt></p></td>
 </tr>
 </tbody>
 </table>
@@ -328,6 +328,8 @@ cmp
   must return an <tt>int</tt> that is negative, zero, or positive, which specifies
   whether the first item should sort before, equal to, or after the second item,
   respectively. (In other words, the same convention that is used by <tt>strcmp</tt>).
+  Note that under Visual Studio 2008 you may need to declare the two arguments
+  as <tt>void *</tt> and then cast them back to their actual types.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -417,8 +419,8 @@ int main(int argc, char *argv[]) {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.8<br />
-Last updated 2010-02-25 18:08:06 EDT
+Version 1.9<br />
+Last updated 2010-03-13 23:46:40 PDT
 </div>
 </div>
 </body>

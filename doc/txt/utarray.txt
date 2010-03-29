@@ -116,8 +116,8 @@ Here is when they are invoked:
 | dtor  |  destruct an element due to an `utarray_resize`, `utarray_pop_back`, `utarray_erase` or `utarray_clear`, `utarray_done` or `utarray_free`
 |===============================================================================
 
-Default behavior
-++++++++++++++++
+Simple elements
++++++++++++++++
 When `init`, `copy` or `dtor` are `NULL` they default to: memset-to-zero,
 memcpy, and do-nothing, respectively.
 
@@ -145,19 +145,20 @@ as shown below, you could make a utarray of them using,
   UT_array *pairs;
   utarray_new(pairs,&intpair_icd);
 
-Non-default behavior
-++++++++++++++++++++
-Now let's take an example where we use non- `NULL` values in the `UT_icd`.
-Suppose we plan to make a utarray of this structure,
+Complex elements
+++++++++++++++++
+When elements contain pointers that require more complex initialization, copy,
+or destruct procedures, we use non- `NULL` values in the `UT_icd`.  Suppose we
+plan to make a utarray of this element:
 
   typedef struct {
     int a;
     char *s;
   } intchar_t;
 
-We'll need to "deep copy" and "deep free" the members of this structure so that
-`s` does not leak when its enclosing structure is freed., and so that `s` is
-copied, rather than shared, whenever the enclosing structure is copied.
+We'll need to provide code to "deep copy" and "deep free" the `char *s` so
+it doesn't leak when the enclosing element is freed, and so that it is
+copied, rather than shared, whenever the enclosing element is copied.
 
   void intchar_copy(void *_dst, void *_src) {
     intchar_t *dst = (intchar_t*)_dst, *src = (intchar_t*)_src;
@@ -166,11 +167,10 @@ copied, rather than shared, whenever the enclosing structure is copied.
   }
   void intchar_dtor(void *_elt) {
     intchar_t *elt = (intchar_t*)_elt;
-    free(dst->s);
+    if (dst->s) free(dst->s);
   }
 
-Notice in this case that we can use the default `init` function (memset to
-zero).
+We still use the default `init` function (memset to zero) since that is sufficient here:
 
   UT_icd intchar_icd = {sizeof(intchar_t), NULL, intchar_copy, intchar_dtor};
   UT_array *intchars;
@@ -181,175 +181,59 @@ We'll see how the `init`, `copy` and `dtor` functions get used below.
 Array operations
 ~~~~~~~~~~~~~~~~
 
-[width="100%",cols="30<m,70<",grid="none",options="none"]
+[width="100%",cols="50<m,40<",grid="none",options="none"]
 |===============================================================================
-| utarray_new(a,icd)         |
-| utarray_free(a)            |
-| utarray_init(a,icd)        |
-| utarray_done(a)            |
-| utarray_reserve(a,by)      |
-| utarray_push_back(a,p)     |
-| utarray_pop_back(a)        |
-| utarray_extend_back(a)     |
-| utarray_len(a)             |
-| utarray_eltptr(a,j)        |
-| utarray_eltidx(a,e)        |
-| utarray_insert(a,p,j)      |
-| utarray_inserta(a,w,j)     |
-| utarray_resize(dst,num)    |
-| utarray_concat(dst,src)    |
-| utarray_erase(a,pos,len)   |
-| utarray_clear(a)           |
-| utarray_sort(a,cmp)        |
-| utarray_front(a)           |
-| utarray_next(a,e)          |
-| utarray_back(a)            |
-|===============================================================================
-
-
-You can use any structure with these macros, as long as the structure 
-contains a `next` pointer. If you want to make a doubly-linked list, 
-the element also needs to have a `prev` pointer.
-
-  typedef struct {
-      char *name;
-      struct element *prev; /* needed for a doubly-linked list only */
-      struct element *next; /* needed for singly- or doubly-linked lists */
-  } element;
-
-You can name your structure anything. In the example above it is called `element`.
-Within a particular list, all elements must be of the same type. 
-
-List operations
-~~~~~~~~~~~~~~~
-The lists support inserting or deleting elements, sorting the elements and 
-iterating over them.
-
-[width="100%",cols="10<m,10<m,10<m",grid="cols",options="header"]
-|===============================================================================
-|Singly-linked             | Doubly-linked              | Circular, doubly-linked
-|LL_PREPEND(head,add);     | DL_PREPEND(head,add);      | CDL_PREPEND(head,add;
-|LL_APPEND(head,add);      | DL_APPEND(head,add);       | 
-|LL_DELETE(head,del);      | DL_DELETE(head,del);       | CDL_DELETE(head,del);
-|LL_SORT(head,cmp);        | DL_SORT(head,cmp);         | CDL_SORT(head,cmp);
-|LL_FOREACH(head,elt) {...}| DL_FOREACH(head,elt) {...} | CDL_FOREACH(head,elt) {...}
-|LL_FOREACH_SAFE(head,elt,tmp) {...}| DL_FOREACH_SAFE(head,elt,tmp) {...} | CDL_FOREACH_SAFE(head,elt,tmp1,tmp2) {...}
-|LL_SEARCH_SCALAR(head,elt,mbr,val);| DL_SEARCH_SCALAR(head,elt,mbr,val); | CDL_SEARCH_SCALAR(head,elt,mbr,val);
-|LL_SEARCH(head,elt,like,cmp);| DL_SEARCH(head,elt,like,cmp); | CDL_SEARCH(head,elt,like,cmp);
+| utarray_new(UT_array *a, UT_icd *icd)| allocate a new array 
+| utarray_free(UT_array *a)            | free an allocated array
+| utarray_init(UT_array *a,UT_icd *icd)| init an array (non-alloc)
+| utarray_done(UT_array *a)            | dispose of an array (non-allocd)
+| utarray_reserve(UT_array *a,int n)  | ensure space available for 'n' more elements
+| utarray_push_back(UT_array *a,void *p) | push element p onto a
+| utarray_pop_back(UT_array *a)        | pop last element from a
+| utarray_extend_back(UT_array *a)     | push empty element onto a
+| utarray_len(UT_array *a)             | get length of a 
+| utarray_eltptr(UT_array *a,int j)    | get pointer of element from index 
+| utarray_eltidx(UT_array *a,void *e)  | get index of element from pointer
+| utarray_insert(UT_array *a,void *p, int j) | insert element p to index j
+| utarray_inserta(UT_array *a,UT_array *w, int j) | insert array w into array a at index j
+| utarray_resize(UT_array *dst,int num)  | extend or shrink array to num elements
+| utarray_concat(UT_array *dst,UT_array *src) | copy src to end of dst array
+| utarray_erase(UT_array *a,int pos,int len) | remove len elements from a[pos]..a[pos+len-1]
+| utarray_clear(UT_array *a) | clear all elements from a ,setting its length to zero
+| utarray_sort(UT_array *a,cmpfcn *cmp) | sort elements of a using comparison function 
+| utarray_front(UT_array *a) | get first element of a
+| utarray_next(UT_array *a,void *e) | get element of a following e (first element if null)
+| utarray_back(UT_array *a) | get last element of a
 |===============================================================================
 
-'Prepend' means to insert an element in front of the existing list head (if any),
-changing the list head to the new element. 'Append' means to add an element at the
-end of the list, so it becomes the new tail element.  
+Notes
+1. `utarray_new` and `utarray_free` are used to allocate a new array and free it,
+   while `utarray_init` and `utarray_done` can be used if the UT_array is already
+   allocated and just needs to be initialized (or internally freed)
+2. `utarray_reserve` takes the "delta" of elements to reserve (not the total 
+   desired capacity of the array; this differs from the C++ STL vector usage)
+3. `utarray_sort` expects a comparison function having the usual `strcmp` -like
+   convention where it accepts two elements (a and b) and returns a negative 
+   value if a precedes b, 0 if a and b sort equally, and positive if b precedes a.
+   This is an example of a comparison function:
 
-The 'sort' operation never moves the elements in memory; rather it only adjusts
-the list order by altering the `prev` and `next` pointers in each element. Also
-the sort operation can change the list head to point to a new element.
+  int intsort(const void *a,const void*b) {
+      int _a = *(int*)a;
+      int _b = *(int*)b;
+      return _a - _b;
+  }
 
-The 'foreach' operation is for easy iteration over the list from the head to the
-tail. A usage example is shown below. You can of course just use the `prev` and
-`next` pointers directly instead of using the 'foreach' macros.
-The 'foreach_safe' operation should be used if you plan to delete any of the list
-elements while iterating. 
-
-The 'search' operation is a shortcut for iteration in search of a particular
-element. It is not any faster than manually iterating and testing each element.
-There are two forms: the "scalar" version searches for an element using a
-simple equality test on a given structure member, while the general version takes an
-element to which all others in the list will be compared using a `cmp` function.
-
-
-The parameters shown in the table above are explained here:
-
-head::
-  The list head (a pointer to your list element structure).
-add::
-  A pointer to the list element structure you are adding to the list.
-del::
-  A pointer to the list element structure you are deleting from the list.
-elt::
-  A pointer that will be assigned to each list element in succession (see
-  example) in the case of iteration macros; also, the output pointer from
-  the search macros.
-like::
-  An element pointer, having the same type as `elt`, for which the search macro 
-  seeks a match (if found, the match is stored in `elt`). A match is determined
-  by the given `cmp` function.
-cmp::
-  pointer to comparison function which accepts two arguments-- these are
-  pointers to two element structures to be compared. The comparison function
-  must return an `int` that is negative, zero, or positive, which specifies
-  whether the first item should sort before, equal to, or after the second item,
-  respectively. (In other words, the same convention that is used by `strcmp`).
-  Note that under Visual Studio 2008 you may need to declare the two arguments
-  as `void *` and then cast them back to their actual types.
-tmp::
-  A pointer of the same type as `elt`. Used internally. Need not be initialized.
-mbr::
-  In the scalar search macro, the name of a member within the `elt` structure which
-  will be tested (using `==`) for equality with the value `val`.
-val::
-  In the scalar search macro, specifies the value of (of structure member
-  `field`) of the element being sought.
-
-Example
+Samples
 ~~~~~~~
-This example program reads names from a text file (one name per line), and
-appends each name to a doubly-linked list. Then it sorts and prints them.
 
-.A doubly-linked list
---------------------------------------------------------------------------------
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "utlist.h"
+.Integer array
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
-#define BUFLEN 20
+.String array
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
-typedef struct el {
-    char bname[BUFLEN];
-    struct el *next, *prev;
-} el;
-
-int namecmp(el *a, el *b) {
-    return strcmp(a->bname,b->bname);
-}
-
-el *head = NULL; /* important- initialize to NULL! */
-
-int main(int argc, char *argv[]) {
-    el *name, *elt, *tmp, etmp;
-
-    char linebuf[BUFLEN];
-    FILE *file;
-
-    if ( (file = fopen( "test11.dat", "r" )) == NULL ) {
-        perror("can't open: "); 
-        exit(-1);
-    }
-
-    while (fgets(linebuf,BUFLEN,file) != NULL) {
-        if ( (name = (el*)malloc(sizeof(el))) == NULL) exit(-1);
-        strncpy(name->bname,linebuf,BUFLEN);
-        DL_APPEND(head, name);
-    }
-    DL_SORT(head, namecmp);
-    DL_FOREACH(head,elt) printf("%s", elt->bname);
-
-    memcpy(&etmp.bname, "WES\n", 5);
-    DL_SEARCH(head,elt,&etmp,namecmp);
-    if (elt) printf("found %s\n", elt->bname);
-
-    /* now delete each element, use the safe iterator */
-    DL_FOREACH_SAFE(head,elt,tmp) {
-      DL_DELETE(head,elt);
-    }
-
-    fclose(file);
-
-    return 0;
-}
---------------------------------------------------------------------------------
 
 // vim: set nowrap syntax=asciidoc: 
 

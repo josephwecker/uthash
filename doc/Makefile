@@ -6,6 +6,9 @@ userguide:	txt/userguide.txt
 utlist: txt/utlist.txt
 	asciidoc --unsafe --out-file=html/utlist.html -a linkcss=1 -a theme=tdh $<
 
+utarray: txt/utarray.txt
+	asciidoc --unsafe --out-file=html/utarray.html -a linkcss=1 -a theme=tdh $<
+
 changelog:	txt/ChangeLog.txt
 	asciidoc --out-file=html/ChangeLog.html txt/ChangeLog.txt 
 
