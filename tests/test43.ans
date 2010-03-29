@@ -49,4 +49,40 @@ cpy 0 0
 cpy 3 4
 free cpy
 length is 2
+resize to 30
+length is 30
+0 0
+3 4
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+0 0
+resize to 1
+length is 1
+resize to 0
+length is 0
 free

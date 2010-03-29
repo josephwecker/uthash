@@ -48,7 +48,7 @@ int main() {
   ip = (intpair_t*)utarray_back(pairs);
   printf("back is %d %d\n", ip->a, ip->b);
   utarray_new(pairs_cpy, &pairicd);
-  utarray_cpy(pairs_cpy, pairs);  printf("copy\n");
+  utarray_concat(pairs_cpy, pairs);  printf("copy\n");
   printf("cpy length is %d\n", utarray_len(pairs_cpy));
   ip=NULL;
   while( (ip=(intpair_t*)utarray_next(pairs_cpy,ip))) printf("cpy %d %d\n", ip->a, ip->b);
@@ -62,6 +62,13 @@ int main() {
   printf("cpy length is %d\n", utarray_len(pairs_cpy));
   while( (ip=(intpair_t*)utarray_next(pairs_cpy,ip))) printf("cpy %d %d\n", ip->a, ip->b);
   utarray_free(pairs_cpy); printf("free cpy\n");
+  printf("length is %d\n", utarray_len(pairs));
+  utarray_resize(pairs, 30); printf("resize to 30\n");
+  printf("length is %d\n", utarray_len(pairs));
+  while( (ip=(intpair_t*)utarray_next(pairs,ip))) printf("%d %d\n", ip->a, ip->b);
+  utarray_resize(pairs, 1); printf("resize to 1\n");
+  printf("length is %d\n", utarray_len(pairs));
+  utarray_resize(pairs, 0); printf("resize to 0\n");
   printf("length is %d\n", utarray_len(pairs));
   utarray_free(pairs); printf("free\n");
   return 0;

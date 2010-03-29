@@ -146,8 +146,29 @@ typedef struct {
   (a)->i += utarray_len(w);                                                     \
 } while(0)
 
-#define utarray_concat(a,b) do { \
-  utarray_inserta(a,b,utarray_len(a)); \
+#define utarray_resize(dst,num) do { \
+  int _ut_i; \
+  if (dst->i > num) { \
+    if ((dst)->icd->dtor) { \
+      for(_ut_i=num; _ut_i < dst->i; _ut_i++) { \
+        (dst)->icd->dtor(utarray_eltptr(dst,_ut_i)); \
+      } \
+    } \
+  } else if (dst->i < num) { \
+    utarray_reserve(dst,num-dst->i); \
+    if ((dst)->icd->init) { \
+      for(_ut_i=dst->i; _ut_i < num; _ut_i++) { \
+        (dst)->icd->init(utarray_eltptr(dst,_ut_i)); \
+      } \
+    } else { \
+      memset(_utarray_eltptr(dst,dst->i),0,(dst)->icd->sz*(num-dst->i)); \
+    } \
+  } \
+  dst->i = num; \
+} while(0)
+
+#define utarray_concat(dst,src) do { \
+  utarray_inserta(dst,src,utarray_len(dst)); \
 } while(0)
 
 #define utarray_erase(a,pos,len) do { \
@@ -173,19 +194,6 @@ typedef struct {
     } \
     (a)->i = 0; \
   } \
-} while(0)
-
-#define utarray_cpy(dst,src) do { \
-  utarray_reserve(dst,src->i); \
-  if (src->icd->copy) { \
-    unsigned _ut_i; \
-    for(_ut_i=0; _ut_i<(src)->i; _ut_i++) {  \
-      (src)->icd->copy(_utarray_eltptr((dst),_ut_i), _utarray_eltptr((src),_ut_i)); \
-    } \
-  } else { \
-    memcpy((dst)->d,(src)->d,(src)->icd->sz*(src)->i); \
-  } \
-  dst->i = src->i; \
 } while(0)
 
 #define utarray_sort(a,cmp) do { \

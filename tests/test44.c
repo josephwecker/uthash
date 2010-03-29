@@ -29,6 +29,12 @@ int main() {
   utarray_erase(a,3,1);
   while ( (p=(int*)utarray_next(a,p))) printf("%d ", *p);
   printf("\n");
+  utarray_resize(a,5);
+  while ( (p=(int*)utarray_next(a,p))) printf("%d ", *p);
+  printf("\n");
+  utarray_resize(a,3);
+  while ( (p=(int*)utarray_next(a,p))) printf("%d ", *p);
+  printf("\n");
   utarray_erase(a,0,3);
   while ( (p=(int*)utarray_next(a,p))) printf("%d ", *p);
   printf("\n");
