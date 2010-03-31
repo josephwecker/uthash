@@ -13,8 +13,13 @@ USAGE
 ============
 The only file you need to use uthash in your own application is
 
-    src/uthash.h, or
+    src/uthash.h
+
+These bonus headers are also included:
+
     src/utlist.h
+    src/utarray.h
+    src/utstring.h
 
 
 SELF-TESTS
