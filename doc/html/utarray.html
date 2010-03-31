@@ -4,13 +4,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="generator" content="AsciiDoc 8.5.0" />
-<title>utarray: dynamic array macros for C structures</title>
+<title>utarray: dynamic array macros for C</title>
 <link rel="stylesheet" href="./tdh.css" type="text/css" />
 <link rel="stylesheet" href="./tdh-quirks.css" type="text/css" />
 </head>
 <body>
 <div id="header">
-<h1>utarray: dynamic array macros for C structures</h1>
+<h1>utarray: dynamic array macros for C</h1>
 <span id="author">Troy D. Hanson</span><br />
 <span id="email"><tt>&lt;<a href="mailto:thanson@users.sourceforge.net">thanson@users.sourceforge.net</a>&gt;</tt></span><br />
 <span id="revnumber">version 1.9,</span>
@@ -117,8 +117,7 @@ copy <tt>utarray.h</tt> into your source directory and use it in your programs.<
 </div></div>
 <div class="paragraph"><p>The dynamic array supports basic operations such as push, pop, and erase on the
 array elements. These array elements can be any simple datatype or structure.
-The array operations, based very loosely on the C++ STL vector methods, are
-listed in full below.</p></div>
+The array <a href="#operations">operations</a> are based loosely on the C++ STL vector methods.</p></div>
 <div class="paragraph"><p>Internally the dynamic array contains a contiguous memory region into which
 the elements are copied. This buffer is grown as needed using <tt>realloc</tt> to
 accomodate all the data that is pushed into it.</p></div>
@@ -149,51 +148,94 @@ Windows, using Visual Studio 2008 and Visual Studio 2010
 </li>
 </ul></div>
 </div>
-<h2 id="_using_utarray">Using utarray</h2>
+<h2 id="_usage">Usage</h2>
 <div class="sectionbody">
-<h3 id="_ut_array">UT_array</h3><div style="clear:left"></div>
+<h3 id="_declaration">Declaration</h3><div style="clear:left"></div>
 <div class="paragraph"><p>The array itself has the data type <tt>UT_array</tt>, regardless of the type of
 elements to be stored in it. It is declared like,</p></div>
 <div class="literalblock">
 <div class="content">
-<pre><tt>UT_array *a;</tt></pre>
+<pre><tt>UT_array *nums;</tt></pre>
 </div></div>
-<div class="paragraph"><p>The examples below assume we&#8217;ve declared <tt>UT_array *nums;</tt> and <tt>UT_array *strs;</tt>.</p></div>
-<h3 id="_array_elements">Array elements</h3><div style="clear:left"></div>
-<h4 id="_integers_and_strings">Integers and strings</h4>
-<div class="paragraph"><p>Here are two examples of how we could now initialize arrays to store either
-integers or strings,</p></div>
-<div class="literalblock">
+<h3 id="_new_and_free">New and free</h3><div style="clear:left"></div>
+<div class="paragraph"><p>The next step is to create the array using <tt>utarray_new</tt>. Later when you&#8217;re
+done with the array, <tt>utarray_free</tt> will free it and all its elements.</p></div>
+<h3 id="_push_pop_etc">Push, pop, etc</h3><div style="clear:left"></div>
+<div class="paragraph"><p>The central features of the utarray involve putting elements into it, taking
+them out, and iterating over them. There are several <a href="#operations">operations</a>
+to pick from that deal with either single elements or ranges of elements at a
+time. In the examples below we will use only the push operation to insert
+elements.</p></div>
+</div>
+<h2 id="_elements">Elements</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Support for dynamic arrays of integers or strings is especially easy. These are
+best shown by example:</p></div>
+<h3 id="_integers">Integers</h3><div style="clear:left"></div>
+<div class="paragraph"><p>This example makes a utarray of integers, pushes 0-9 into it, then prints it.
+Lastly it frees it.</p></div>
+<div class="listingblock">
+<div class="title">Integer elements</div>
 <div class="content">
-<pre><tt>utarray_new(nums,&amp;ut_int_icd);  /* to store integers */
-utarray_new(strs,&amp;ut_str_icd);  /* to store strings */</tt></pre>
+<pre><tt>#include &lt;stdio.h&gt;
+#include "utarray.h"
+
+int main() {
+  UT_array *nums;
+  int i, *p;
+
+  utarray_new(nums,&amp;ut_int_icd);
+  for(i=0; i &lt; 10; i++) utarray_push_back(nums,&amp;i);
+
+  for(p=(int*)utarray_front(nums);
+      p!=NULL;
+      p=(int*)utarray_next(nums,p)) {
+    printf("%d\n",*p);
+  }
+
+  utarray_free(nums);
+
+  return 0;
+}</tt></pre>
 </div></div>
-<div class="paragraph"><p>Support for arrays of integers and strings uses these predefined <tt>ut_int_icd</tt>
-and <tt>ut_str_icd</tt> helper structures. These will be covered in detail shortly.
-For now, let&#8217;s first see how to push data into the array. Here&#8217;s how we could
-push integers 0-9 into the <tt>nums</tt> array:</p></div>
-<div class="literalblock">
+<div class="paragraph"><p>The second argument to <tt>utarray_push_back</tt> is always a <em>pointer</em> to the type
+(so a literal cannot be used). So for integers, it is an <tt>int*</tt>.</p></div>
+<h3 id="_strings">Strings</h3><div style="clear:left"></div>
+<div class="paragraph"><p>In this example we make a utarray of strings, push two strings into it, print
+it and free it.</p></div>
+<div class="listingblock">
+<div class="title">String elements</div>
 <div class="content">
-<pre><tt>int i;
-for(i=0; i &lt; 10; i++) utarray_push_back(nums,&amp;i);</tt></pre>
+<pre><tt>#include &lt;stdio.h&gt;
+#include "utarray.h"
+
+int main() {
+  UT_array *strs;
+  char *s, **p;
+
+  utarray_new(strs,&amp;ut_str_icd);
+
+  s = "hello"; utarray_push_back(strs, &amp;s);
+  s = "world"; utarray_push_back(strs, &amp;s);
+  p = NULL;
+  while ( (p=(char**)utarray_next(strs,p))) {
+    printf("%s\n",*p);
+  }
+
+  utarray_free(strs);
+
+  return 0;
+}</tt></pre>
 </div></div>
-<div class="paragraph"><p>Similarly, here&#8217;s how we could push a couple of strings into the <tt>strs</tt> array:</p></div>
-<div class="literalblock">
-<div class="content">
-<pre><tt>char *s;
-s = "hello"; utarray_push_back(strs, &amp;s);
-s = "world"; utarray_push_back(strs, &amp;s);</tt></pre>
-</div></div>
-<div class="paragraph"><p>Note that the second argument is always a pointer to the type (so a literal
-cannot be used). So in the case of strings, we are passing a <tt>char**</tt>.</p></div>
-<h4 id="_custom_elements_types">Custom elements types</h4>
-<div class="paragraph"><p>Of course, arrays can hold any type of element, not just integers and strings.
-The elements can be basic types or structures. You need to define the C
-functions to initialize an empty element, to copy an element and to destruct an
-element. Any or all of these can be <tt>NULL</tt> to use default behavior explained
-below. Finally, the size of the element must be provided so that the array can
-be managed automatically. These C functions and the element size are passed
-together as a <tt>UT_icd</tt> structure, defined in <tt>utarray.h</tt>:</p></div>
+<div class="paragraph"><p>In this example, since the element is a <tt>char*</tt>, we pass a pointer to it
+(<tt>char**</tt>) as the second argument to <tt>utarray_push_back</tt>. Note that "push" makes
+a copy of the source string and pushes that copy into the array.</p></div>
+<h3 id="_about_ut_icd">About UT_icd</h3><div style="clear:left"></div>
+<div class="paragraph"><p>Arrays be made of any type of element, not just integers and strings.  The
+elements can be basic types or structures. Unless you&#8217;re dealing with integers
+and strings (which use pre-defined <tt>ut_int_icd</tt> and <tt>ut_str_icd</tt>), you&#8217;ll need
+to define a <tt>UT_icd</tt> helper structure. This structure contains everything that
+utarray needs to initialize, copy or destruct elements.</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><tt>typedef struct {
@@ -210,95 +252,139 @@ together as a <tt>UT_icd</tt> structure, defined in <tt>utarray.h</tt>:</p></div
 typedef void (dtor_f)(void *elt);
 typedef void (init_f)(void *elt);</tt></pre>
 </div></div>
-<div class="paragraph"><p>Here is when they are invoked:</p></div>
-<div class="tableblock">
-<table rules="none"
-width="100%"
-frame="border"
-cellspacing="0" cellpadding="4">
-<col width="10%" />
-<col width="90%" />
-<tbody>
-<tr>
-<td align="center" valign="top"><p class="table">init</p></td>
-<td align="left" valign="top"><p class="table">initialize an empty element as a result of <tt>utarray_resize</tt> or <tt>utarray_extend_back</tt></p></td>
-</tr>
-<tr>
-<td align="center" valign="top"><p class="table">copy</p></td>
-<td align="left" valign="top"><p class="table">copy an element due to an <tt>utarray_push_back</tt>, <tt>utarray_inserta</tt>, or <tt>utarray_concat</tt></p></td>
-</tr>
-<tr>
-<td align="center" valign="top"><p class="table">dtor</p></td>
-<td align="left" valign="top"><p class="table">destruct an element due to an <tt>utarray_resize</tt>, <tt>utarray_pop_back</tt>, <tt>utarray_erase</tt> or <tt>utarray_clear</tt>, <tt>utarray_done</tt> or <tt>utarray_free</tt></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<h5 id="_simple_elements">Simple elements</h5>
-<div class="paragraph"><p>When <tt>init</tt>, <tt>copy</tt> or <tt>dtor</tt> are <tt>NULL</tt> they default to: memset-to-zero,
-memcpy, and do-nothing, respectively.</p></div>
-<div class="paragraph"><p>For example, to have a utarray of <tt>long</tt> we&#8217;d declare a <tt>UT_icd</tt> with default
-(<tt>NULL</tt>) values for <tt>init</tt>, <tt>copy</tt> or <tt>dtor</tt>:</p></div>
-<div class="literalblock">
+<div class="paragraph"><p>The <tt>sz</tt> is just the size of the element being stored in the array.</p></div>
+<div class="paragraph"><p>The <tt>init</tt> function will be invoked whenever utarray needs to initialize an
+empty element. This only happens as a byproduct of <tt>utarray_resize</tt> or
+<tt>utarray_extend_back</tt>. If <tt>init</tt> is <tt>NULL</tt>, it defaults to zero filling the
+new element using memset.</p></div>
+<div class="paragraph"><p>The <tt>copy</tt> function is used whenever an element is copied into the array.
+It is invoked during <tt>utarray_push_back</tt>, <tt>utarray_insert</tt>, <tt>utarray_inserta</tt>,
+or <tt>utarray_concat</tt>. If <tt>copy</tt> is <tt>NULL</tt>, it defaults to a bitwise copy using
+memcpy.</p></div>
+<div class="paragraph"><p>The <tt>dtor</tt> function is used to clean up an element that is being removed from
+the array. It may be invoked due to <tt>utarray_resize</tt>, <tt>utarray_pop_back</tt>,
+<tt>utarray_erase</tt>, <tt>utarray_clear</tt>, <tt>utarray_done</tt> or <tt>utarray_free</tt>. If the
+elements need no cleanup upon destruction, <tt>dtor</tt> may be <tt>NULL</tt>.</p></div>
+<h3 id="_scalar_types">Scalar types</h3><div style="clear:left"></div>
+<div class="paragraph"><p>The next example uses <tt>UT_icd</tt> with all its defaults to make a utarray of
+<tt>long</tt> elements. This example pushes two longs, prints them, and frees the
+array.</p></div>
+<div class="listingblock">
+<div class="title">long elements</div>
 <div class="content">
-<pre><tt>UT_icd long_icd = {sizeof(long), NULL, NULL, NULL };
-utarray_new(nums, &amp;long_icd);</tt></pre>
+<pre><tt>#include &lt;stdio.h&gt;
+#include "utarray.h"
+
+int main() {
+  UT_array *nums;
+  UT_icd long_icd = {sizeof(long), NULL, NULL, NULL };
+  long l, *p;
+  utarray_new(nums, &amp;long_icd);
+
+  l=1; utarray_push_back(nums, &amp;l);
+  l=2; utarray_push_back(nums, &amp;l);
+
+  p=NULL;
+  while( (p=(long*)utarray_next(nums,p))) printf("%ld\n", *p);
+
+  utarray_free(nums);
+  return 0;
+}</tt></pre>
 </div></div>
-<div class="paragraph"><p>Looking at the four members of <tt>long_icd</tt>, we have:
- - the element size first,
- - then the initializor function (here <tt>NULL</tt> which zero fills new elements using memset),
- - then the copy function (here <tt>NULL</tt> which simply does a <tt>memcpy</tt>), and
- - the destructor function (here <tt>NULL</tt>, which means no cleanup is needed)</p></div>
-<div class="paragraph"><p>For another example, if you had a structure of <tt>int</tt> pairs called <tt>intpair_t</tt>
-as shown below, you could make a utarray of them using,</p></div>
-<div class="literalblock">
+<h3 id="_structures">Structures</h3><div style="clear:left"></div>
+<div class="paragraph"><p>Structures can be used as utarray elements. If the structure requires no
+special effort to initialize, copy or destruct, we can use <tt>UT_icd</tt> with all
+its defaults. This example shows a structure that consists of two integers. Here
+we push two values, print them and free the array.</p></div>
+<div class="listingblock">
+<div class="title">Structure (simple)</div>
 <div class="content">
-<pre><tt>typedef struct {
-  int a;
-  int b;
-} intpair_t;</tt></pre>
+<pre><tt>#include &lt;stdio.h&gt;
+#include "utarray.h"
+
+typedef struct {
+    int a;
+    int b;
+} intpair_t;
+
+int main() {
+
+  UT_array *pairs;
+  UT_icd intpair_icd = {sizeof(intpair_t), NULL, NULL, NULL};
+  intpair_t ip, *p;
+  utarray_new(pairs,&amp;intpair_icd);
+
+  ip.a=1;  ip.b=2;  utarray_push_back(pairs, &amp;ip);
+  ip.a=10; ip.b=20; utarray_push_back(pairs, &amp;ip);
+
+  for(p=(intpair_t*)utarray_front(pairs);
+      p!=NULL;
+      p=(intpair_t*)utarray_next(pairs,p)) {
+    printf("%d %d\n", p-&gt;a, p-&gt;b);
+  }
+
+  utarray_free(pairs);
+  return 0;
+}</tt></pre>
 </div></div>
-<div class="literalblock">
+<div class="paragraph"><p>The real utility of <tt>UT_icd</tt> is apparent when the elements of the utarray are
+structures that require special work to initialize, copy or destruct.</p></div>
+<div class="paragraph"><p>For example, when a structure contains pointers to related memory areas that
+need to be copied when the structure is copied (and freed when the structure is
+freed), we can use custom <tt>init</tt>, <tt>copy</tt>, and <tt>dtor</tt> members in the <tt>UT_icd</tt>.</p></div>
+<div class="paragraph"><p>Here we take an example of a structure that contains an integer and a string.
+When this element is copied (such as when an element is pushed into the array),
+we want to "deep copy" the <tt>s</tt> pointer (so the original element and the new
+element point to their own copies of <tt>s</tt>). When an element is destructed, we
+want to "deep free" its copy of <tt>s</tt>. Lastly, this example is written to work
+even if <tt>s</tt> has the value <tt>NULL</tt>.</p></div>
+<div class="listingblock">
+<div class="title">Structure (complex)</div>
 <div class="content">
-<pre><tt>UT_icd intpair_icd = {sizeof(intpair_t), NULL, NULL, NULL};
-UT_array *pairs;
-utarray_new(pairs,&amp;intpair_icd);</tt></pre>
-</div></div>
-<h5 id="_complex_elements">Complex elements</h5>
-<div class="paragraph"><p>When elements contain pointers that require more complex initialization, copy,
-or destruct procedures, we use non- <tt>NULL</tt> values in the <tt>UT_icd</tt>.  Suppose we
-plan to make a utarray of this element:</p></div>
-<div class="literalblock">
-<div class="content">
-<pre><tt>typedef struct {
-  int a;
-  char *s;
-} intchar_t;</tt></pre>
-</div></div>
-<div class="paragraph"><p>We&#8217;ll need to provide code to "deep copy" and "deep free" the <tt>char *s</tt> so
-it doesn&#8217;t leak when the enclosing element is freed, and so that it is
-copied, rather than shared, whenever the enclosing element is copied.</p></div>
-<div class="literalblock">
-<div class="content">
-<pre><tt>void intchar_copy(void *_dst, void *_src) {
+<pre><tt>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include "utarray.h"
+
+typedef struct {
+    int a;
+    char *s;
+} intchar_t;
+
+void intchar_copy(void *_dst, const void *_src) {
   intchar_t *dst = (intchar_t*)_dst, *src = (intchar_t*)_src;
   dst-&gt;a = src-&gt;a;
   dst-&gt;s = src-&gt;s ? strdup(src-&gt;s) : NULL;
 }
+
 void intchar_dtor(void *_elt) {
   intchar_t *elt = (intchar_t*)_elt;
-  if (dst-&gt;s) free(dst-&gt;s);
+  if (elt-&gt;s) free(elt-&gt;s);
+}
+
+int main() {
+  UT_array *intchars;
+  UT_icd intchar_icd = {sizeof(intchar_t), NULL, intchar_copy, intchar_dtor};
+  intchar_t ic, *p;
+  utarray_new(intchars, &amp;intchar_icd);
+
+  ic.a=1; ic.s="hello"; utarray_push_back(intchars, &amp;ic);
+  ic.a=2; ic.s="world"; utarray_push_back(intchars, &amp;ic);
+
+  p=NULL;
+  while( (p=(intchar_t*)utarray_next(intchars,p))) {
+    printf("%d %s\n", p-&gt;a, (p-&gt;s ? p-&gt;s : "null"));
+  }
+
+  utarray_free(intchars);
+  return 0;
 }</tt></pre>
 </div></div>
-<div class="paragraph"><p>We still use the default <tt>init</tt> function (memset to zero) since that is sufficient here:</p></div>
-<div class="literalblock">
-<div class="content">
-<pre><tt>UT_icd intchar_icd = {sizeof(intchar_t), NULL, intchar_copy, intchar_dtor};
-UT_array *intchars;
-utarray_new(intchars, &amp;intchar_icd);</tt></pre>
-</div></div>
-<div class="paragraph"><p>We&#8217;ll see how the <tt>init</tt>, <tt>copy</tt> and <tt>dtor</tt> functions get used below.</p></div>
-<h3 id="_array_operations">Array operations</h3><div style="clear:left"></div>
+</div>
+<h2 id="operations">Reference</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This table lists all the utarray operations. These are loosely based on the C++
+vector class.</p></div>
+<h3 id="_operations">Operations</h3><div style="clear:left"></div>
 <div class="tableblock">
 <table rules="none"
 width="100%"
@@ -373,7 +459,7 @@ cellspacing="0" cellpadding="4">
 </tr>
 <tr>
 <td align="left" valign="top"><p class="table"><tt>utarray_clear(UT_array *a)</tt></p></td>
-<td align="left" valign="top"><p class="table">clear all elements from a ,setting its length to zero</p></td>
+<td align="left" valign="top"><p class="table">clear all elements from a, setting its length to zero</p></td>
 </tr>
 <tr>
 <td align="left" valign="top"><p class="table"><tt>utarray_sort(UT_array *a,cmpfcn *cmp)</tt></p></td>
@@ -385,7 +471,7 @@ cellspacing="0" cellpadding="4">
 </tr>
 <tr>
 <td align="left" valign="top"><p class="table"><tt>utarray_next(UT_array *a,void *e)</tt></p></td>
-<td align="left" valign="top"><p class="table">get element of a following e (first element if null)</p></td>
+<td align="left" valign="top"><p class="table">get element of a following e (front if e is NULL)</p></td>
 </tr>
 <tr>
 <td align="left" valign="top"><p class="table"><tt>utarray_back(UT_array *a)</tt></p></td>
@@ -394,16 +480,29 @@ cellspacing="0" cellpadding="4">
 </tbody>
 </table>
 </div>
-<div class="paragraph"><p>Notes
-1. <tt>utarray_new</tt> and <tt>utarray_free</tt> are used to allocate a new array and free it,
+<h3 id="_notes">Notes</h3><div style="clear:left"></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+<tt>utarray_new</tt> and <tt>utarray_free</tt> are used to allocate a new array and free it,
    while <tt>utarray_init</tt> and <tt>utarray_done</tt> can be used if the UT_array is already
-   allocated and just needs to be initialized (or internally freed)
-2. <tt>utarray_reserve</tt> takes the "delta" of elements to reserve (not the total
-   desired capacity of the array; this differs from the C++ STL vector usage)
-3. <tt>utarray_sort</tt> expects a comparison function having the usual <tt>strcmp</tt> -like
+   allocated and just needs to be initialized or have its internal resources
+   freed.
+</p>
+</li>
+<li>
+<p>
+<tt>utarray_reserve</tt> takes the "delta" of elements to reserve (not the total
+   desired capacity of the array-- this differs from the C++ STL "reserve" notion)
+</p>
+</li>
+<li>
+<p>
+<tt>utarray_sort</tt> expects a comparison function having the usual <tt>strcmp</tt> -like
    convention where it accepts two elements (a and b) and returns a negative
    value if a precedes b, 0 if a and b sort equally, and positive if b precedes a.
-   This is an example of a comparison function:</p></div>
+   This is an example of a comparison function:
+</p>
 <div class="literalblock">
 <div class="content">
 <pre><tt>int intsort(const void *a,const void*b) {
@@ -412,22 +511,13 @@ cellspacing="0" cellpadding="4">
     return _a - _b;
 }</tt></pre>
 </div></div>
-<h3 id="_samples">Samples</h3><div style="clear:left"></div>
-<div class="listingblock">
-<div class="title">Integer array</div>
-<div class="content">
-<pre><tt></tt></pre>
-</div></div>
-<div class="listingblock">
-<div class="title">String array</div>
-<div class="content">
-<pre><tt></tt></pre>
-</div></div>
+</li>
+</ol></div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 1.9<br />
-Last updated 2010-03-28 20:48:40 PDT
+Last updated 2010-03-30 23:20:42 PDT
 </div>
 </div>
 </body>
