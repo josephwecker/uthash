@@ -53,7 +53,7 @@ typedef struct {
 
 typedef struct {
     unsigned i,n;/* i: index of next available slot, n: num slots */
-    UT_icd *icd; /* initializer, copy and destructor functions */
+    const UT_icd *icd; /* initializer, copy and destructor functions */
     char *d;     /* n slots of size icd->sz*/
 } UT_array;
 
@@ -214,8 +214,8 @@ static void utarray_str_dtor(void *elt) {
   char **eltc = (char**)elt;
   if (*eltc) free(*eltc);
 }
-static UT_icd ut_str_icd _UNUSED_ = {sizeof(char*),NULL,utarray_str_cpy,utarray_str_dtor};
-static UT_icd ut_int_icd _UNUSED_ = {sizeof(int),NULL,NULL,NULL};
+static const UT_icd ut_str_icd _UNUSED_ = {sizeof(char*),NULL,utarray_str_cpy,utarray_str_dtor};
+static const UT_icd ut_int_icd _UNUSED_ = {sizeof(int),NULL,NULL,NULL};
 
 
 #endif /* UTARRAY_H */
