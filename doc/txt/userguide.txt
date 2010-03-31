@@ -53,7 +53,7 @@ This software can be used in C and C++ programs.  It has been tested on:
 
  * Linux
  * Mac OS X
- * Windows (Visual Studio 2008 and 2010, Cygwin, MinGW)
+ * Windows using Visual Studio 2008 and 2010
  * Solaris 
  * OpenBSD
 
@@ -83,24 +83,15 @@ thanson@users.sourceforge.net.
 Resources
 ~~~~~~~~~
 Users of uthash may wish to follow the news feed for information about new
-releases. Also, there are three extra headers included with uthash that provide
-macro implementations for linked lists, dynamic arrays and strings. These are
-totally independent from uthash. They are included with uthash because users
-have asked for these and it seemed easier than making separate projects.
+releases. Also, there are some extra bonus headers included with uthash.
 
 News::
  The author has a news feed for http://troydhanson.wordpress.com/feed/[software updates] image:img/rss.png[(RSS)].
-Linked list macros::
- Included with uthash is a separate header called link:utlist.html[utlist.h]
- providing 'linked list macros' for C structures, similar to the hash macros
-Dynamic array macros::
- Also included with uthash is a header called link:utarray.html[utarray.h] 
- for manipulating dynamic arrays of your structures using basic operations
- like push, pop, etc.
-Dynamic string macros::
-  Lastly, uthash includes a header called link:utstring.html[utstring.h]
-  which implements a basic dynamic string.  You can printf or append data into
-  this string without managing its internal memory yourself.
+Extras included with uthash::
+ uthash ships with these "extras"-- independent headers similar to uthash. 
+ First link:utlist.html[utlist.h] provides linked list macros for C structures.
+ Second, link:utarray.html[utarray.h] implements dynamic arrays using macros. 
+ Third, link:utstring.html[utstring.h] implements a basic dynamic string.
 
 Who's using it?
 ~~~~~~~~~~~~~~~
@@ -537,19 +528,7 @@ Standard key types
 This section goes into specifics of how to work with different kinds of keys.
 You can use nearly any type of key-- integers, strings, pointers, structures, etc. 
 
-[NOTE]
-.Avoid floating point keys
-================================================================================
-It is not advisable to use floating point keys- that is, `float` or `double`
-keys. While they work under certain conditions (that is, when the stored and 
-looked-up key values are bitwise-identical), the normal situation with floating
-point types is that they are not bitwise identical even for some identical
-numbers. This is due to multiple representations for certain floating point
-quantities. Also, because floating point calculations are ultimately approximate
-there is no guarantee that two means of computing a result will produce the same
-quantity at a bitwise level. This means that calculated floating point values
-are generally unsuitable for use as keys.
-================================================================================
+NOTE: Use of floating point values (`float` or `double`) as keys is not recommended.
 
 Integer keys
 ~~~~~~~~~~~~
@@ -654,7 +633,7 @@ Your key field can have any data type. To uthash, it is just a sequence of
 bytes.  Therefore, even a nested structure can be used as a key. We'll use the
 general macros `HASH_ADD` and `HASH_FIND` to demonstrate.
 
-NOTE: structures contain padding (wasted internal space used to fulfill
+NOTE: Structures contain padding (wasted internal space used to fulfill
 alignment requirements for the members of the structure). These padding bytes
 'must be zeroed' before adding an item to the hash or looking up an item.
 Therefore always zero the whole structure before setting the members of

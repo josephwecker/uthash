@@ -184,7 +184,7 @@ Mac OS X
 </li>
 <li>
 <p>
-Windows (Visual Studio 2008 and 2010, Cygwin, MinGW)
+Windows using Visual Studio 2008 and 2010
 </p>
 </li>
 <li>
@@ -215,10 +215,7 @@ It is free and open source.</p></div>
 <a href="mailto:thanson@users.sourceforge.net">thanson@users.sourceforge.net</a>.</p></div>
 <h3 id="_resources">Resources</h3><div style="clear:left"></div>
 <div class="paragraph"><p>Users of uthash may wish to follow the news feed for information about new
-releases. Also, there are three extra headers included with uthash that provide
-macro implementations for linked lists, dynamic arrays and strings. These are
-totally independent from uthash. They are included with uthash because users
-have asked for these and it seemed easier than making separate projects.</p></div>
+releases. Also, there are some extra bonus headers included with uthash.</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
 News
@@ -231,32 +228,14 @@ News
 </p>
 </dd>
 <dt class="hdlist1">
-Linked list macros
+Extras included with uthash
 </dt>
 <dd>
 <p>
- Included with uthash is a separate header called <a href="utlist.html">utlist.h</a>
- providing <em>linked list macros</em> for C structures, similar to the hash macros
-</p>
-</dd>
-<dt class="hdlist1">
-Dynamic array macros
-</dt>
-<dd>
-<p>
- Also included with uthash is a header called <a href="utarray.html">utarray.h</a>
- for manipulating dynamic arrays of your structures using basic operations
- like push, pop, etc.
-</p>
-</dd>
-<dt class="hdlist1">
-Dynamic string macros
-</dt>
-<dd>
-<p>
-  Lastly, uthash includes a header called <a href="utstring.html">utstring.h</a>
-  which implements a basic dynamic string.  You can printf or append data into
-  this string without managing its internal memory yourself.
+ uthash ships with these "extras"-- independent headers similar to uthash.
+ First <a href="utlist.html">utlist.h</a> provides linked list macros for C structures.
+ Second, <a href="utarray.html">utarray.h</a> implements dynamic arrays using macros.
+ Third, <a href="utstring.html">utstring.h</a> implements a basic dynamic string.
 </p>
 </dd>
 </dl></div>
@@ -656,18 +635,7 @@ You can use nearly any type of key-- integers, strings, pointers, structures, et
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">
-<div class="title">Avoid floating point keys</div>
-<div class="paragraph"><p>It is not advisable to use floating point keys- that is, <tt>float</tt> or <tt>double</tt>
-keys. While they work under certain conditions (that is, when the stored and
-looked-up key values are bitwise-identical), the normal situation with floating
-point types is that they are not bitwise identical even for some identical
-numbers. This is due to multiple representations for certain floating point
-quantities. Also, because floating point calculations are ultimately approximate
-there is no guarantee that two means of computing a result will produce the same
-quantity at a bitwise level. This means that calculated floating point values
-are generally unsuitable for use as keys.</p></div>
-</td>
+<td class="content">Use of floating point values (<tt>float</tt> or <tt>double</tt>) as keys is not recommended.</td>
 </tr></table>
 </div>
 <h3 id="_integer_keys">Integer keys</h3><div style="clear:left"></div>
@@ -773,7 +741,7 @@ general macros <tt>HASH_ADD</tt> and <tt>HASH_FIND</tt> to demonstrate.</p></div
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">structures contain padding (wasted internal space used to fulfill
+<td class="content">Structures contain padding (wasted internal space used to fulfill
 alignment requirements for the members of the structure). These padding bytes
 <em>must be zeroed</em> before adding an item to the hash or looking up an item.
 Therefore always zero the whole structure before setting the members of
@@ -1873,7 +1841,7 @@ condition
 <div id="footer">
 <div id="footer-text">
 Version 1.9<br />
-Last updated 2010-03-23 18:24:45 PDT
+Last updated 2010-03-31 13:29:33 PDT
 </div>
 </div>
 </body>
