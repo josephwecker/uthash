@@ -86,27 +86,24 @@ do { \
 
 #define utstring_bincpy(s,b,l) \
 do {   \
-  utstring_reserve(s,l); \
+  utstring_reserve(s,(l)+1); \
   if (l) memcpy(&(s)->d[(s)->i], b, l); \
   s->i += l; \
+  s->d[s->i]='\0'; \
 } while(0)
 
 #define utstring_concat(dst,src) \
 do {   \
-  utstring_reserve(dst,src->i); \
+  utstring_reserve(dst,(src->i)+1); \
   if (src->i) memcpy(&(dst)->d[(dst)->i], src->d, src->i); \
   dst->i += src->i; \
+  dst->d[dst->i]='\0'; \
 } while(0)
 
 #define utstring_len(s) ((unsigned)((s)->i))
 
 #define utstring_body(s) ((s)->d)
-_UNUSED_ static char* utstring_cstr(UT_string *s) 
-{
-   utstring_reserve(s,1);
-   s->d[s->i]='\0';
-   return (s)->d;
-} 
+
 _UNUSED_ static void utstring_printf_va(UT_string *s, const char *fmt, va_list ap) {
    int n;
    va_list cp;
