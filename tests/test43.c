@@ -11,6 +11,7 @@ UT_icd pairicd = { sizeof(intpair_t),NULL,NULL,NULL};
 int main() {
   UT_array *pairs, *pairs_cpy;
   intpair_t it, *ip;
+  size_t zero=0;
   utarray_new(pairs, &pairicd);
   printf("length is %d\n", utarray_len(pairs));
   it.a = 1; it.b=2; utarray_push_back(pairs, &it); printf("push\n");
@@ -68,7 +69,7 @@ int main() {
   while( (ip=(intpair_t*)utarray_next(pairs,ip))) printf("%d %d\n", ip->a, ip->b);
   utarray_resize(pairs, 1); printf("resize to 1\n");
   printf("length is %d\n", utarray_len(pairs));
-  utarray_resize(pairs, 0); printf("resize to 0\n");
+  utarray_resize(pairs, zero); printf("resize to 0\n");
   printf("length is %d\n", utarray_len(pairs));
   utarray_free(pairs); printf("free\n");
   return 0;

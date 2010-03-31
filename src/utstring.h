@@ -22,7 +22,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /* a dynamic string implementation using macros 
- * see http://uthash.sourceforge.net/utarray
+ * see http://uthash.sourceforge.net/utstring
  */
 #ifndef UTSTRING_H
 #define UTSTRING_H
@@ -46,58 +46,58 @@ typedef struct {
     size_t i; /* index of first unused byte */
 } UT_string;
 
-#define utstring_reserve(s,amt) \
-do {   \
-  if (((s)->n - (s)->i) < (size_t)(amt)) { \
-     s->d = (char*)realloc((s)->d, (s)->n + amt); \
-     if (s->d == NULL) oom(); \
-     s->n += amt; \
-  } \
+#define utstring_reserve(s,amt)                            \
+do {                                                       \
+  if (((s)->n - (s)->i) < (size_t)(amt)) {                 \
+     s->d = (char*)realloc((s)->d, (s)->n + amt);          \
+     if (s->d == NULL) oom();                              \
+     s->n += amt;                                          \
+  }                                                        \
 } while(0)
 
-#define utstring_init(s) \
-do {   \
-  utstring_reserve(s,100); \
+#define utstring_init(s)                                   \
+do {                                                       \
+  utstring_reserve(s,100);                                 \
 } while(0)
 
-#define utstring_done(s) \
-do {   \
-  if ((s)->d != NULL) free((s)->d); \
-  (s)->n = 0; \
+#define utstring_done(s)                                   \
+do {                                                       \
+  if ((s)->d != NULL) free((s)->d);                        \
+  (s)->n = 0;                                              \
 } while(0)
 
-#define utstring_free(s) \
-do {   \
-  utstring_done(s); \
-  free(s); \
+#define utstring_free(s)                                   \
+do {                                                       \
+  utstring_done(s);                                        \
+  free(s);                                                 \
 } while(0)
 
-#define utstring_new(s) \
-do {   \
-   s = (UT_string*)calloc(sizeof(UT_string),1); \
-   if (!s) oom(); \
-   utstring_init(s); \
+#define utstring_new(s)                                    \
+do {                                                       \
+   s = (UT_string*)calloc(sizeof(UT_string),1);            \
+   if (!s) oom();                                          \
+   utstring_init(s);                                       \
 } while(0)
 
-#define utstring_clear(s) \
-do { \
-  (s)->i = 0; \
+#define utstring_clear(s)                                  \
+do {                                                       \
+  (s)->i = 0;                                              \
 } while(0)
 
-#define utstring_bincpy(s,b,l) \
-do {   \
-  utstring_reserve(s,(l)+1); \
-  if (l) memcpy(&(s)->d[(s)->i], b, l); \
-  s->i += l; \
-  s->d[s->i]='\0'; \
+#define utstring_bincpy(s,b,l)                             \
+do {                                                       \
+  utstring_reserve(s,(l)+1);                               \
+  if (l) memcpy(&(s)->d[(s)->i], b, l);                    \
+  s->i += l;                                               \
+  s->d[s->i]='\0';                                         \
 } while(0)
 
-#define utstring_concat(dst,src) \
-do {   \
-  utstring_reserve(dst,(src->i)+1); \
+#define utstring_concat(dst,src)                           \
+do {                                                       \
+  utstring_reserve(dst,(src->i)+1);                        \
   if (src->i) memcpy(&(dst)->d[(dst)->i], src->d, src->i); \
-  dst->i += src->i; \
-  dst->d[dst->i]='\0'; \
+  dst->i += src->i;                                        \
+  dst->d[dst->i]='\0';                                     \
 } while(0)
 
 #define utstring_len(s) ((unsigned)((s)->i))
