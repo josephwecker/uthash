@@ -355,6 +355,12 @@ Notes
       return _a - _b;
   }
 
+4. A 'pointer' to a particular element (obtained using `utarray_eltptr` or
+   `utarray_front`, `utarray_next`, `utarray_back`) becomes invalid whenever
+   another element is inserted into the utarray. This is because the internal
+   memory management may need to `realloc` the element storage to a new address.
+   For this reason, it's usually better to refer to an element by its integer
+   'index' in code whose duration may include element insertion.
 
 // vim: set nowrap syntax=asciidoc: 
 
