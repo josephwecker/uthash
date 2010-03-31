@@ -29,6 +29,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define UTSTRING_VERSION 1.9
 
+#ifdef __GNUC__
+#define _UNUSED_ __attribute__ ((__unused__)) 
+#else
+#define _UNUSED_ 
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
@@ -95,13 +101,13 @@ do {   \
 #define utstring_len(s) ((unsigned)((s)->i))
 
 #define utstring_body(s) ((s)->d)
-static char* utstring_cstr(UT_string *s) 
+_UNUSED_ static char* utstring_cstr(UT_string *s) 
 {
    utstring_reserve(s,1);
    s->d[s->i]='\0';
    return (s)->d;
 } 
-static void utstring_printf_va(UT_string *s, const char *fmt, va_list ap) {
+_UNUSED_ static void utstring_printf_va(UT_string *s, const char *fmt, va_list ap) {
    int n;
    va_list cp;
    while (1) {
@@ -123,7 +129,7 @@ static void utstring_printf_va(UT_string *s, const char *fmt, va_list ap) {
       else utstring_reserve(s,(s->n)*2);   /* 2x */
    }
 }
-static void utstring_printf(UT_string *s, const char *fmt, ...) {
+_UNUSED_ static void utstring_printf(UT_string *s, const char *fmt, ...) {
    va_list ap;
    va_start(ap,fmt);
    utstring_printf_va(s,fmt,ap);

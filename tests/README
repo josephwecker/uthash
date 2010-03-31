@@ -54,6 +54,9 @@ test49: test utarray of str
 test50: test utarray of long
 test51: test utarray of intpair
 test52: test utarray of intchar
+test53: test utstring
+test54: test utstring
+test55: test utstring
 
 Other Make targets
 ================================================================================
