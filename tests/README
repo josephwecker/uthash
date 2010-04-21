@@ -57,6 +57,7 @@ test52: test utarray of intchar
 test53: test utstring
 test54: test utstring
 test55: test utstring
+test56: test uthash, utlist and utstring together for #define conflicts etc
 
 Other Make targets
 ================================================================================
