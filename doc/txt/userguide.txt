@@ -649,7 +649,7 @@ char *someaddr = NULL;
 
 int main() {
   el_t *d;
-  el_t *e = malloc(sizeof(el_t));
+  el_t *e = (el_t*)malloc(sizeof(el_t));
   if (!e) return -1;
   e->key = (void*)someaddr;
   e->i = 1;
