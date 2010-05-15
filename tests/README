@@ -58,6 +58,7 @@ test53: test utstring
 test54: test utstring
 test55: test utstring
 test56: test uthash, utlist and utstring together for #define conflicts etc
+test57: test uthash HASH_ADD_PTR and HASH_FIND_PTR
 
 Other Make targets
 ================================================================================

@@ -1,7 +1,7 @@
 uthash User Guide
 =================
 Troy D. Hanson <thanson@users.sourceforge.net>
-v1.9, March 2010
+v1.9.1, May 2010
 
 include::sflogo.txt[]
 include::topnav.txt[]
@@ -158,7 +158,7 @@ listing, see <<Macro_reference,Macro Reference>>.
 .Convenience vs. general macros:
 *****************************************************************************
 The uthash macros fall into two categories. The 'convenience' macros can be used
-with integer or string keys (and require that you chose the conventional
+with integer, pointer or string keys (and require that you chose the conventional
 name `hh` for the `UT_hash_handle` field).  The convenience macros take fewer
 arguments than the general macros, making their usage a bit simpler for these
 common types of keys. 
@@ -624,6 +624,40 @@ int main(int argc, char *argv[]) {
     HASH_FIND_STR( users, "betty", s);
     if (s) printf("betty's id is %d\n", s->id);
    return 0;
+}
+----------------------------------------------------------------------
+
+Pointer keys
+~~~~~~~~~~~~
+Your key can be a pointer. Here is a simple example where a structure has a
+pointer member, called `key`.
+
+.A pointer key
+----------------------------------------------------------------------
+#include <stdio.h>
+#include <stdlib.h>
+#include "uthash.h"
+
+typedef struct {
+  void *key;
+  int i;
+  UT_hash_handle hh;
+} el_t;
+
+el_t *hash = NULL;
+char *someaddr = NULL;
+
+int main() {
+  el_t *d;
+  el_t *e = malloc(sizeof(el_t));
+  if (!e) return -1;
+  e->key = (void*)someaddr;
+  e->i = 1;
+  HASH_ADD_PTR(hash,key,e);
+  HASH_FIND_PTR(hash, &someaddr, d);
+  if (d) printf("found\n");
+  free(e);
+  return 0;
 }
 ----------------------------------------------------------------------
 
@@ -1380,7 +1414,7 @@ require fewer arguments.
 In order to use the convenience macros, 
 
 1. the structure's `UT_hash_handle` field must be named `hh`, and
-2. for add or find, the key field must be of type `int` or `char[]` 
+2. for add or find, the key field must be of type `int` or `char[]` or pointer
 
 .Convenience macros
 [width="90%",cols="10m,30m",grid="none",options="header"]
@@ -1390,6 +1424,8 @@ In order to use the convenience macros,
 |HASH_FIND_INT | (head, key_ptr, item_ptr)
 |HASH_ADD_STR  | (head, keyfield_name, item_ptr)
 |HASH_FIND_STR | (head, key_ptr, item_ptr)
+|HASH_ADD_PTR  | (head, keyfield_name, item_ptr)
+|HASH_FIND_PTR | (head, key_ptr, item_ptr)
 |HASH_DEL      | (head, item_ptr)
 |HASH_SORT     | (head, cmp)
 |HASH_COUNT    | (head)

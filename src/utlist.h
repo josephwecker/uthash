@@ -24,7 +24,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef UTLIST_H
 #define UTLIST_H
 
-#define UTLIST_VERSION 1.9
+#define UTLIST_VERSION 1.9.1
 
 /* 
  * This file contains macros to manipulate singly and doubly-linked lists.

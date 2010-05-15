@@ -13,8 +13,8 @@
 <h1>uthash User Guide</h1>
 <span id="author">Troy D. Hanson</span><br />
 <span id="email"><tt>&lt;<a href="mailto:thanson@users.sourceforge.net">thanson@users.sourceforge.net</a>&gt;</tt></span><br />
-<span id="revnumber">version 1.9,</span>
-<span id="revdate">March 2010</span>
+<span id="revnumber">version 1.9.1,</span>
+<span id="revdate">May 2010</span>
 </div>
 <div id="preamble">
 <div class="sectionbody">
@@ -294,7 +294,7 @@ listing, see <a href="#Macro_reference">Macro Reference</a>.</p></div>
 <div class="sidebar-content">
 <div class="sidebar-title">Convenience vs. general macros:</div>
 <div class="paragraph"><p>The uthash macros fall into two categories. The <em>convenience</em> macros can be used
-with integer or string keys (and require that you chose the conventional
+with integer, pointer or string keys (and require that you chose the conventional
 name <tt>hh</tt> for the <tt>UT_hash_handle</tt> field).  The convenience macros take fewer
 arguments than the general macros, making their usage a bit simpler for these
 common types of keys.</p></div>
@@ -730,6 +730,38 @@ int main(int argc, char *argv[]) {
     HASH_FIND_STR( users, "betty", s);
     if (s) printf("betty's id is %d\n", s-&gt;id);
    return 0;
+}</tt></pre>
+</div></div>
+<h3 id="_pointer_keys">Pointer keys</h3><div style="clear:left"></div>
+<div class="paragraph"><p>Your key can be a pointer. Here is a simple example where a structure has a
+pointer member, called <tt>key</tt>.</p></div>
+<div class="listingblock">
+<div class="title">A pointer key</div>
+<div class="content">
+<pre><tt>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include "uthash.h"
+
+typedef struct {
+  void *key;
+  int i;
+  UT_hash_handle hh;
+} el_t;
+
+el_t *hash = NULL;
+char *someaddr = NULL;
+
+int main() {
+  el_t *d;
+  el_t *e = malloc(sizeof(el_t));
+  if (!e) return -1;
+  e-&gt;key = (void*)someaddr;
+  e-&gt;i = 1;
+  HASH_ADD_PTR(hash,key,e);
+  HASH_FIND_PTR(hash, &amp;someaddr, d);
+  if (d) printf("found\n");
+  free(e);
+  return 0;
 }</tt></pre>
 </div></div>
 <h3 id="_structure_keys">Structure keys</h3><div style="clear:left"></div>
@@ -1641,7 +1673,7 @@ the structure&#8217;s <tt>UT_hash_handle</tt> field must be named <tt>hh</tt>, a
 </li>
 <li>
 <p>
-for add or find, the key field must be of type <tt>int</tt> or <tt>char[]</tt>
+for add or find, the key field must be of type <tt>int</tt> or <tt>char[]</tt> or pointer
 </p>
 </li>
 </ol></div>
@@ -1674,6 +1706,14 @@ cellspacing="0" cellpadding="4">
 </tr>
 <tr>
 <td align="left" valign="top"><p class="table"><tt>HASH_FIND_STR</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>(head, key_ptr, item_ptr)</tt></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><tt>HASH_ADD_PTR</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>(head, keyfield_name, item_ptr)</tt></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><tt>HASH_FIND_PTR</tt></p></td>
 <td align="left" valign="top"><p class="table"><tt>(head, key_ptr, item_ptr)</tt></p></td>
 </tr>
 <tr>
@@ -1840,8 +1880,8 @@ condition
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.9<br />
-Last updated 2010-03-31 13:29:33 PDT
+Version 1.9.1<br />
+Last updated 2010-05-14 22:02:43 PDT
 </div>
 </div>
 </body>

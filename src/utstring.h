@@ -27,7 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef UTSTRING_H
 #define UTSTRING_H
 
-#define UTSTRING_VERSION 1.9
+#define UTSTRING_VERSION 1.9.1
 
 #ifdef __GNUC__
 #define _UNUSED_ __attribute__ ((__unused__)) 
@@ -49,14 +49,15 @@ typedef struct {
 #define utstring_reserve(s,amt)                            \
 do {                                                       \
   if (((s)->n - (s)->i) < (size_t)(amt)) {                 \
-     s->d = (char*)realloc((s)->d, (s)->n + amt);          \
-     if (s->d == NULL) oom();                              \
-     s->n += amt;                                          \
+     (s)->d = (char*)realloc((s)->d, (s)->n + amt);        \
+     if ((s)->d == NULL) oom();                            \
+     (s)->n += amt;                                        \
   }                                                        \
 } while(0)
 
 #define utstring_init(s)                                   \
 do {                                                       \
+  (s)->n = 0; (s)->i = 0; (s)->d = NULL;                   \
   utstring_reserve(s,100);                                 \
 } while(0)
 

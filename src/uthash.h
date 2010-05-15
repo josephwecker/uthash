@@ -62,7 +62,7 @@ typedef unsigned int uint32_t;
 #include <inttypes.h>   /* uint32_t */
 #endif
 
-#define UTHASH_VERSION 1.9
+#define UTHASH_VERSION 1.9.1
 
 #define uthash_fatal(msg) exit(-1)        /* fatal error (out of memory,etc) */
 #define uthash_malloc(sz) malloc(sz)      /* malloc fcn                      */
@@ -233,6 +233,10 @@ do {                                                                            
     HASH_FIND(hh,head,findint,sizeof(int),out)
 #define HASH_ADD_INT(head,intfield,add)                                          \
     HASH_ADD(hh,head,intfield,sizeof(int),add)
+#define HASH_FIND_PTR(head,findptr,out)                                          \
+    HASH_FIND(hh,head,findptr,sizeof(void *),out)
+#define HASH_ADD_PTR(head,ptrfield,add)                                          \
+    HASH_ADD(hh,head,ptrfield,sizeof(void *),add)
 #define HASH_DEL(head,delptr)                                                    \
     HASH_DELETE(hh,head,delptr)
 
