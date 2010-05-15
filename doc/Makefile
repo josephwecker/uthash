@@ -17,6 +17,7 @@ changelog:	txt/ChangeLog.txt
 
 stage:
 	cp html/userguide.html ${PAGEROOT}/uthash
+	cp html/userguide.pdf ${PAGEROOT}/uthash
 	cp html/utlist.html ${PAGEROOT}/uthash
 	cp html/utarray.html ${PAGEROOT}/uthash
 	cp html/utstring.html ${PAGEROOT}/uthash
