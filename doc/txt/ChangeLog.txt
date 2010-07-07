@@ -9,6 +9,8 @@ Version ?.?.? (201?-??-??)
 --------------------------
 * Add sz parameter to `uthash_free` for convenience on embedded platforms
 (thanks, Niall Douglas)
+* Add extra parentheses in `HASH_COUNT` for better robustness (thanks Srđan
+Stipić !)
 
 Version 1.9.1 (2010-05-15)
 --------------------------
