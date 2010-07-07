@@ -889,7 +889,7 @@ do {                                                                            
 
 /* obtain a count of items in the hash */
 #define HASH_COUNT(head) HASH_CNT(hh,head) 
-#define HASH_CNT(hh,head) (head?(head->hh.tbl->num_items):0)
+#define HASH_CNT(hh,head) ((head)?((head)->hh.tbl->num_items):0)
 
 typedef struct UT_hash_bucket {
    struct UT_hash_handle *hh_head;
