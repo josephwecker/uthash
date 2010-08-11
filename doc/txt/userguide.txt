@@ -528,7 +528,13 @@ Standard key types
 This section goes into specifics of how to work with different kinds of keys.
 You can use nearly any type of key-- integers, strings, pointers, structures, etc. 
 
-NOTE: Use of floating point values (`float` or `double`) as keys is not recommended.
+[NOTE]
+.A note about float
+================================================================================
+You can use floating point keys. This comes with the same caveats as with any
+program that tests floating point equality. In other words, even the tiniest
+difference in two floating point numbers makes them distinct keys.
+================================================================================
 
 Integer keys
 ~~~~~~~~~~~~
