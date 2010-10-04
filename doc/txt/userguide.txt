@@ -266,24 +266,17 @@ The hash table pointer (which initially points to the first item added to the
 hash) can change in response to `HASH_DEL` (i.e. if you delete the first item
 in the hash table).
 
-Delete all items
-~~~~~~~~~~~~~~~~
-To delete all the structures in a hash table, you can either iteratively delete
-the items (if you plan to free each one or need to other per-element work), or
-you can delete all the items in a single operation.
-
 Iterative deletion
 ^^^^^^^^^^^^^^^^^^
-It's easy: just keep deleting the first item. If you plan to free it, copy the
-pointer beforehand since the delete will advance the "first item" to the next.
+The `HASH_ITER` macro is a deletion-safe iteration construct which expands
+to a simple 'for' loop.
 
 .Delete all items from a hash
 ----------------------------------------------------------------------
 void delete_all() {
-  user_struct *current_user; 
+  struct my_struct *current_user, *tmp; 
 
-  while(users) { 
-    current_user = users;          /* copy pointer to first item     */
+  HASH_ITER(hh, users, current_user, tmp) {
     HASH_DEL(users,current_user);  /* delete; users advances to next */
     free(current_user);            /* optional- if you want to free  */
   } 
@@ -333,6 +326,23 @@ void print_users() {
 
 There is also an `hh.prev` pointer you could use to iterate backwards through
 the hash, starting from any known item.
+
+[[deletesafe]]
+Deletion-safe iteration
+^^^^^^^^^^^^^^^^^^^^^^^
+In the example above, it would not be safe to delete and free `s` in the body
+of the 'for' loop, (because `s` is derefenced each time the loop iterates).
+This is easy to rewrite correctly (by copying the `s->hh.next` pointer to a
+temporary variable 'before' freeing `s`), but it comes up often enough that a
+deletion-safe iteration macro, `HASH_ITER`, is included. It expands to a
+`for`-loop header. Here is how it could be used to rewrite the last example:
+
+    struct my_struct *s, *tmp;
+
+    HASH_ITER(hh, users, user, tmp) {
+        printf("user id %d: name %s\n", s->id, s->name);
+        /* ... it is safe to delete and free s here */
+    }
 
 .A hash is also a doubly-linked list.
 *******************************************************************************
@@ -432,10 +442,9 @@ void delete_user(struct my_struct *user) {
 }
 
 void delete_all() {
-  struct my_struct *current_user; 
+  struct my_struct *current_user, *tmp; 
 
-  while(users) { 
-    current_user = users;          /* grab pointer to first item */
+  HASH_ITER(hh, users, current_user, tmp) {
     HASH_DEL(users,current_user);  /* delete it (users advances to next) */
     free(current_user);            /* free it */
   } 
@@ -1469,6 +1478,7 @@ than `hh`, or if your key's data type isn't `int` or `char[]`.
 |HASH_CNT       | (hh_name, head)
 |HASH_CLEAR     | (hh_name, head)
 |HASH_SELECT    | (dst_hh_name, dst_head, src_hh_name, src_head, condition)
+|HASH_ITER      | (hh_name, head, item_ptr, tmp_item_ptr)
 |===============================================================================
 
 [NOTE]
@@ -1498,9 +1508,11 @@ key_ptr::
     (since it's a pointer, you can't directly pass a literal value here). For
     `HASH_ADD_KEYPTR`, this is the address of the key of the item being added.
 item_ptr::
-    pointer to the structure being added, deleted or looked up. This is an
-    input parameter for `HASH_ADD` and `HASH_DELETE` macros, and an output
-    parameter for `HASH_FIND`.
+    pointer to the structure being added, deleted, or looked up, or the current
+    pointer during iteration. This is an input parameter for `HASH_ADD` and
+    `HASH_DELETE` macros, and an output parameter for `HASH_FIND` and
+    `HASH_ITER`. (When using `HASH_ITER` to iterate, `tmp_item_ptr`
+    is another variable of the same type as `item_ptr`, used internally).
 cmp::
     pointer to comparison function which accepts two arguments (pointers to
     items to compare) and returns an int specifying whether the first item

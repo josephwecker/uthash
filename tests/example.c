@@ -33,10 +33,9 @@ void delete_user(struct my_struct *user) {
 }
 
 void delete_all() {
-  struct my_struct *current_user; 
+  struct my_struct *current_user, *tmp; 
 
-  while(users) { 
-    current_user = users;          /* grab pointer to first item */
+  HASH_ITER(hh, users, current_user, tmp) {
     HASH_DEL(users,current_user);  /* delete it (users advances to next) */
     free(current_user);            /* free it */
   } 
