@@ -887,6 +887,10 @@ do {                                                                            
   }                                                                              \
 } while(0)
 
+#define HASH_ITER(hh,head,el,tmp)                                               \
+for((el)=(head),(tmp)=(head)?(head)->hh.next:NULL;                              \
+  el; (el)=(tmp),(tmp)=(tmp)?(tmp)->hh.next:NULL) 
+
 /* obtain a count of items in the hash */
 #define HASH_COUNT(head) HASH_CNT(hh,head) 
 #define HASH_CNT(hh,head) ((head)?((head)->hh.tbl->num_items):0)
