@@ -5,12 +5,12 @@ include::sflogo.txt[]
 
 Click to return to the link:index.html[uthash home page].
 
-Version ?.?.? (201?-??-??)
+Version 1.9.2 (2010-10-31)
 --------------------------
-* Add extra parentheses so complex macro arguments are evaluated properly
-(thanks, ngg)
-* Add sz parameter to `uthash_free` for convenience on embedded platforms
-(thanks, Niall Douglas)
+* `hashscan` can now run on FreeBSD 8.1 and later (thanks, Markus Gebert!)
+* Add extra parentheses so complex macro arguments are evaluated properly (thanks, ngg)
+* Add sz parameter to `uthash_free` for convenience on embedded platforms (thanks, Niall Douglas)
+* uthash has been downloaded 12,294 times
 
 Version 1.9.1 (2010-05-15)
 --------------------------

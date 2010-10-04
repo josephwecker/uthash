@@ -32,7 +32,7 @@ pdf: txt/userguide.txt
 	a2x --format=pdf $<
 	mv txt/userguide.pdf pdf/
 	cd html && ln -sf ../pdf/userguide.pdf userguide.pdf
-	rm txt/userguide.xml
+	rm -f txt/userguide.xml
 
 css: html/toc.css
 	cat /etc/asciidoc/stylesheets/xhtml11.css html/toc.css > html/tdh.css

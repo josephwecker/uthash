@@ -1,7 +1,7 @@
 uthash User Guide
 =================
 Troy D. Hanson <thanson@users.sourceforge.net>
-v1.9.1, May 2010
+v1.9.2, October 2010
 
 include::sflogo.txt[]
 include::topnav.txt[]
@@ -56,6 +56,7 @@ This software can be used in C and C++ programs.  It has been tested on:
  * Windows using Visual Studio 2008 and 2010
  * Solaris 
  * OpenBSD
+ * FreeBSD
 
 Test suite
 ^^^^^^^^^^
@@ -547,15 +548,19 @@ String keys
 ~~~~~~~~~~~
 If your structure has a string key, the operations to use depend on whether your
 structure 'points to' the key (`char *`) or the string resides `within` the
-structure (`char a[10]`).
+structure (`char a[10]`).  *This distinction is important*.  As we'll see below,
+you need to use `HASH_ADD_KEYPTR` when your structure 'points' to a key (that is,
+the key itself is 'outside' of the structure); in contrast, use `HASH_ADD_STR`
+for a string key that is contained *within* your structure.
 
 [NOTE]
 .char[ ] vs. char* 
 ================================================================================
 The string is 'within' the structure in the first example below-- `name` is a
-`char[10]` field.  If instead the structure 'points' to the key (i.e., `name` is
-declared `char *`), as in the second example below, use `HASH_ADD_KEYPTR`
-described in the <<Macro_reference,Macro reference>>.
+`char[10]` field.  In the second example, the key is 'outside' of the
+structure-- `name` is a `char *`. So the first example uses `HASH_ADD_STR` but
+the second example uses `HASH_ADD_KEYPTR`.  For information on this macro, see
+the <<Macro_reference,Macro reference>>.
 ================================================================================
 
 String 'within' structure
@@ -635,8 +640,11 @@ int main(int argc, char *argv[]) {
 
 Pointer keys
 ~~~~~~~~~~~~
-Your key can be a pointer. Here is a simple example where a structure has a
-pointer member, called `key`.
+Your key can be a pointer. To be very clear, this means the 'pointer itself'
+can be the key (in contrast, if the thing 'pointed to' is the key, this is a
+different use case handled by `HASH_ADD_KEYPTR`).
+
+Here is a simple example where a structure has a pointer member, called `key`.
 
 .A pointer key
 ----------------------------------------------------------------------
@@ -1116,7 +1124,9 @@ approaches 100%, the hash table approaches constant-time lookup performance.
 [[hashscan]]
 hashscan
 ~~~~~~~~
-A *Linux-only* utility called `hashscan` is included in the `tests/` directory. It
+NOTE: This utility is only available on Linux, and on FreeBSD (8.1 and up).
+
+A utility called `hashscan` is included in the `tests/` directory. It
 is built automatically when you run `make` in that directory. This tool
 examines a running process and reports on the uthash tables that it finds in
 that program's memory. It can also save the keys from each table in a format

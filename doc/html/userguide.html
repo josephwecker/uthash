@@ -3,19 +3,26 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.5.0" />
+<meta name="generator" content="AsciiDoc 8.5.2" />
 <title>uthash User Guide</title>
 <link rel="stylesheet" href="./tdh.css" type="text/css" />
 <link rel="stylesheet" href="./tdh-quirks.css" type="text/css" />
+<script type="text/javascript">
+/*<![CDATA[*/
+window.onload = function(){asciidoc.footnotes();}
+/*]]>*/
+</script>
+<script type="text/javascript" src="./asciidoc-xhtml11.js"></script>
 </head>
 <body>
 <div id="header">
 <h1>uthash User Guide</h1>
 <span id="author">Troy D. Hanson</span><br />
 <span id="email"><tt>&lt;<a href="mailto:thanson@users.sourceforge.net">thanson@users.sourceforge.net</a>&gt;</tt></span><br />
-<span id="revnumber">version 1.9.1,</span>
-<span id="revdate">May 2010</span>
+<span id="revnumber">version 1.9.2,</span>
+<span id="revdate">October 2010</span>
 </div>
+<div id="content">
 <div id="preamble">
 <div class="sectionbody">
 <a style="float: right; padding-right: 50px" href="http://sourceforge.net/projects/uthash"><img style="border: 0" src="http://sflogo.sourceforge.net/sflogo.php?group_id=163879&amp;type=13" width="120" height="30" alt="uthash at SourceForge.net" /></a>
@@ -195,6 +202,11 @@ Solaris
 <li>
 <p>
 OpenBSD
+</p>
+</li>
+<li>
+<p>
+FreeBSD
 </p>
 </li>
 </ul></div>
@@ -635,7 +647,12 @@ You can use nearly any type of key-- integers, strings, pointers, structures, et
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">Use of floating point values (<tt>float</tt> or <tt>double</tt>) as keys is not recommended.</td>
+<td class="content">
+<div class="title">A note about float</div>
+<div class="paragraph"><p>You can use floating point keys. This comes with the same caveats as with any
+program that tests floating point equality. In other words, even the tiniest
+difference in two floating point numbers makes them distinct keys.</p></div>
+</td>
 </tr></table>
 </div>
 <h3 id="_integer_keys">Integer keys</h3><div style="clear:left"></div>
@@ -646,7 +663,10 @@ the same for all types of keys).</p></div>
 <h3 id="_string_keys">String keys</h3><div style="clear:left"></div>
 <div class="paragraph"><p>If your structure has a string key, the operations to use depend on whether your
 structure <em>points to</em> the key (<tt>char *</tt>) or the string resides <tt>within</tt> the
-structure (<tt>char a[10]</tt>).</p></div>
+structure (<tt>char a[10]</tt>).  <strong>This distinction is important</strong>.  As we&#8217;ll see below,
+you need to use <tt>HASH_ADD_KEYPTR</tt> when your structure <em>points</em> to a key (that is,
+the key itself is <em>outside</em> of the structure); in contrast, use <tt>HASH_ADD_STR</tt>
+for a string key that is contained <strong>within</strong> your structure.</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
@@ -655,9 +675,10 @@ structure (<tt>char a[10]</tt>).</p></div>
 <td class="content">
 <div class="title">char[ ] vs. char*</div>
 <div class="paragraph"><p>The string is <em>within</em> the structure in the first example below-- <tt>name</tt> is a
-<tt>char[10]</tt> field.  If instead the structure <em>points</em> to the key (i.e., <tt>name</tt> is
-declared <tt>char *</tt>), as in the second example below, use <tt>HASH_ADD_KEYPTR</tt>
-described in the <a href="#Macro_reference">Macro reference</a>.</p></div>
+<tt>char[10]</tt> field.  In the second example, the key is <em>outside</em> of the
+structure-- <tt>name</tt> is a <tt>char *</tt>. So the first example uses <tt>HASH_ADD_STR</tt> but
+the second example uses <tt>HASH_ADD_KEYPTR</tt>.  For information on this macro, see
+the <a href="#Macro_reference">Macro reference</a>.</p></div>
 </td>
 </tr></table>
 </div>
@@ -733,8 +754,10 @@ int main(int argc, char *argv[]) {
 }</tt></pre>
 </div></div>
 <h3 id="_pointer_keys">Pointer keys</h3><div style="clear:left"></div>
-<div class="paragraph"><p>Your key can be a pointer. Here is a simple example where a structure has a
-pointer member, called <tt>key</tt>.</p></div>
+<div class="paragraph"><p>Your key can be a pointer. To be very clear, this means the <em>pointer itself</em>
+can be the key (in contrast, if the thing <em>pointed to</em> is the key, this is a
+different use case handled by <tt>HASH_ADD_KEYPTR</tt>).</p></div>
+<div class="paragraph"><p>Here is a simple example where a structure has a pointer member, called <tt>key</tt>.</p></div>
 <div class="listingblock">
 <div class="title">A pointer key</div>
 <div class="content">
@@ -753,7 +776,7 @@ char *someaddr = NULL;
 
 int main() {
   el_t *d;
-  el_t *e = malloc(sizeof(el_t));
+  el_t *e = (el_t*)malloc(sizeof(el_t));
   if (!e) return -1;
   e-&gt;key = (void*)someaddr;
   e-&gt;i = 1;
@@ -1033,7 +1056,7 @@ out faster.</p></div>
 width="50%"
 frame="border"
 cellspacing="0" cellpadding="4">
-<caption class="title">Table 1: Bloom filter sizes for selected values of n</caption>
+<caption class="title">Table 1. Bloom filter sizes for selected values of n</caption>
 <col width="25%" />
 <col width="75%" />
 <thead>
@@ -1135,7 +1158,7 @@ below. E.g.,</p></div>
 width="50%"
 frame="border"
 cellspacing="0" cellpadding="4">
-<caption class="title">Table 2: Built-in hash functions</caption>
+<caption class="title">Table 2. Built-in hash functions</caption>
 <col width="20%" />
 <col width="80%" />
 <thead>
@@ -1327,7 +1350,15 @@ items have favorable linear positions in their bucket chains.  As <tt>ideal%</tt
 approaches 100%, the hash table approaches constant-time lookup performance.</p></div>
 </div></div>
 <h3 id="hashscan">hashscan</h3><div style="clear:left"></div>
-<div class="paragraph"><p>A <strong>Linux-only</strong> utility called <tt>hashscan</tt> is included in the <tt>tests/</tt> directory. It
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">This utility is only available on Linux, and on FreeBSD (8.1 and up).</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>A utility called <tt>hashscan</tt> is included in the <tt>tests/</tt> directory. It
 is built automatically when you run <tt>make</tt> in that directory. This tool
 examines a running process and reports on the uthash tables that it finds in
 that program&#8217;s memory. It can also save the keys from each table in a format
@@ -1521,10 +1552,12 @@ If your application uses its own custom allocator, this hash can use them too.</
 
 /* re-define, specifying alternate functions */
 #define uthash_malloc(sz) my_malloc(sz)
-#define uthash_free(ptr) my_free(ptr)
+#define uthash_free(ptr,sz) my_free(ptr)
 
 ...</tt></pre>
 </div></div>
+<div class="paragraph"><p>Notice that <tt>uthash_free</tt> receives two parameters. The <tt>sz</tt> parameter is for
+convenience on embedded platforms that manage their own memory.</p></div>
 <h4 id="_out_of_memory">Out of memory</h4>
 <div class="paragraph"><p>If memory allocation fails (i.e., the malloc function returned <tt>NULL</tt>), the
 default behavior is to terminate the process by calling <tt>exit(-1)</tt>. This can
@@ -1682,7 +1715,7 @@ for add or find, the key field must be of type <tt>int</tt> or <tt>char[]</tt> o
 width="90%"
 frame="border"
 cellspacing="0" cellpadding="4">
-<caption class="title">Table 3: Convenience macros</caption>
+<caption class="title">Table 3. Convenience macros</caption>
 <col width="25%" />
 <col width="75%" />
 <thead>
@@ -1740,7 +1773,7 @@ than <tt>hh</tt>, or if your key&#8217;s data type isn&#8217;t <tt>int</tt> or <
 width="90%"
 frame="border"
 cellspacing="0" cellpadding="4">
-<caption class="title">Table 4: General macros</caption>
+<caption class="title">Table 4. General macros</caption>
 <col width="25%" />
 <col width="75%" />
 <thead>
@@ -1878,10 +1911,12 @@ condition
 </dd>
 </dl></div>
 </div>
+</div>
+<div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Version 1.9.1<br />
-Last updated 2010-05-14 22:02:43 PDT
+Version 1.9.2<br />
+Last updated 2010-10-03 23:30:53 EDT
 </div>
 </div>
 </body>
