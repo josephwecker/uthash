@@ -223,8 +223,8 @@ It is free and open source.</p></div>
 <div class="paragraph"><p>Please follow the link to download on the
 <a href="http://uthash.sourceforge.net">uthash website</a> at <a href="http://uthash.sourceforge.net">http://uthash.sourceforge.net</a>.</p></div>
 <h3 id="_getting_help">Getting help</h3><div style="clear:left"></div>
-<div class="paragraph"><p>Feel free to <a href="mailto:thanson@users.sourceforge.net">email the author</a> at
-<a href="mailto:thanson@users.sourceforge.net">thanson@users.sourceforge.net</a>.</p></div>
+<div class="paragraph"><p>Feel free to <a href="mailto:tdh@tkhanson.net">email the author</a> at
+<a href="mailto:tdh@tkhanson.net">tdh@tkhanson.net</a>.</p></div>
 <h3 id="_resources">Resources</h3><div style="clear:left"></div>
 <div class="paragraph"><p>Users of uthash may wish to follow the news feed for information about new
 releases. Also, there are some extra bonus headers included with uthash.</p></div>
@@ -399,21 +399,16 @@ will never free your structure.</p></div>
 <div class="paragraph"><p>The hash table pointer (which initially points to the first item added to the
 hash) can change in response to <tt>HASH_DEL</tt> (i.e. if you delete the first item
 in the hash table).</p></div>
-<h3 id="_delete_all_items">Delete all items</h3><div style="clear:left"></div>
-<div class="paragraph"><p>To delete all the structures in a hash table, you can either iteratively delete
-the items (if you plan to free each one or need to other per-element work), or
-you can delete all the items in a single operation.</p></div>
 <h4 id="_iterative_deletion">Iterative deletion</h4>
-<div class="paragraph"><p>It&#8217;s easy: just keep deleting the first item. If you plan to free it, copy the
-pointer beforehand since the delete will advance the "first item" to the next.</p></div>
+<div class="paragraph"><p>The <tt>HASH_ITER</tt> macro is a deletion-safe iteration construct which expands
+to a simple <em>for</em> loop.</p></div>
 <div class="listingblock">
 <div class="title">Delete all items from a hash</div>
 <div class="content">
 <pre><tt>void delete_all() {
-  user_struct *current_user;
+  struct my_struct *current_user, *tmp;
 
-  while(users) {
-    current_user = users;          /* copy pointer to first item     */
+  HASH_ITER(hh, users, current_user, tmp) {
     HASH_DEL(users,current_user);  /* delete; users advances to next */
     free(current_user);            /* optional- if you want to free  */
   }
@@ -454,6 +449,24 @@ following the <tt>hh.next</tt> pointer.</p></div>
 </div></div>
 <div class="paragraph"><p>There is also an <tt>hh.prev</tt> pointer you could use to iterate backwards through
 the hash, starting from any known item.</p></div>
+<h4 id="deletesafe">Deletion-safe iteration</h4>
+<div class="paragraph"><p>In the example above, it would not be safe to delete and free <tt>s</tt> in the body
+of the <em>for</em> loop, (because <tt>s</tt> is derefenced each time the loop iterates).
+This is easy to rewrite correctly (by copying the <tt>s-&gt;hh.next</tt> pointer to a
+temporary variable <em>before</em> freeing <tt>s</tt>), but it comes up often enough that a
+deletion-safe iteration macro, <tt>HASH_ITER</tt>, is included. It expands to a
+<tt>for</tt>-loop header. Here is how it could be used to rewrite the last example:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>struct my_struct *s, *tmp;</tt></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>HASH_ITER(hh, users, s, tmp) {
+    printf("user id %d: name %s\n", s-&gt;id, s-&gt;name);
+    /* ... it is safe to delete and free s here */
+}</tt></pre>
+</div></div>
 <div class="sidebarblock">
 <div class="sidebar-content">
 <div class="sidebar-title">A hash is also a doubly-linked list.</div>
@@ -547,10 +560,9 @@ void delete_user(struct my_struct *user) {
 }
 
 void delete_all() {
-  struct my_struct *current_user;
+  struct my_struct *current_user, *tmp;
 
-  while(users) {
-    current_user = users;          /* grab pointer to first item */
+  HASH_ITER(hh, users, current_user, tmp) {
     HASH_DEL(users,current_user);  /* delete it (users advances to next) */
     free(current_user);            /* free it */
   }
@@ -1815,6 +1827,10 @@ cellspacing="0" cellpadding="4">
 <td align="left" valign="top"><p class="table"><tt>HASH_SELECT</tt></p></td>
 <td align="left" valign="top"><p class="table"><tt>(dst_hh_name, dst_head, src_hh_name, src_head, condition)</tt></p></td>
 </tr>
+<tr>
+<td align="left" valign="top"><p class="table"><tt>HASH_ITER</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>(hh_name, head, item_ptr, tmp_item_ptr)</tt></p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -1883,9 +1899,11 @@ item_ptr
 </dt>
 <dd>
 <p>
-    pointer to the structure being added, deleted or looked up. This is an
-    input parameter for <tt>HASH_ADD</tt> and <tt>HASH_DELETE</tt> macros, and an output
-    parameter for <tt>HASH_FIND</tt>.
+    pointer to the structure being added, deleted, or looked up, or the current
+    pointer during iteration. This is an input parameter for <tt>HASH_ADD</tt> and
+    <tt>HASH_DELETE</tt> macros, and an output parameter for <tt>HASH_FIND</tt> and
+    <tt>HASH_ITER</tt>. (When using <tt>HASH_ITER</tt> to iterate, <tt>tmp_item_ptr</tt>
+    is another variable of the same type as <tt>item_ptr</tt>, used internally).
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1916,7 +1934,7 @@ condition
 <div id="footer">
 <div id="footer-text">
 Version 1.9.2<br />
-Last updated 2010-10-03 23:30:53 EDT
+Last updated 2010-10-04 02:27:35 EDT
 </div>
 </div>
 </body>

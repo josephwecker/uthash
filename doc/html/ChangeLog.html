@@ -560,9 +560,14 @@ footnotes: function () {
 <div class="paragraph"><p>Click to return to the <a href="index.html">uthash home page</a>.</p></div>
 </div>
 </div>
-<h2 id="_version_1_9_2_2010_10_31">Version 1.9.2 (2010-10-31)</h2>
+<h2 id="_version_1_9_2_2010_10_04">Version 1.9.2 (2010-10-04)</h2>
 <div class="sectionbody">
 <div class="ulist"><ul>
+<li>
+<p>
+new <tt>HASH_ITER</tt> macro for more convenient deletion-safe iteration
+</p>
+</li>
 <li>
 <p>
 <tt>hashscan</tt> can now run on FreeBSD 8.1 and later (thanks, Markus Gebert!)
@@ -570,12 +575,12 @@ footnotes: function () {
 </li>
 <li>
 <p>
-Add extra parentheses so complex macro arguments are evaluated properly (thanks, ngg)
+More parens to evaluate complex macro arguments properly (thanks, ngg!)
 </p>
 </li>
 <li>
 <p>
-Add sz parameter to <tt>uthash_free</tt> for convenience on embedded platforms (thanks, Niall Douglas)
+Add sz parameter to the <tt>uthash_free</tt> hook for platforms that do their own memory management. Hopefully this minor API change doesn&#8217;t cause too much breakage for people. (thanks, Niall Douglas!)
 </p>
 </li>
 <li>
@@ -987,7 +992,7 @@ Initial release
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2010-10-03 23:13:30 EDT
+Last updated 2010-10-04 02:22:20 EDT
 </div>
 </div>
 </body>

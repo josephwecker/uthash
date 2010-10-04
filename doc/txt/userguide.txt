@@ -78,8 +78,8 @@ http://uthash.sourceforge.net[uthash website] at http://uthash.sourceforge.net.
 
 Getting help
 ~~~~~~~~~~~~
-Feel free to mailto:thanson@users.sourceforge.net[email the author] at
-thanson@users.sourceforge.net.
+Feel free to mailto:tdh@tkhanson.net[email the author] at
+tdh@tkhanson.net.
 
 Resources
 ~~~~~~~~~
@@ -339,7 +339,7 @@ deletion-safe iteration macro, `HASH_ITER`, is included. It expands to a
 
     struct my_struct *s, *tmp;
 
-    HASH_ITER(hh, users, user, tmp) {
+    HASH_ITER(hh, users, s, tmp) {
         printf("user id %d: name %s\n", s->id, s->name);
         /* ... it is safe to delete and free s here */
     }

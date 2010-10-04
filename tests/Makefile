@@ -62,7 +62,7 @@ endif
 #detect FreeBSD (platform specific utilities)
 ifeq ($(strip $(shell uname -s)), FreeBSD)
   ifeq ($(shell if [ `sysctl -n kern.osreldate` -ge 0801000 ]; then echo "ok"; fi), ok)
-    PLAT_UTILS = hashscan
+    PLAT_UTILS = hashscan sleep_test
   endif
 endif
 
