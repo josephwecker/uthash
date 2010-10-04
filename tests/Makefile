@@ -58,6 +58,13 @@ ifneq ($(strip $(shell $(CC) -v 2>&1 |grep "linux")),)
   PLAT_UTILS = hashscan sleep_test
 endif
 
+#detect FreeBSD (platform specific utilities)
+ifeq ($(strip $(shell uname -s)), FreeBSD)
+  ifeq ($(shell if [ `sysctl -n kern.osreldate` -ge 0801000 ]; then echo "ok"; fi), ok)
+    PLAT_UTILS = hashscan
+  endif
+endif
+
 
 all: $(PROGS) $(UTILS) $(PLAT_UTILS) $(FUNCS) $(SPECIAL_FUNCS) $(TEST_TARGET) 
 
