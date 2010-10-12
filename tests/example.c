@@ -11,7 +11,7 @@ struct my_struct {
 
 struct my_struct *users = NULL;
 
-int add_user(int user_id, char *name) {
+void add_user(int user_id, char *name) {
     struct my_struct *s;
 
     s = (struct my_struct*)malloc(sizeof(struct my_struct));

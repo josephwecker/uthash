@@ -185,7 +185,7 @@ a unique value. Then call `HASH_ADD`. (Here we use the convenience macro
 
 .Add an item to a hash
 ----------------------------------------------------------------------
-int add_user(int user_id, char *name) {
+void add_user(int user_id, char *name) {
     struct my_struct *s;
 
     s = malloc(sizeof(struct my_struct));
@@ -420,7 +420,7 @@ struct my_struct {
 
 struct my_struct *users = NULL;
 
-int add_user(int user_id, char *name) {
+void add_user(int user_id, char *name) {
     struct my_struct *s;
 
     s = malloc(sizeof(struct my_struct));
