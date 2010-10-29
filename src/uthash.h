@@ -62,7 +62,7 @@ typedef unsigned int uint32_t;
 #include <inttypes.h>   /* uint32_t */
 #endif
 
-#define UTHASH_VERSION 1.9.1
+#define UTHASH_VERSION 1.9.3
 
 #define uthash_fatal(msg) exit(-1)        /* fatal error (out of memory,etc) */
 #define uthash_malloc(sz) malloc(sz)      /* malloc fcn                      */
@@ -106,7 +106,7 @@ do {                                                                            
 
 #define HASH_BLOOM_FREE(tbl)                                                     \
 do {                                                                             \
-  uthash_free((tbl)->bloom_bv, HASH_BLOOM_BYTELEN);                             \
+  uthash_free((tbl)->bloom_bv, HASH_BLOOM_BYTELEN);                              \
 } while (0);
 
 #define HASH_BLOOM_BITSET(bv,idx) (bv[(idx)/8] |= (1U << ((idx)%8)))
@@ -194,10 +194,10 @@ do {                                                                            
     unsigned _hd_bkt;                                                            \
     struct UT_hash_handle *_hd_hh_del;                                           \
     if ( ((delptr)->hh.prev == NULL) && ((delptr)->hh.next == NULL) )  {         \
-        uthash_free((head)->hh.tbl->buckets,                                    \
-                    (head)->hh.tbl->num_buckets*sizeof(struct UT_hash_bucket) );\
+        uthash_free((head)->hh.tbl->buckets,                                     \
+                    (head)->hh.tbl->num_buckets*sizeof(struct UT_hash_bucket) ); \
         HASH_BLOOM_FREE((head)->hh.tbl);                                         \
-        uthash_free((head)->hh.tbl, sizeof(UT_hash_table));                     \
+        uthash_free((head)->hh.tbl, sizeof(UT_hash_table));                      \
         head = NULL;                                                             \
     } else {                                                                     \
         _hd_hh_del = &((delptr)->hh);                                            \
@@ -737,7 +737,7 @@ do {                                                                            
            _he_thh = _he_hh_nxt;                                                 \
         }                                                                        \
     }                                                                            \
-    uthash_free( tbl->buckets, tbl->num_buckets*sizeof(struct UT_hash_bucket) );\
+    uthash_free( tbl->buckets, tbl->num_buckets*sizeof(struct UT_hash_bucket) ); \
     tbl->num_buckets *= 2;                                                       \
     tbl->log2_num_buckets++;                                                     \
     tbl->buckets = _he_new_buckets;                                              \
@@ -880,16 +880,22 @@ do {                                                                            
 #define HASH_CLEAR(hh,head)                                                      \
 do {                                                                             \
   if (head) {                                                                    \
-    uthash_free((head)->hh.tbl->buckets,                                        \
-                (head)->hh.tbl->num_buckets*sizeof(struct UT_hash_bucket));     \
-    uthash_free((head)->hh.tbl, sizeof(UT_hash_table));                         \
+    uthash_free((head)->hh.tbl->buckets,                                         \
+                (head)->hh.tbl->num_buckets*sizeof(struct UT_hash_bucket));      \
+    uthash_free((head)->hh.tbl, sizeof(UT_hash_table));                          \
     (head)=NULL;                                                                 \
   }                                                                              \
 } while(0)
 
-#define HASH_ITER(hh,head,el,tmp)                                               \
-for((el)=(head),(tmp)=(head)?(head)->hh.next:NULL;                              \
-  el; (el)=(tmp),(tmp)=(tmp)?(tmp)->hh.next:NULL) 
+#ifdef NO_DECLTYPE
+#define HASH_ITER(hh,head,el,tmp)                                                \
+for((el)=(head), (*(char**)(&(tmp)))=(char*)((head)?(head)->hh.next:NULL);       \
+  el; (el)=(tmp),(*(char**)(&(tmp)))=(char*)((tmp)?(tmp)->hh.next:NULL)) 
+#else
+#define HASH_ITER(hh,head,el,tmp)                                                \
+for((el)=(head),(tmp)=DECLTYPE(el)((head)?(head)->hh.next:NULL);                 \
+  el; (el)=(tmp),(tmp)=DECLTYPE(el)((tmp)?(tmp)->hh.next:NULL))
+#endif
 
 /* obtain a count of items in the hash */
 #define HASH_COUNT(head) HASH_CNT(hh,head) 
