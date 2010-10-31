@@ -5,7 +5,7 @@ include::sflogo.txt[]
 
 Click to return to the link:index.html[uthash home page].
 
-Version 1.9.3 (2010-11-04)
+Version 1.9.3 (2010-10-31)
 --------------------------
 * fix an ifdef for compatibility with Intel compiler (thanks, degski!)
 * fix HASH_ITER macro to satisfy C++ casting rules (thanks, Erik Bai!)
