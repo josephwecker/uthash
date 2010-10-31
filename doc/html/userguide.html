@@ -329,7 +329,7 @@ a unique value. Then call <tt>HASH_ADD</tt>. (Here we use the convenience macro
 <div class="listingblock">
 <div class="title">Add an item to a hash</div>
 <div class="content">
-<pre><tt>int add_user(int user_id, char *name) {
+<pre><tt>void add_user(int user_id, char *name) {
     struct my_struct *s;
 
     s = malloc(sizeof(struct my_struct));
@@ -538,7 +538,7 @@ struct my_struct {
 
 struct my_struct *users = NULL;
 
-int add_user(int user_id, char *name) {
+void add_user(int user_id, char *name) {
     struct my_struct *s;
 
     s = malloc(sizeof(struct my_struct));
@@ -1934,7 +1934,7 @@ condition
 <div id="footer">
 <div id="footer-text">
 Version 1.9.2<br />
-Last updated 2010-10-04 02:27:35 EDT
+Last updated 2010-10-28 23:25:58 EDT
 </div>
 </div>
 </body>
