@@ -1,6 +1,18 @@
 #include <stdio.h>
 #include "utarray.h"
 
+int strsort(const void *_a, const void *_b) {
+  char *a = *(char**)_a;
+  char *b = *(char**)_b;
+  return strcmp(a,b);
+}
+
+int revsort(const void *_a, const void *_b) {
+  char *a = *(char**)_a;
+  char *b = *(char**)_b;
+  return strcmp(b,a);
+}
+
 int main() {
   UT_array *strs,*strs2;
   char *s, **p=NULL;
@@ -23,6 +35,12 @@ int main() {
   while ( (p=(char**)utarray_next(strs2,p))) printf("%s ",*p); printf("\n");
   utarray_clear(strs2);
   utarray_concat(strs2, strs);
+  while ( (p=(char**)utarray_next(strs2,p))) printf("%s ",*p); printf("\n");
+  printf("sorting strs2\n");
+  utarray_sort(strs2,strsort);
+  while ( (p=(char**)utarray_next(strs2,p))) printf("%s ",*p); printf("\n");
+  printf("reverse sorting strs2\n");
+  utarray_sort(strs2,revsort);
   while ( (p=(char**)utarray_next(strs2,p))) printf("%s ",*p); printf("\n");
   utarray_clear(strs2);
   utarray_free(strs2);

@@ -26,6 +26,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <string.h>   /* memcmp,strlen */
 #include <stddef.h>   /* ptrdiff_t */
+#include <stdlib.h>   /* exit() */
 
 /* These macros use decltype or the earlier __typeof GNU extension.
    As decltype is only available in newer compilers (VS2010 or gcc 4.3+
@@ -197,6 +198,7 @@ do {                                                                            
         uthash_free((head)->hh.tbl->buckets,                                     \
                     (head)->hh.tbl->num_buckets*sizeof(struct UT_hash_bucket) ); \
         HASH_BLOOM_FREE((head)->hh.tbl);                                         \
+        (head)->hh.tbl->signature = 0;                                           \
         uthash_free((head)->hh.tbl, sizeof(UT_hash_table));                      \
         head = NULL;                                                             \
     } else {                                                                     \

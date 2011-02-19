@@ -26,6 +26,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define UTLIST_VERSION 1.9.1
 
+#include <assert.h>
+
 /* 
  * This file contains macros to manipulate singly and doubly-linked lists.
  *
@@ -409,6 +411,7 @@ do {                                                                            
 
 #define DL_DELETE(head,del)                                                                    \
 do {                                                                                           \
+  assert((del)->prev != NULL);                                                                 \
   if ((del)->prev == (del)) {                                                                  \
       (head)=NULL;                                                                             \
   } else if ((del)==(head)) {                                                                  \
