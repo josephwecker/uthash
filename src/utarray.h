@@ -170,7 +170,7 @@ typedef struct {
 } while(0)
 
 #define utarray_concat(dst,src) do {                                          \
-  utarray_inserta(dst,src,utarray_len(dst));                                  \
+  utarray_inserta((dst),(src),utarray_len(dst));                                  \
 } while(0)
 
 #define utarray_erase(a,pos,len) do {                                         \
