@@ -80,6 +80,15 @@ do {                                                       \
    utstring_init(s);                                       \
 } while(0)
 
+#define utstring_renew(s)                                  \
+do {                                                       \
+   if (s) {                                                \
+     utstring_clear(s);                                    \
+   } else {                                                \
+     utstring_new(s);                                      \
+   }                                                       \
+} while(0)
+
 #define utstring_clear(s)                                  \
 do {                                                       \
   (s)->i = 0;                                              \

@@ -152,6 +152,7 @@ Operations
 [width="100%",cols="50<m,40<",grid="none",options="none"]
 |===============================================================================
 | utstring_new(s) | allocate a new utstring
+| utstring_renew(s) | allocate a new utstring (if s is `NULL`) otherwise clears it
 | utstring_free(s) | free an allocated utstring
 | utstring_init(s)  |  init a utstring (non-alloc)
 | utstring_done(s) |  dispose of a utstring (non-allocd)
