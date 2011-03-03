@@ -59,6 +59,7 @@ do {                                                       \
 do {                                                       \
   (s)->n = 0; (s)->i = 0; (s)->d = NULL;                   \
   utstring_reserve(s,100);                                 \
+  (s)->d[0] = '\0'; \
 } while(0)
 
 #define utstring_done(s)                                   \
