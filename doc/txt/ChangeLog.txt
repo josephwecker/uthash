@@ -8,6 +8,7 @@ Click to return to the link:index.html[uthash home page].
 Version 1.9.4 (2011-00-00)
 --------------------------
 * added `utstring_renew`
+* added extra parens in the utarray_inserta macro to handle complex arguments
 * define `uint8_t` on Visual Studio when using Bloom filter (thanks, Chris Groer!) [TODO]
 * zero the hash table signature when it's freed so `hashscan` does not see them (thanks, Chris Groer!)
 
