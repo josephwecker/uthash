@@ -6,10 +6,11 @@ typedef struct {
     int b;
 } intpair_t;
 
+UT_icd intpair_icd = {sizeof(intpair_t), NULL, NULL, NULL};
+
 int main() {
 
   UT_array *pairs;
-  UT_icd intpair_icd = {sizeof(intpair_t), NULL, NULL, NULL};
   intpair_t ip, *p;
   utarray_new(pairs,&intpair_icd);
 

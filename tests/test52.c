@@ -18,9 +18,10 @@ void intchar_dtor(void *_elt) {
   if (elt->s) free(elt->s);
 }
 
+UT_icd intchar_icd = {sizeof(intchar_t), NULL, intchar_copy, intchar_dtor};
+
 int main() {
   UT_array *intchars;
-  UT_icd intchar_icd = {sizeof(intchar_t), NULL, intchar_copy, intchar_dtor};
   intchar_t ic, *p;
   utarray_new(intchars, &intchar_icd);
 
