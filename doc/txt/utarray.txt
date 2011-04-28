@@ -177,6 +177,10 @@ the array. It may be invoked due to `utarray_resize`, `utarray_pop_back`,
 `utarray_erase`, `utarray_clear`, `utarray_done` or `utarray_free`. If the
 elements need no cleanup upon destruction, `dtor` may be `NULL`.
 
+Note: a pointer to the UT_icd will be kept internally in the utarray.
+Therefore the UT_icd itself should be declared at a sufficient scope (such as a
+global or static file scope).
+
 Scalar types
 ~~~~~~~~~~~~
 
@@ -189,9 +193,10 @@ array.
 #include <stdio.h>
 #include "utarray.h"
 
+UT_icd long_icd = {sizeof(long), NULL, NULL, NULL };
+
 int main() {
   UT_array *nums;
-  UT_icd long_icd = {sizeof(long), NULL, NULL, NULL };
   long l, *p;
   utarray_new(nums, &long_icd);
 
@@ -224,10 +229,11 @@ typedef struct {
     int b;
 } intpair_t;
 
+UT_icd intpair_icd = {sizeof(intpair_t), NULL, NULL, NULL};
+
 int main() {
 
   UT_array *pairs;
-  UT_icd intpair_icd = {sizeof(intpair_t), NULL, NULL, NULL};
   intpair_t ip, *p;
   utarray_new(pairs,&intpair_icd);
 
@@ -281,9 +287,10 @@ void intchar_dtor(void *_elt) {
   if (elt->s) free(elt->s);
 }
 
+UT_icd intchar_icd = {sizeof(intchar_t), NULL, intchar_copy, intchar_dtor};
+
 int main() {
   UT_array *intchars;
-  UT_icd intchar_icd = {sizeof(intchar_t), NULL, intchar_copy, intchar_dtor};
   intchar_t ic, *p;
   utarray_new(intchars, &intchar_icd);
 

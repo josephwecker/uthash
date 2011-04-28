@@ -3,10 +3,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.5.0" />
+<meta name="generator" content="AsciiDoc 8.5.2" />
 <title>utarray: dynamic array macros for C</title>
 <link rel="stylesheet" href="./tdh.css" type="text/css" />
 <link rel="stylesheet" href="./tdh-quirks.css" type="text/css" />
+<script type="text/javascript">
+/*<![CDATA[*/
+window.onload = function(){asciidoc.footnotes();}
+/*]]>*/
+</script>
+<script type="text/javascript" src="./asciidoc-xhtml11.js"></script>
 </head>
 <body>
 <div id="header">
@@ -16,6 +22,7 @@
 <span id="revnumber">version 1.9,</span>
 <span id="revdate">March 2010</span>
 </div>
+<div id="content">
 <div id="preamble">
 <div class="sectionbody">
 <a style="float: right; padding-right: 50px" href="http://sourceforge.net/projects/uthash"><img style="border: 0" src="http://sflogo.sourceforge.net/sflogo.php?group_id=163879&amp;type=13" width="120" height="30" alt="uthash at SourceForge.net" /></a>
@@ -265,6 +272,9 @@ memcpy.</p></div>
 the array. It may be invoked due to <tt>utarray_resize</tt>, <tt>utarray_pop_back</tt>,
 <tt>utarray_erase</tt>, <tt>utarray_clear</tt>, <tt>utarray_done</tt> or <tt>utarray_free</tt>. If the
 elements need no cleanup upon destruction, <tt>dtor</tt> may be <tt>NULL</tt>.</p></div>
+<div class="paragraph"><p>Note: a pointer to the UT_icd will be kept internally in the utarray.
+Therefore the UT_icd itself should be declared at a sufficient scope (such as a
+global or static file scope).</p></div>
 <h3 id="_scalar_types">Scalar types</h3><div style="clear:left"></div>
 <div class="paragraph"><p>The next example uses <tt>UT_icd</tt> with all its defaults to make a utarray of
 <tt>long</tt> elements. This example pushes two longs, prints them, and frees the
@@ -275,9 +285,10 @@ array.</p></div>
 <pre><tt>#include &lt;stdio.h&gt;
 #include "utarray.h"
 
+UT_icd long_icd = {sizeof(long), NULL, NULL, NULL };
+
 int main() {
   UT_array *nums;
-  UT_icd long_icd = {sizeof(long), NULL, NULL, NULL };
   long l, *p;
   utarray_new(nums, &amp;long_icd);
 
@@ -307,10 +318,11 @@ typedef struct {
     int b;
 } intpair_t;
 
+UT_icd intpair_icd = {sizeof(intpair_t), NULL, NULL, NULL};
+
 int main() {
 
   UT_array *pairs;
-  UT_icd intpair_icd = {sizeof(intpair_t), NULL, NULL, NULL};
   intpair_t ip, *p;
   utarray_new(pairs,&amp;intpair_icd);
 
@@ -361,9 +373,10 @@ void intchar_dtor(void *_elt) {
   if (elt-&gt;s) free(elt-&gt;s);
 }
 
+UT_icd intchar_icd = {sizeof(intchar_t), NULL, intchar_copy, intchar_dtor};
+
 int main() {
   UT_array *intchars;
-  UT_icd intchar_icd = {sizeof(intchar_t), NULL, intchar_copy, intchar_dtor};
   intchar_t ic, *p;
   utarray_new(intchars, &amp;intchar_icd);
 
@@ -524,10 +537,12 @@ A <em>pointer</em> to a particular element (obtained using <tt>utarray_eltptr</t
 </li>
 </ol></div>
 </div>
+</div>
+<div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
 Version 1.9<br />
-Last updated 2010-03-31 08:05:39 PDT
+Last updated 2011-04-27 22:55:31 EDT
 </div>
 </div>
 </body>
