@@ -93,6 +93,7 @@ do {                                                       \
 #define utstring_clear(s)                                  \
 do {                                                       \
   (s)->i = 0;                                              \
+  (s)->d[0] = '\0';                                        \
 } while(0)
 
 #define utstring_bincpy(s,b,l)                             \

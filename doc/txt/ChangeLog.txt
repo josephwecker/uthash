@@ -12,6 +12,7 @@ Version 1.9.4 (2011-00-00)
 * define `uint8_t` on Visual Studio when using Bloom filter (thanks, Chris Groer!) [TODO]
 * zero the hash table signature when it's freed so `hashscan` does not see them (thanks, Chris Groer!)
 * added an example of a multi-level hash table (test59.c)
+* fixed null-termination when `utstring_clear` is followed by `utstring_body` (thanks, Dino Ciuffetti!)
 
 Version 1.9.3 (2010-10-31)
 --------------------------
