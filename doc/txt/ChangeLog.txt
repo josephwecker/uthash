@@ -5,14 +5,16 @@ include::sflogo.txt[]
 
 Click to return to the link:index.html[uthash home page].
 
-Version 1.9.4 (2011-00-00)
+Version 1.9.4 (2011-05-22)
 --------------------------
+* added support for MurmurHash v3 (TODO)
+* added support for utlist concatenation (TODO)
+* added documention for constructing a multi-level hash table (thanks, Richard Cook!)
+* fixed termination when `utstring_clear` is followed by `utstring_body` (thanks, Dino Ciuffetti!)
+* fixed utarray_inserta macro when used with complex arguments
+* on Visual Studio define `uint8_t` 
 * added `utstring_renew`
-* added extra parens in the utarray_inserta macro to handle complex arguments
-* define `uint8_t` on Visual Studio when using Bloom filter (thanks, Chris Groer!) [TODO]
-* zero the hash table signature when it's freed so `hashscan` does not see them (thanks, Chris Groer!)
-* added an example of a multi-level hash table (test59.c)
-* fixed null-termination when `utstring_clear` is followed by `utstring_body` (thanks, Dino Ciuffetti!)
+* uthash has been downloaded 16,055 times
 
 Version 1.9.3 (2010-10-31)
 --------------------------

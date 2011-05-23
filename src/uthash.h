@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2003-2010, Troy D. Hanson     http://uthash.sourceforge.net
+Copyright (c) 2003-2011, Troy D. Hanson     http://uthash.sourceforge.net
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -59,11 +59,12 @@ do {                                                                            
 /* a number of the hash function use uint32_t which isn't defined on win32 */
 #ifdef _MSC_VER
 typedef unsigned int uint32_t;
+typedef unsigned char uint8_t;
 #else
 #include <inttypes.h>   /* uint32_t */
 #endif
 
-#define UTHASH_VERSION 1.9.3
+#define UTHASH_VERSION 1.9.4
 
 #define uthash_fatal(msg) exit(-1)        /* fatal error (out of memory,etc) */
 #define uthash_malloc(sz) malloc(sz)      /* malloc fcn                      */
@@ -198,7 +199,6 @@ do {                                                                            
         uthash_free((head)->hh.tbl->buckets,                                     \
                     (head)->hh.tbl->num_buckets*sizeof(struct UT_hash_bucket) ); \
         HASH_BLOOM_FREE((head)->hh.tbl);                                         \
-        (head)->hh.tbl->signature = 0;                                           \
         uthash_free((head)->hh.tbl, sizeof(UT_hash_table));                      \
         head = NULL;                                                             \
     } else {                                                                     \

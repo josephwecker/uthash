@@ -19,8 +19,8 @@ window.onload = function(){asciidoc.footnotes();}
 <h1>uthash User Guide</h1>
 <span id="author">Troy D. Hanson</span><br />
 <span id="email"><tt>&lt;<a href="mailto:thanson@users.sourceforge.net">thanson@users.sourceforge.net</a>&gt;</tt></span><br />
-<span id="revnumber">version 1.9.2,</span>
-<span id="revdate">October 2010</span>
+<span id="revnumber">version 1.9.4,</span>
+<span id="revdate">May 2011</span>
 </div>
 <div id="content">
 <div id="preamble">
@@ -211,10 +211,20 @@ FreeBSD
 </li>
 </ul></div>
 <h4 id="_test_suite">Test suite</h4>
-<div class="paragraph"><p>To run the test suite, look in the <tt>tests</tt> directory and either run <tt>make</tt> on
-Unix platforms, or on Windows run the "do_tests_win32.cmd" batch file (if you
-have Visual Studio 2008 or 2010 installed in a non-standard location you may
-have to edit the batch file).</p></div>
+<div class="paragraph"><p>To run the test suite, enter the <tt>tests</tt> directory. Then,</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+on Unix platforms, run <tt>make</tt>
+</p>
+</li>
+<li>
+<p>
+on Windows, run the "do_tests_win32.cmd" batch file. (You may edit the
+   batch file if your Visual Studio is installed in a non-standard location).
+</p>
+</li>
+</ul></div>
 <h3 id="_bsd_licensed">BSD licensed</h3><div style="clear:left"></div>
 <div class="paragraph"><p>This software is made available under the
 <a href="license.html">revised BSD license</a>.
@@ -941,6 +951,80 @@ zero-filling it. This zeroes out any padding between the key fields. If we
 didn&#8217;t zero-fill the structure, this padding would contain random values.  The
 random values would lead to <tt>HASH_FIND</tt> failures; as two "identical" keys will
 appear to mismatch if there are any differences within their padding.</p></div>
+<h3 id="multilevel">Multi-level hash tables</h3><div style="clear:left"></div>
+<div class="paragraph"><p>A multi-level hash table arises when each element of a hash table contains its
+own secondary hash table. There can be any number of levels. In a scripting
+language you might see:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>$items{bob}{age}=37</tt></pre>
+</div></div>
+<div class="paragraph"><p>The C program below builds this example in uthash: the hash table is called
+<tt>items</tt>. It contains one element (<tt>bob</tt>) whose own hash table contains one
+element (<tt>age</tt>) with value 37.  No special functions are necessary to build
+a multi-level hash table.</p></div>
+<div class="paragraph"><p>While this example represents both levels (<tt>bob</tt> and <tt>age</tt>) using the same
+structure, it would also be fine to use two different structure definitions.
+It would also be fine if there were three or more levels instead of two.</p></div>
+<div class="listingblock">
+<div class="title">Multi-level hash table</div>
+<div class="content">
+<pre><tt>#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdlib.h&gt;
+#include "uthash.h"
+
+/* hash of hashes */
+typedef struct item {
+  char name[10];
+  struct item *sub;
+  int val;
+  UT_hash_handle hh;
+} item_t;
+
+item_t *items=NULL;
+
+int main(int argc, char *argvp[]) {
+  item_t *item1, *item2, *tmp1, *tmp2;
+
+  /* make initial element */
+  item_t *i = malloc(sizeof(*i));
+  strcpy(i-&gt;name, "bob");
+  i-&gt;sub = NULL;
+  i-&gt;val = 0;
+  HASH_ADD_STR(items, name, i);
+
+  /* add a sub hash table off this element */
+  item_t *s = malloc(sizeof(*s));
+  strcpy(s-&gt;name, "age");
+  s-&gt;sub = NULL;
+  s-&gt;val = 37;
+  HASH_ADD_STR(i-&gt;sub, name, s);
+
+  /* iterate over hash elements */
+  HASH_ITER(hh, items, item1, tmp1) {
+    HASH_ITER(hh, item1-&gt;sub, item2, tmp2) {
+      printf("$items{%s}{%s} = %d\n", item1-&gt;name, item2-&gt;name, item2-&gt;val);
+    }
+  }
+
+  return 0;
+}</tt></pre>
+</div></div>
+<div class="paragraph"><p>The example above is included in <tt>tests/test59.c</tt>.  By adding a few lines we
+can delete and free all the elements in the multi-level hash:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>/* iterate over hash elements, deleting and freeing them */
+HASH_ITER(hh, items, item1, tmp1) {
+  HASH_ITER(hh, item1-&gt;sub, item2, tmp2) {
+    HASH_DEL(item1-&gt;sub, item2);
+    free(item2);
+  }
+  HASH_DEL(items, item1);
+  free(item1);
+}</tt></pre>
+</div></div>
 <h3 id="multihash">Items in several hash tables</h3><div style="clear:left"></div>
 <div class="paragraph"><p>A structure can be added to more than one hash table. A few reasons you might do
 this include:</p></div>
@@ -1933,8 +2017,8 @@ condition
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Version 1.9.2<br />
-Last updated 2010-10-28 23:25:58 EDT
+Version 1.9.4<br />
+Last updated 2011-05-22 23:04:41 EDT
 </div>
 </div>
 </body>

@@ -1,7 +1,7 @@
 uthash User Guide
 =================
 Troy D. Hanson <thanson@users.sourceforge.net>
-v1.9.2, October 2010
+v1.9.4, May 2011
 
 include::sflogo.txt[]
 include::topnav.txt[]
@@ -60,10 +60,11 @@ This software can be used in C and C++ programs.  It has been tested on:
 
 Test suite
 ^^^^^^^^^^
-To run the test suite, look in the `tests` directory and either run `make` on
-Unix platforms, or on Windows run the "do_tests_win32.cmd" batch file (if you
-have Visual Studio 2008 or 2010 installed in a non-standard location you may
-have to edit the batch file).
+To run the test suite, enter the `tests` directory. Then,
+
+ * on Unix platforms, run `make` 
+ * on Windows, run the "do_tests_win32.cmd" batch file. (You may edit the
+   batch file if your Visual Studio is installed in a non-standard location).
 
 BSD licensed
 ~~~~~~~~~~~~
@@ -830,6 +831,82 @@ zero-filling it. This zeroes out any padding between the key fields. If we
 didn't zero-fill the structure, this padding would contain random values.  The
 random values would lead to `HASH_FIND` failures; as two "identical" keys will
 appear to mismatch if there are any differences within their padding.
+
+[[multilevel]]
+Multi-level hash tables
+~~~~~~~~~~~~~~~~~~~~~~~
+A multi-level hash table arises when each element of a hash table contains its
+own secondary hash table. There can be any number of levels. In a scripting
+language you might see:
+
+  $items{bob}{age}=37
+  
+The C program below builds this example in uthash: the hash table is called
+`items`. It contains one element (`bob`) whose own hash table contains one
+element (`age`) with value 37.  No special functions are necessary to build
+a multi-level hash table. 
+
+While this example represents both levels (`bob` and `age`) using the same
+structure, it would also be fine to use two different structure definitions.
+It would also be fine if there were three or more levels instead of two.
+
+.Multi-level hash table
+----------------------------------------------------------------------
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include "uthash.h"
+
+/* hash of hashes */
+typedef struct item {
+  char name[10];
+  struct item *sub;
+  int val;
+  UT_hash_handle hh;
+} item_t;
+
+item_t *items=NULL;
+
+int main(int argc, char *argvp[]) {
+  item_t *item1, *item2, *tmp1, *tmp2;
+
+  /* make initial element */
+  item_t *i = malloc(sizeof(*i));
+  strcpy(i->name, "bob");
+  i->sub = NULL;
+  i->val = 0;
+  HASH_ADD_STR(items, name, i);
+
+  /* add a sub hash table off this element */
+  item_t *s = malloc(sizeof(*s));
+  strcpy(s->name, "age");
+  s->sub = NULL;
+  s->val = 37;
+  HASH_ADD_STR(i->sub, name, s);
+
+  /* iterate over hash elements */
+  HASH_ITER(hh, items, item1, tmp1) {
+    HASH_ITER(hh, item1->sub, item2, tmp2) {
+      printf("$items{%s}{%s} = %d\n", item1->name, item2->name, item2->val);
+    }
+  }
+
+  return 0;
+}
+----------------------------------------------------------------------
+The example above is included in `tests/test59.c`.  By adding a few lines we
+can delete and free all the elements in the multi-level hash:
+
+  /* iterate over hash elements, deleting and freeing them */
+  HASH_ITER(hh, items, item1, tmp1) {
+    HASH_ITER(hh, item1->sub, item2, tmp2) {
+      HASH_DEL(item1->sub, item2);
+      free(item2);
+    }
+    HASH_DEL(items, item1);
+    free(item1);
+  }
+
 
 [[multihash]]
 Items in several hash tables
