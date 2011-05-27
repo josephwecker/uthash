@@ -9,6 +9,7 @@ Version 1.9.4 (2011-05-22)
 --------------------------
 * added support for MurmurHash v3 (TODO)
 * added support for utlist concatenation (TODO)
+* added `utarray_find` (TODO add documentation)
 * added documention for constructing a multi-level hash table (thanks, Richard Cook!)
 * fixed termination when `utstring_clear` is followed by `utstring_body` (thanks, Dino Ciuffetti!)
 * fixed utarray_inserta macro when used with complex arguments

@@ -337,6 +337,7 @@ Operations
 | utarray_erase(UT_array *a,int pos,int len) | remove len elements from a[pos]..a[pos+len-1]
 | utarray_clear(UT_array *a) | clear all elements from a, setting its length to zero
 | utarray_sort(UT_array *a,cmpfcn *cmp) | sort elements of a using comparison function 
+| utarray_find(UT_array *a,void *v, cmpfcn *cmp) | find element v in utarray (must be sorted)
 | utarray_front(UT_array *a) | get first element of a
 | utarray_next(UT_array *a,void *e) | get element of a following e (front if e is NULL)
 | utarray_back(UT_array *a) | get last element of a
@@ -362,7 +363,12 @@ Notes
       return _a - _b;
   }
 
-4. A 'pointer' to a particular element (obtained using `utarray_eltptr` or
+4. `utarray_find` uses a binary search to locate an element having a certain value
+   according to the given comparison function. The utarray must be first sorted
+   using the same comparison function. An example of using `utarray_find` with
+   a utarray of strings is included in `tests/test61.c`.
+
+5. A 'pointer' to a particular element (obtained using `utarray_eltptr` or
    `utarray_front`, `utarray_next`, `utarray_back`) becomes invalid whenever
    another element is inserted into the utarray. This is because the internal
    memory management may need to `realloc` the element storage to a new address.

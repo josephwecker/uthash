@@ -62,6 +62,7 @@ test57: test uthash HASH_ADD_PTR and HASH_FIND_PTR
 test58: test HASH_ITER macro
 test59: sample of multi-level hash 
 test60: sample of multi-level hash that also does HASH_DEL and free
+test61: test utarray_find
 
 Other Make targets
 ================================================================================
