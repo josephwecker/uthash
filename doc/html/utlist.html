@@ -231,6 +231,11 @@ cellspacing="0" cellpadding="4">
 <td align="left" valign="top"><p class="table"><tt></tt></p></td>
 </tr>
 <tr>
+<td align="left" valign="top"><p class="table"><tt>LL_CONCAT(head1,head2);</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>DL_CONCAT(head1,head2);</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt></tt></p></td>
+</tr>
+<tr>
 <td align="left" valign="top"><p class="table"><tt>LL_DELETE(head,del);</tt></p></td>
 <td align="left" valign="top"><p class="table"><tt>DL_DELETE(head,del);</tt></p></td>
 <td align="left" valign="top"><p class="table"><tt>CDL_DELETE(head,del);</tt></p></td>
@@ -265,7 +270,9 @@ cellspacing="0" cellpadding="4">
 </div>
 <div class="paragraph"><p><em>Prepend</em> means to insert an element in front of the existing list head (if any),
 changing the list head to the new element. <em>Append</em> means to add an element at the
-end of the list, so it becomes the new tail element.</p></div>
+end of the list, so it becomes the new tail element. <em>Concatenate</em> takes two
+properly constructed lists and appends the second list to the first.  (Visual
+Studio 2008 does not support <tt>LL_CONCAT</tt> and <tt>DL_CONCAT</tt>, but VS2010 is ok.)</p></div>
 <div class="paragraph"><p>The <em>sort</em> operation never moves the elements in memory; rather it only adjusts
 the list order by altering the <tt>prev</tt> and <tt>next</tt> pointers in each element. Also
 the sort operation can change the list head to point to a new element.</p></div>
@@ -429,7 +436,7 @@ int main(int argc, char *argv[]) {
 <div id="footer">
 <div id="footer-text">
 Version 1.9<br />
-Last updated 2010-07-18 21:14:24 EDT
+Last updated 2011-06-05 14:48:52 EDT
 </div>
 </div>
 </body>

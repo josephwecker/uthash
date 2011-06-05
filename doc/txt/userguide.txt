@@ -1,7 +1,7 @@
 uthash User Guide
 =================
 Troy D. Hanson <thanson@users.sourceforge.net>
-v1.9.4, May 2011
+v1.9.4, June 2011
 
 include::sflogo.txt[]
 include::topnav.txt[]
@@ -76,6 +76,9 @@ Obtaining uthash
 ~~~~~~~~~~~~~~~~
 Please follow the link to download on the 
 http://uthash.sourceforge.net[uthash website] at http://uthash.sourceforge.net.
+
+A number of platforms include uthash in their package repositories. For example,
+Debian/Ubuntu users may simply `aptitude install uthash-dev`.
 
 Getting help
 ~~~~~~~~~~~~
@@ -406,7 +409,7 @@ If this code was placed in a file called `example.c` in the same directory as
 
 Follow the prompts to try the program, and type `Ctrl-C` when done.
 
-.A complete program (part 1 of 2)
+.A complete program 
 ----------------------------------------------------------------------
 #include <stdio.h>   /* gets */
 #include <stdlib.h>  /* atoi, malloc */
@@ -466,10 +469,7 @@ int name_sort(struct my_struct *a, struct my_struct *b) {
 int id_sort(struct my_struct *a, struct my_struct *b) {
     return (a->id - b->id);
 }
-----------------------------------------------------------------------
 
-.A complete program (part 2 of 2)
-----------------------------------------------------------------------
 void sort_by_name() {
     HASH_SORT(users, name_sort);
 }
@@ -1111,7 +1111,7 @@ below. E.g.,
 |OAT    |   One-at-a-time
 |FNV    |   Fowler/Noll/Vo
 |SFH    |   Paul Hsieh 
-|MUR    |   MurmurHash (see note)
+|MUR    |   MurmurHash v3 (see note)
 |===============================================================================
 
 [NOTE]

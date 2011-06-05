@@ -5,17 +5,22 @@ include::sflogo.txt[]
 
 Click to return to the link:index.html[uthash home page].
 
-Version 1.9.4 (2011-06-03)
+Version 1.9.4 (2011-06-05)
 --------------------------
-* added support for MurmurHash v3 
-* added support for utlist concatenation (TODO)
-* added `utarray_find` (TODO add documentation)
-* added documention for constructing a multi-level hash table 
-* fixed termination when `utstring_clear` is followed by `utstring_body` (thanks, Dino Ciuffetti!)
+* uthash now supports MurmurHash v3 
+* utlist now includes concatenation macros (`LL_CONCAT` and `DL_CONCAT`)
+* utarray now supports binary search (`utarray_find`)
+* utstring now supports a new-or-clear-existing macro (`utstring_renew`)
+* documented technique for a multi-level hash table 
+* clarified scope requirements for `UT_icd` in the utarray documentation
+* fixed termination when `utstring_clear` is followed by `utstring_body` 
 * fixed utarray_inserta macro when used with complex arguments
-* on Visual Studio define `uint8_t` 
-* added `utstring_renew`
-* uthash has been downloaded 16,055 times
+* on Visual Studio define missing type `uint8_t` 
+* Debian/Ubuntu include uthash in the package `uthash-dev`. 
+* uthash has been downloaded 16,211 times. 
+
+Thanks to Yu Feng, Richard Cook, Dino Ciuffetti, Chris Groer, and Arun Cherian
+for feedback and fixes in this release!
 
 Version 1.9.3 (2010-10-31)
 --------------------------

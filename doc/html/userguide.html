@@ -20,7 +20,7 @@ window.onload = function(){asciidoc.footnotes();}
 <span id="author">Troy D. Hanson</span><br />
 <span id="email"><tt>&lt;<a href="mailto:thanson@users.sourceforge.net">thanson@users.sourceforge.net</a>&gt;</tt></span><br />
 <span id="revnumber">version 1.9.4,</span>
-<span id="revdate">May 2011</span>
+<span id="revdate">June 2011</span>
 </div>
 <div id="content">
 <div id="preamble">
@@ -232,6 +232,8 @@ It is free and open source.</p></div>
 <h3 id="_obtaining_uthash">Obtaining uthash</h3><div style="clear:left"></div>
 <div class="paragraph"><p>Please follow the link to download on the
 <a href="http://uthash.sourceforge.net">uthash website</a> at <a href="http://uthash.sourceforge.net">http://uthash.sourceforge.net</a>.</p></div>
+<div class="paragraph"><p>A number of platforms include uthash in their package repositories. For example,
+Debian/Ubuntu users may simply <tt>aptitude install uthash-dev</tt>.</p></div>
 <h3 id="_getting_help">Getting help</h3><div style="clear:left"></div>
 <div class="paragraph"><p>Feel free to <a href="mailto:tdh@tkhanson.net">email the author</a> at
 <a href="mailto:tdh@tkhanson.net">tdh@tkhanson.net</a>.</p></div>
@@ -533,7 +535,7 @@ working example.</p></div>
 </div></div>
 <div class="paragraph"><p>Follow the prompts to try the program, and type <tt>Ctrl-C</tt> when done.</p></div>
 <div class="listingblock">
-<div class="title">A complete program (part 1 of 2)</div>
+<div class="title">A complete program</div>
 <div class="content">
 <pre><tt>#include &lt;stdio.h&gt;   /* gets */
 #include &lt;stdlib.h&gt;  /* atoi, malloc */
@@ -592,12 +594,9 @@ int name_sort(struct my_struct *a, struct my_struct *b) {
 
 int id_sort(struct my_struct *a, struct my_struct *b) {
     return (a-&gt;id - b-&gt;id);
-}</tt></pre>
-</div></div>
-<div class="listingblock">
-<div class="title">A complete program (part 2 of 2)</div>
-<div class="content">
-<pre><tt>void sort_by_name() {
+}
+
+void sort_by_name() {
     HASH_SORT(users, name_sort);
 }
 
@@ -1290,7 +1289,7 @@ cellspacing="0" cellpadding="4">
 </tr>
 <tr>
 <td align="center" valign="top"><p class="table"><tt>MUR</tt></p></td>
-<td align="left" valign="top"><p class="table">MurmurHash (see note)</p></td>
+<td align="left" valign="top"><p class="table">MurmurHash v3 (see note)</p></td>
 </tr>
 </tbody>
 </table>
@@ -2018,7 +2017,7 @@ condition
 <div id="footer">
 <div id="footer-text">
 Version 1.9.4<br />
-Last updated 2011-05-22 23:04:41 EDT
+Last updated 2011-06-05 15:02:07 EDT
 </div>
 </div>
 </body>
