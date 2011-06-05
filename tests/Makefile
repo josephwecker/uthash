@@ -12,7 +12,7 @@ PROGS = test1 test2 test3 test4 test5 test6 test7 test8 test9   \
         test58 test59 test60 test61 test62
 CFLAGS = -I$(HASHDIR) 
 #CFLAGS += -DHASH_BLOOM=16
-#CFLAGS += -O3
+#CFLAGS += -O2
 CFLAGS += -g
 #CFLAGS += -Wstrict-aliasing=2
 CFLAGS += -Wall 
