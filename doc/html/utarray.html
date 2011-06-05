@@ -19,8 +19,8 @@ window.onload = function(){asciidoc.footnotes();}
 <h1>utarray: dynamic array macros for C</h1>
 <span id="author">Troy D. Hanson</span><br />
 <span id="email"><tt>&lt;<a href="mailto:thanson@users.sourceforge.net">thanson@users.sourceforge.net</a>&gt;</tt></span><br />
-<span id="revnumber">version 1.9,</span>
-<span id="revdate">March 2010</span>
+<span id="revnumber">version 1.9.4,</span>
+<span id="revdate">June 2011</span>
 </div>
 <div id="content">
 <div id="preamble">
@@ -272,9 +272,9 @@ memcpy.</p></div>
 the array. It may be invoked due to <tt>utarray_resize</tt>, <tt>utarray_pop_back</tt>,
 <tt>utarray_erase</tt>, <tt>utarray_clear</tt>, <tt>utarray_done</tt> or <tt>utarray_free</tt>. If the
 elements need no cleanup upon destruction, <tt>dtor</tt> may be <tt>NULL</tt>.</p></div>
-<div class="paragraph"><p>Note: a pointer to the UT_icd will be kept internally in the utarray.
-Therefore the UT_icd itself should be declared at a sufficient scope (such as a
-global or static file scope).</p></div>
+<div class="paragraph"><p>Note: the UT_icd pointer will be copied in to the utarray. For the pointer
+to be valid throughout the lifetime of the utarray, the UT_icd must be
+defined at sufficient scope such as a global, or static file scope.</p></div>
 <h3 id="_scalar_types">Scalar types</h3><div style="clear:left"></div>
 <div class="paragraph"><p>The next example uses <tt>UT_icd</tt> with all its defaults to make a utarray of
 <tt>long</tt> elements. This example pushes two longs, prints them, and frees the
@@ -479,6 +479,10 @@ cellspacing="0" cellpadding="4">
 <td align="left" valign="top"><p class="table">sort elements of a using comparison function</p></td>
 </tr>
 <tr>
+<td align="left" valign="top"><p class="table"><tt>utarray_find(UT_array *a,void *v, cmpfcn *cmp)</tt></p></td>
+<td align="left" valign="top"><p class="table">find element v in utarray (must be sorted)</p></td>
+</tr>
+<tr>
 <td align="left" valign="top"><p class="table"><tt>utarray_front(UT_array *a)</tt></p></td>
 <td align="left" valign="top"><p class="table">get first element of a</p></td>
 </tr>
@@ -527,6 +531,14 @@ cellspacing="0" cellpadding="4">
 </li>
 <li>
 <p>
+<tt>utarray_find</tt> uses a binary search to locate an element having a certain value
+   according to the given comparison function. The utarray must be first sorted
+   using the same comparison function. An example of using <tt>utarray_find</tt> with
+   a utarray of strings is included in <tt>tests/test61.c</tt>.
+</p>
+</li>
+<li>
+<p>
 A <em>pointer</em> to a particular element (obtained using <tt>utarray_eltptr</tt> or
    <tt>utarray_front</tt>, <tt>utarray_next</tt>, <tt>utarray_back</tt>) becomes invalid whenever
    another element is inserted into the utarray. This is because the internal
@@ -541,8 +553,8 @@ A <em>pointer</em> to a particular element (obtained using <tt>utarray_eltptr</t
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Version 1.9<br />
-Last updated 2011-04-27 22:55:31 EDT
+Version 1.9.4<br />
+Last updated 2011-06-05 16:06:30 EDT
 </div>
 </div>
 </body>

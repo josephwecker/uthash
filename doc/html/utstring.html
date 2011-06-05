@@ -3,19 +3,26 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.5.0" />
+<meta name="generator" content="AsciiDoc 8.5.2" />
 <title>utstring: dynamic string macros for C</title>
 <link rel="stylesheet" href="./tdh.css" type="text/css" />
 <link rel="stylesheet" href="./tdh-quirks.css" type="text/css" />
+<script type="text/javascript">
+/*<![CDATA[*/
+window.onload = function(){asciidoc.footnotes();}
+/*]]>*/
+</script>
+<script type="text/javascript" src="./asciidoc-xhtml11.js"></script>
 </head>
 <body>
 <div id="header">
 <h1>utstring: dynamic string macros for C</h1>
 <span id="author">Troy D. Hanson</span><br />
 <span id="email"><tt>&lt;<a href="mailto:thanson@users.sourceforge.net">thanson@users.sourceforge.net</a>&gt;</tt></span><br />
-<span id="revnumber">version 1.9,</span>
-<span id="revdate">March 2010</span>
+<span id="revnumber">version 1.9.4,</span>
+<span id="revdate">June 2011</span>
 </div>
+<div id="content">
 <div id="preamble">
 <div class="sectionbody">
 <a style="float: right; padding-right: 50px" href="http://sourceforge.net/projects/uthash"><img style="border: 0" src="http://sflogo.sourceforge.net/sflogo.php?group_id=163879&amp;type=13" width="120" height="30" alt="uthash at SourceForge.net" /></a>
@@ -250,6 +257,10 @@ cellspacing="0" cellpadding="4">
 <td align="left" valign="top"><p class="table">allocate a new utstring</p></td>
 </tr>
 <tr>
+<td align="left" valign="top"><p class="table"><tt>utstring_renew(s)</tt></p></td>
+<td align="left" valign="top"><p class="table">allocate a new utstring (if s is <tt>NULL</tt>) otherwise clears it</p></td>
+</tr>
+<tr>
 <td align="left" valign="top"><p class="table"><tt>utstring_free(s)</tt></p></td>
 <td align="left" valign="top"><p class="table">free an allocated utstring</p></td>
 </tr>
@@ -306,10 +317,12 @@ cellspacing="0" cellpadding="4">
 </li>
 </ol></div>
 </div>
+</div>
+<div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Version 1.9<br />
-Last updated 2010-03-31 09:01:34 PDT
+Version 1.9.4<br />
+Last updated 2011-06-05 16:04:35 EDT
 </div>
 </div>
 </body>
