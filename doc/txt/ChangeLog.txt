@@ -5,6 +5,10 @@ include::sflogo.txt[]
 
 Click to return to the link:index.html[uthash home page].
 
+Version 1.9.5 (2011-??-??)
+--------------------------
+* fixed memory leak in `uthash_clear` when using Bloom filter (thanks, Jan Hättig!)
+
 Version 1.9.4 (2011-06-05)
 --------------------------
 * uthash now supports MurmurHash v3 
