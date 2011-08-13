@@ -186,7 +186,7 @@ contains a <tt>next</tt> pointer. If you want to make a doubly-linked list,
 the element also needs to have a <tt>prev</tt> pointer.</p></div>
 <div class="literalblock">
 <div class="content">
-<pre><tt>typedef struct {
+<pre><tt>typedef struct element {
     char *name;
     struct element *prev; /* needed for a doubly-linked list only */
     struct element *next; /* needed for singly- or doubly-linked lists */
@@ -436,7 +436,7 @@ int main(int argc, char *argv[]) {
 <div id="footer">
 <div id="footer-text">
 Version 1.9.4<br />
-Last updated 2011-06-05 16:04:08 EDT
+Last updated 2011-08-13 11:52:55 EDT
 </div>
 </div>
 </body>

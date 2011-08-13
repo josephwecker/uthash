@@ -65,7 +65,7 @@ You can use any structure with these macros, as long as the structure
 contains a `next` pointer. If you want to make a doubly-linked list, 
 the element also needs to have a `prev` pointer.
 
-  typedef struct {
+  typedef struct element {
       char *name;
       struct element *prev; /* needed for a doubly-linked list only */
       struct element *next; /* needed for singly- or doubly-linked lists */
