@@ -147,7 +147,7 @@ do {                                                                            
 } while(0)
 
 #define HASH_ADD(hh,head,fieldname,keylen_in,add)                                \
-        HASH_ADD_KEYPTR(hh,head,&add->fieldname,keylen_in,add)
+        HASH_ADD_KEYPTR(hh,head,&((add)->fieldname),keylen_in,add)
  
 #define HASH_ADD_KEYPTR(hh,head,keyptr,keylen_in,add)                            \
 do {                                                                             \
