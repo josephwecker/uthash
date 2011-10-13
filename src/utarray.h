@@ -177,15 +177,20 @@ typedef struct {
   if ((a)->icd->dtor) {                                                       \
     size_t _ut_i;                                                             \
     for(_ut_i=0; _ut_i < len; _ut_i++) {                                      \
-      (a)->icd->dtor(utarray_eltptr(a,pos+_ut_i));                            \
+      (a)->icd->dtor(utarray_eltptr((a),pos+_ut_i));                            \
     }                                                                         \
   }                                                                           \
   if ((a)->i > (pos+len)) {                                                   \
-    memmove( _utarray_eltptr(a,pos), _utarray_eltptr(a,pos+len),              \
-            ((a->i)-(pos+len))*((a)->icd->sz));                               \
+    memmove( _utarray_eltptr((a),pos), _utarray_eltptr((a),pos+len),              \
+            (((a)->i)-(pos+len))*((a)->icd->sz));                               \
   }                                                                           \
   (a)->i -= (len);                                                            \
 } while(0)
+
+#define utarray_renew(a,u) do {                                                 \
+  if (a) utarray_clear(a); \
+  else utarray_new((a),(u));   \
+} while(0);
 
 #define utarray_clear(a) do {                                                 \
   if ((a)->i > 0) {                                                           \
@@ -221,6 +226,7 @@ static void utarray_str_dtor(void *elt) {
 }
 static const UT_icd ut_str_icd _UNUSED_ = {sizeof(char*),NULL,utarray_str_cpy,utarray_str_dtor};
 static const UT_icd ut_int_icd _UNUSED_ = {sizeof(int),NULL,NULL,NULL};
+static const UT_icd ut_ptr_icd _UNUSED_ = {sizeof(void*),NULL,NULL,NULL};
 
 
 #endif /* UTARRAY_H */
