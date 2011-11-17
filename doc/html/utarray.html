@@ -2,19 +2,19 @@
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.5.2" />
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.6.6" />
 <title>utarray: dynamic array macros for C</title>
 <link rel="stylesheet" href="./tdh.css" type="text/css" />
-<link rel="stylesheet" href="./tdh-quirks.css" type="text/css" />
+<script type="text/javascript" src="./asciidoc.js"></script>
+<script type="text/javascript" src="./tdh.js"></script>
 <script type="text/javascript">
 /*<![CDATA[*/
-window.onload = function(){asciidoc.footnotes();}
+asciidoc.install();
 /*]]>*/
 </script>
-<script type="text/javascript" src="./asciidoc-xhtml11.js"></script>
 </head>
-<body>
+<body class="article">
 <div id="header">
 <h1>utarray: dynamic array macros for C</h1>
 <span id="author">Troy D. Hanson</span><br />
@@ -32,6 +32,7 @@ window.onload = function(){asciidoc.footnotes();}
   </div>
 </div>
 </div>
+<div class="sect1">
 <h2 id="_introduction">Introduction</h2>
 <div class="sectionbody">
 <div id="toc"></div>
@@ -128,14 +129,19 @@ The array <a href="#operations">operations</a> are based loosely on the C++ STL 
 <div class="paragraph"><p>Internally the dynamic array contains a contiguous memory region into which
 the elements are copied. This buffer is grown as needed using <tt>realloc</tt> to
 accomodate all the data that is pushed into it.</p></div>
-<h3 id="_download">Download</h3><div style="clear:left"></div>
+<div class="sect2">
+<h3 id="_download">Download</h3>
 <div class="paragraph"><p>To download the <tt>utarray.h</tt> header file, follow the link on the
 <a href="http://uthash.sourceforge.net">uthash home page</a>.</p></div>
-<h3 id="_bsd_licensed">BSD licensed</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_bsd_licensed">BSD licensed</h3>
 <div class="paragraph"><p>This software is made available under the
 <a href="license.html">revised BSD license</a>.
 It is free and open source.</p></div>
-<h3 id="_platforms">Platforms</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_platforms">Platforms</h3>
 <div class="paragraph"><p>The <em>utarray</em> macros have been tested on:</p></div>
 <div class="ulist"><ul>
 <li>
@@ -155,30 +161,42 @@ Windows, using Visual Studio 2008 and Visual Studio 2010
 </li>
 </ul></div>
 </div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_usage">Usage</h2>
 <div class="sectionbody">
-<h3 id="_declaration">Declaration</h3><div style="clear:left"></div>
+<div class="sect2">
+<h3 id="_declaration">Declaration</h3>
 <div class="paragraph"><p>The array itself has the data type <tt>UT_array</tt>, regardless of the type of
 elements to be stored in it. It is declared like,</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><tt>UT_array *nums;</tt></pre>
 </div></div>
-<h3 id="_new_and_free">New and free</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_new_and_free">New and free</h3>
 <div class="paragraph"><p>The next step is to create the array using <tt>utarray_new</tt>. Later when you&#8217;re
 done with the array, <tt>utarray_free</tt> will free it and all its elements.</p></div>
-<h3 id="_push_pop_etc">Push, pop, etc</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_push_pop_etc">Push, pop, etc</h3>
 <div class="paragraph"><p>The central features of the utarray involve putting elements into it, taking
 them out, and iterating over them. There are several <a href="#operations">operations</a>
 to pick from that deal with either single elements or ranges of elements at a
 time. In the examples below we will use only the push operation to insert
 elements.</p></div>
 </div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_elements">Elements</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>Support for dynamic arrays of integers or strings is especially easy. These are
 best shown by example:</p></div>
-<h3 id="_integers">Integers</h3><div style="clear:left"></div>
+<div class="sect2">
+<h3 id="_integers">Integers</h3>
 <div class="paragraph"><p>This example makes a utarray of integers, pushes 0-9 into it, then prints it.
 Lastly it frees it.</p></div>
 <div class="listingblock">
@@ -207,7 +225,9 @@ int main() {
 </div></div>
 <div class="paragraph"><p>The second argument to <tt>utarray_push_back</tt> is always a <em>pointer</em> to the type
 (so a literal cannot be used). So for integers, it is an <tt>int*</tt>.</p></div>
-<h3 id="_strings">Strings</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_strings">Strings</h3>
 <div class="paragraph"><p>In this example we make a utarray of strings, push two strings into it, print
 it and free it.</p></div>
 <div class="listingblock">
@@ -237,7 +257,9 @@ int main() {
 <div class="paragraph"><p>In this example, since the element is a <tt>char*</tt>, we pass a pointer to it
 (<tt>char**</tt>) as the second argument to <tt>utarray_push_back</tt>. Note that "push" makes
 a copy of the source string and pushes that copy into the array.</p></div>
-<h3 id="_about_ut_icd">About UT_icd</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_about_ut_icd">About UT_icd</h3>
 <div class="paragraph"><p>Arrays be made of any type of element, not just integers and strings.  The
 elements can be basic types or structures. Unless you&#8217;re dealing with integers
 and strings (which use pre-defined <tt>ut_int_icd</tt> and <tt>ut_str_icd</tt>), you&#8217;ll need
@@ -272,10 +294,9 @@ memcpy.</p></div>
 the array. It may be invoked due to <tt>utarray_resize</tt>, <tt>utarray_pop_back</tt>,
 <tt>utarray_erase</tt>, <tt>utarray_clear</tt>, <tt>utarray_done</tt> or <tt>utarray_free</tt>. If the
 elements need no cleanup upon destruction, <tt>dtor</tt> may be <tt>NULL</tt>.</p></div>
-<div class="paragraph"><p>Note: the UT_icd pointer will be copied in to the utarray. For the pointer
-to be valid throughout the lifetime of the utarray, the UT_icd must be
-defined at sufficient scope such as a global, or static file scope.</p></div>
-<h3 id="_scalar_types">Scalar types</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_scalar_types">Scalar types</h3>
 <div class="paragraph"><p>The next example uses <tt>UT_icd</tt> with all its defaults to make a utarray of
 <tt>long</tt> elements. This example pushes two longs, prints them, and frees the
 array.</p></div>
@@ -302,7 +323,9 @@ int main() {
   return 0;
 }</tt></pre>
 </div></div>
-<h3 id="_structures">Structures</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_structures">Structures</h3>
 <div class="paragraph"><p>Structures can be used as utarray elements. If the structure requires no
 special effort to initialize, copy or destruct, we can use <tt>UT_icd</tt> with all
 its defaults. This example shows a structure that consists of two integers. Here
@@ -393,11 +416,15 @@ int main() {
 }</tt></pre>
 </div></div>
 </div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="operations">Reference</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>This table lists all the utarray operations. These are loosely based on the C++
 vector class.</p></div>
-<h3 id="_operations">Operations</h3><div style="clear:left"></div>
+<div class="sect2">
+<h3 id="_operations">Operations</h3>
 <div class="tableblock">
 <table rules="none"
 width="100%"
@@ -497,7 +524,9 @@ cellspacing="0" cellpadding="4">
 </tbody>
 </table>
 </div>
-<h3 id="_notes">Notes</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_notes">Notes</h3>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
@@ -550,11 +579,13 @@ A <em>pointer</em> to a particular element (obtained using <tt>utarray_eltptr</t
 </ol></div>
 </div>
 </div>
+</div>
+</div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
 Version 1.9.4<br />
-Last updated 2011-06-05 16:06:30 EDT
+Last updated 2011-11-16 22:51:29 EST
 </div>
 </div>
 </body>

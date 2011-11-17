@@ -35,8 +35,8 @@ pdf: txt/userguide.txt
 	rm -f txt/userguide.xml
 
 css: html/toc.css
-	cat /etc/asciidoc/stylesheets/xhtml11.css html/toc.css > html/tdh.css
-	cp /etc/asciidoc/stylesheets/xhtml11-quirks.css html/tdh-quirks.css 
+	if [ ! -d ~/.asciidoc/themes/tdh ]; then mkdir ~/.asciidoc/themes/tdh; fi
+	cp html/toc.css ~/.asciidoc/themes/tdh
 
 docbook: txt/userguide.txt
 	asciidoc -b docbook --out-file=/tmp/userguide.xml $<
