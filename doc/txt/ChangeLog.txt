@@ -5,13 +5,13 @@ include::sflogo.txt[]
 
 Click to return to the link:index.html[uthash home page].
 
-Version 1.9.5 (2011-??-??)
+Version 1.9.5 (2011-11-16)
 --------------------------
-* utarray now copies the UT_icd on array creation rather than storing a pointer
-* added utarray_renew
+* added `utarray_renew`
 * fixed memory leak in `uthash_clear` when using Bloom filter (thanks, Jan Hättig!)
+* utarray now copies the UT_icd on array creation rather than storing a pointer
 * add parentheses to `HASH_ADD` to fix preprocessing of certain arguments (thanks, Aaron Rosen!) 
-* more parenthesizations
+* more parenthesizations for greater macro argument flexibility
 
 Version 1.9.4 (2011-06-05)
 --------------------------

@@ -177,10 +177,6 @@ the array. It may be invoked due to `utarray_resize`, `utarray_pop_back`,
 `utarray_erase`, `utarray_clear`, `utarray_done` or `utarray_free`. If the
 elements need no cleanup upon destruction, `dtor` may be `NULL`.
 
-Note: the UT_icd pointer will be copied in to the utarray. For the pointer
-to be valid throughout the lifetime of the utarray, the UT_icd must be 
-defined at sufficient scope such as a global, or static file scope.
-
 Scalar types
 ~~~~~~~~~~~~
 

@@ -91,7 +91,7 @@ Users of uthash may wish to follow the news feed for information about new
 releases. Also, there are some extra bonus headers included with uthash.
 
 News::
- The author has a news feed for http://troydhanson.wordpress.com/feed/[software updates] image:img/rss.png[(RSS)].
+ The author has a news feed for http://troydhanson.wordpress.com/[software updates] image:img/rss.png[(RSS)].
 Extras included with uthash::
  uthash ships with these "extras"-- independent headers similar to uthash. 
  First link:utlist.html[utlist.h] provides linked list macros for C structures.
