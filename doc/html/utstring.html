@@ -2,25 +2,25 @@
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.5.2" />
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.6.6" />
 <title>utstring: dynamic string macros for C</title>
 <link rel="stylesheet" href="./tdh.css" type="text/css" />
-<link rel="stylesheet" href="./tdh-quirks.css" type="text/css" />
+<script type="text/javascript" src="./asciidoc.js"></script>
+<script type="text/javascript" src="./tdh.js"></script>
 <script type="text/javascript">
 /*<![CDATA[*/
-window.onload = function(){asciidoc.footnotes();}
+asciidoc.install();
 /*]]>*/
 </script>
-<script type="text/javascript" src="./asciidoc-xhtml11.js"></script>
 </head>
-<body>
+<body class="article">
 <div id="header">
 <h1>utstring: dynamic string macros for C</h1>
 <span id="author">Troy D. Hanson</span><br />
 <span id="email"><tt>&lt;<a href="mailto:thanson@users.sourceforge.net">thanson@users.sourceforge.net</a>&gt;</tt></span><br />
-<span id="revnumber">version 1.9.4,</span>
-<span id="revdate">June 2011</span>
+<span id="revnumber">version 1.9.5,</span>
+<span id="revdate">November 2011</span>
 </div>
 <div id="content">
 <div id="preamble">
@@ -32,6 +32,7 @@ window.onload = function(){asciidoc.footnotes();}
   </div>
 </div>
 </div>
+<div class="sect1">
 <h2 id="_introduction">Introduction</h2>
 <div class="sectionbody">
 <div id="toc"></div>
@@ -126,14 +127,19 @@ copy <tt>utstring.h</tt> into your source directory and use it in your programs.
 binary data-- despite its name, utstring is not limited to string content),
 concatenation, getting the length and content, and clearing it.  The string
 <a href="#operations">operations</a> are listed below.</p></div>
-<h3 id="_download">Download</h3><div style="clear:left"></div>
+<div class="sect2">
+<h3 id="_download">Download</h3>
 <div class="paragraph"><p>To download the <tt>utstring.h</tt> header file, follow the link on the
 <a href="http://uthash.sourceforge.net">uthash home page</a>.</p></div>
-<h3 id="_bsd_licensed">BSD licensed</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_bsd_licensed">BSD licensed</h3>
 <div class="paragraph"><p>This software is made available under the
 <a href="license.html">revised BSD license</a>.
 It is free and open source.</p></div>
-<h3 id="_platforms">Platforms</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_platforms">Platforms</h3>
 <div class="paragraph"><p>The <em>utstring</em> macros have been tested on:</p></div>
 <div class="ulist"><ul>
 <li>
@@ -148,18 +154,26 @@ Windows, using Visual Studio 2008 and Visual Studio 2010
 </li>
 </ul></div>
 </div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_usage">Usage</h2>
 <div class="sectionbody">
-<h3 id="_declaration">Declaration</h3><div style="clear:left"></div>
+<div class="sect2">
+<h3 id="_declaration">Declaration</h3>
 <div class="paragraph"><p>The dynamic string itself has the data type <tt>UT_string</tt>.  It is declared like,</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><tt>UT_string *str;</tt></pre>
 </div></div>
-<h3 id="_new_and_free">New and free</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_new_and_free">New and free</h3>
 <div class="paragraph"><p>The next step is to create the string using <tt>utstring_new</tt>. Later when you&#8217;re
 done with it, <tt>utstring_free</tt> will free it and all its content.</p></div>
-<h3 id="_manipulation">Manipulation</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_manipulation">Manipulation</h3>
 <div class="paragraph"><p>The <tt>utstring_printf</tt> or <tt>utstring_bincpy</tt> operations insert (copy) data into
 the string. To concatenate one utstring to another, use <tt>utstring_concat</tt>.  To
 clear the content of the string, use <tt>utstring_clear</tt>. The length of the string
@@ -167,7 +181,9 @@ is available from <tt>utstring_len</tt>, and its content from <tt>utstring_body<
 evaluates to a <tt>char*</tt>.  The buffer it points to is always null-terminated.
 So, it can be used directly with external functions that expect a string.
 This automatic null terminator is not counted in the length of the string.</p></div>
-<h3 id="_samples">Samples</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_samples">Samples</h3>
 <div class="paragraph"><p>These examples show how to use utstring.</p></div>
 <div class="listingblock">
 <div class="title">Sample 1</div>
@@ -240,10 +256,14 @@ int main() {
 }</tt></pre>
 </div></div>
 </div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="operations">Reference</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>These are the utstring operations.</p></div>
-<h3 id="_operations">Operations</h3><div style="clear:left"></div>
+<div class="sect2">
+<h3 id="_operations">Operations</h3>
 <div class="tableblock">
 <table rules="none"
 width="100%"
@@ -299,7 +319,9 @@ cellspacing="0" cellpadding="4">
 </tbody>
 </table>
 </div>
-<h3 id="_notes">Notes</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_notes">Notes</h3>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
@@ -318,11 +340,13 @@ cellspacing="0" cellpadding="4">
 </ol></div>
 </div>
 </div>
+</div>
+</div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Version 1.9.4<br />
-Last updated 2011-06-05 16:04:35 EDT
+Version 1.9.5<br />
+Last updated 2011-11-16 23:21:49 EST
 </div>
 </div>
 </body>

@@ -1,4 +1,4 @@
-all: css userguide changelog pdf utlist
+all: css userguide changelog pdf utlist utstring utarray
 
 userguide:	txt/userguide.txt
 	asciidoc --unsafe --out-file=html/userguide.html -a linkcss=1 -a theme=tdh $<
