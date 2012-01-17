@@ -66,12 +66,22 @@ typedef unsigned char uint8_t;
 
 #define UTHASH_VERSION 1.9.4
 
+#ifndef uthash_fatal
 #define uthash_fatal(msg) exit(-1)        /* fatal error (out of memory,etc) */
+#endif
+#ifndef uthash_malloc
 #define uthash_malloc(sz) malloc(sz)      /* malloc fcn                      */
+#endif
+#ifndef uthash_free
 #define uthash_free(ptr,sz) free(ptr)     /* free fcn                        */
+#endif
 
+#ifndef uthash_noexpand_fyi
 #define uthash_noexpand_fyi(tbl)          /* can be defined to log noexpand  */
+#endif
+#ifndef uthash_expand_fyi
 #define uthash_expand_fyi(tbl)            /* can be defined to log expands   */
+#endif
 
 /* initial number of buckets */
 #define HASH_INITIAL_NUM_BUCKETS 32      /* initial number of buckets        */
