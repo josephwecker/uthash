@@ -190,7 +190,7 @@ typedef struct {
 #define utarray_renew(a,u) do {                                               \
   if (a) utarray_clear(a); \
   else utarray_new((a),(u));   \
-} while(0);
+} while(0) 
 
 #define utarray_clear(a) do {                                                 \
   if ((a)->i > 0) {                                                           \

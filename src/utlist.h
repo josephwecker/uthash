@@ -421,7 +421,7 @@ do {                                                                            
       (head)->prev = (head);                                                                   \
       (head)->next = NULL;                                                                     \
   }                                                                                            \
-} while (0);
+} while (0) 
 
 #define DL_CONCAT(head1,head2)                                                                 \
 do {                                                                                           \
@@ -436,7 +436,7 @@ do {                                                                            
         (head1)=(head2);                                                                       \
     }                                                                                          \
   }                                                                                            \
-} while (0);
+} while (0) 
 
 #define DL_DELETE(head,del)                                                                    \
 do {                                                                                           \
@@ -454,7 +454,7 @@ do {                                                                            
           (head)->prev = (del)->prev;                                                          \
       }                                                                                        \
   }                                                                                            \
-} while (0);
+} while (0) 
 
 
 #define DL_FOREACH(head,el)                                                                    \
@@ -494,7 +494,7 @@ do {                                                                            
      (del)->prev->next = (del)->next;                                                          \
      if ((del) == (head)) (head)=(del)->next;                                                  \
   }                                                                                            \
-} while (0);
+} while (0) 
 
 #define CDL_FOREACH(head,el)                                                                   \
     for(el=head;el;el=(el->next==head ? 0L : el->next)) 
