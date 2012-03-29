@@ -580,10 +580,10 @@ do {                                                                            
  if (head.hh_head) DECLTYPE_ASSIGN(out,ELMT_FROM_HH(tbl,head.hh_head));          \
  else out=NULL;                                                                  \
  while (out) {                                                                   \
-    if (out->hh.keylen == keylen_in) {                                           \
-        if ((HASH_KEYCMP(out->hh.key,keyptr,keylen_in)) == 0) break;             \
+    if ((out)->hh.keylen == keylen_in) {                                           \
+        if ((HASH_KEYCMP((out)->hh.key,keyptr,keylen_in)) == 0) break;             \
     }                                                                            \
-    if (out->hh.hh_next) DECLTYPE_ASSIGN(out,ELMT_FROM_HH(tbl,out->hh.hh_next)); \
+    if ((out)->hh.hh_next) DECLTYPE_ASSIGN(out,ELMT_FROM_HH(tbl,(out)->hh.hh_next)); \
     else out = NULL;                                                             \
  }                                                                               \
 } while(0)
