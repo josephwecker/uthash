@@ -352,11 +352,11 @@ do {                                                                            
     (head)=(head)->next;                                                                       \
   } else {                                                                                     \
     char *_tmp = (char*)(head);                                                                \
-    while (head->next && (head->next != (del))) {                                              \
-      head = head->next;                                                                       \
+    while ((head)->next && ((head)->next != (del))) {                                          \
+      head = (head)->next;                                                                     \
     }                                                                                          \
-    if (head->next) {                                                                          \
-      head->next = ((del)->next);                                                              \
+    if ((head)->next) {                                                                        \
+      (head)->next = ((del)->next);                                                            \
     }                                                                                          \
     {                                                                                          \
       char **_head_alias = (char**)&(head);                                                    \
@@ -375,7 +375,7 @@ do {                                                                            
 /* end VS2008 replacements */
 
 #define LL_FOREACH(head,el)                                                                    \
-    for(el=head;el;el=el->next)
+    for(el=head;el;el=(el)->next)
 
 #define LL_FOREACH_SAFE(head,el,tmp)                                                           \
   for((el)=(head);(el) && (tmp = (el)->next, 1); (el) = tmp)
@@ -458,7 +458,7 @@ do {                                                                            
 
 
 #define DL_FOREACH(head,el)                                                                    \
-    for(el=head;el;el=el->next)
+    for(el=head;el;el=(el)->next)
 
 /* this version is safe for deleting the elements during iteration */
 #define DL_FOREACH_SAFE(head,el,tmp)                                                           \
@@ -497,7 +497,7 @@ do {                                                                            
 } while (0) 
 
 #define CDL_FOREACH(head,el)                                                                   \
-    for(el=head;el;el=(el->next==head ? 0L : el->next)) 
+    for(el=head;el;el=((el)->next==head ? 0L : (el)->next)) 
 
 #define CDL_FOREACH_SAFE(head,el,tmp1,tmp2)                                                    \
   for((el)=(head), ((tmp1)=(head)?((head)->prev):NULL);                                        \
