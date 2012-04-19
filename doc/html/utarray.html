@@ -518,6 +518,10 @@ cellspacing="0" cellpadding="4">
 <td align="left" valign="top"><p class="table">get element of a following e (front if e is NULL)</p></td>
 </tr>
 <tr>
+<td align="left" valign="top"><p class="table"><tt>utarray_prev(UT_array *a,void *e)</tt></p></td>
+<td align="left" valign="top"><p class="table">get element of a before e (back if e is NULL)</p></td>
+</tr>
+<tr>
 <td align="left" valign="top"><p class="table"><tt>utarray_back(UT_array *a)</tt></p></td>
 <td align="left" valign="top"><p class="table">get last element of a</p></td>
 </tr>
@@ -569,7 +573,7 @@ cellspacing="0" cellpadding="4">
 <li>
 <p>
 A <em>pointer</em> to a particular element (obtained using <tt>utarray_eltptr</tt> or
-   <tt>utarray_front</tt>, <tt>utarray_next</tt>, <tt>utarray_back</tt>) becomes invalid whenever
+   <tt>utarray_front</tt>, <tt>utarray_next</tt>, <tt>utarray_prev</tt>, <tt>utarray_back</tt>) becomes invalid whenever
    another element is inserted into the utarray. This is because the internal
    memory management may need to <tt>realloc</tt> the element storage to a new address.
    For this reason, it&#8217;s usually better to refer to an element by its integer
@@ -585,7 +589,7 @@ A <em>pointer</em> to a particular element (obtained using <tt>utarray_eltptr</t
 <div id="footer">
 <div id="footer-text">
 Version 1.9.5<br />
-Last updated 2011-11-16 23:28:17 EST
+Last updated 2012-04-19 17:54:10 EDT
 </div>
 </div>
 </body>

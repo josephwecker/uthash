@@ -7,6 +7,7 @@ Click to return to the link:index.html[uthash home page].
 
 Version 1.9.6 (2012-??-??)
 --------------------------
+* add utarray_prev (thanks, Ben Hiett!)
 * edit examples so they do not leak memory as suggested by 任晶磊
 * add parens, casts, remove extra semi-colons (thanks, Atis and Debasis Ganguly!)
 * added ifndef to uthash_malloc and related hooks so it's no longer

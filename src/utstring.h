@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2008-2011, Troy D. Hanson   http://uthash.sourceforge.net
+Copyright (c) 2008-2012, Troy D. Hanson   http://uthash.sourceforge.net
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef UTSTRING_H
 #define UTSTRING_H
 
-#define UTSTRING_VERSION 1.9.4
+#define UTSTRING_VERSION 1.9.5
 
 #ifdef __GNUC__
 #define _UNUSED_ __attribute__ ((__unused__)) 

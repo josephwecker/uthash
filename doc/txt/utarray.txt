@@ -336,6 +336,7 @@ Operations
 | utarray_find(UT_array *a,void *v, cmpfcn *cmp) | find element v in utarray (must be sorted)
 | utarray_front(UT_array *a) | get first element of a
 | utarray_next(UT_array *a,void *e) | get element of a following e (front if e is NULL)
+| utarray_prev(UT_array *a,void *e) | get element of a before e (back if e is NULL)
 | utarray_back(UT_array *a) | get last element of a
 |===============================================================================
 
@@ -365,7 +366,7 @@ Notes
    a utarray of strings is included in `tests/test61.c`.
 
 5. A 'pointer' to a particular element (obtained using `utarray_eltptr` or
-   `utarray_front`, `utarray_next`, `utarray_back`) becomes invalid whenever
+   `utarray_front`, `utarray_next`, `utarray_prev`, `utarray_back`) becomes invalid whenever
    another element is inserted into the utarray. This is because the internal
    memory management may need to `realloc` the element storage to a new address.
    For this reason, it's usually better to refer to an element by its integer

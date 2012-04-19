@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2003-2011, Troy D. Hanson     http://uthash.sourceforge.net
+Copyright (c) 2003-2012, Troy D. Hanson     http://uthash.sourceforge.net
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -64,7 +64,7 @@ typedef unsigned char uint8_t;
 #include <inttypes.h>   /* uint32_t */
 #endif
 
-#define UTHASH_VERSION 1.9.4
+#define UTHASH_VERSION 1.9.5
 
 #ifndef uthash_fatal
 #define uthash_fatal(msg) exit(-1)        /* fatal error (out of memory,etc) */
