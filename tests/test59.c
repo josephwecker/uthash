@@ -37,5 +37,15 @@ int main(int argc, char *argvp[]) {
     }
   }
 
+  /* clean up both hash tables */
+  HASH_ITER(hh, items, item1, tmp1) {
+    HASH_ITER(hh, item1->sub, item2, tmp2) {
+      HASH_DEL(item1->sub, item2);
+      free(item2);
+    }
+    HASH_DEL(items, item1);
+    free(item1);
+  }
+
   return 0;
 }

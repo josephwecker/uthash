@@ -20,6 +20,9 @@ int main() {
   HASH_ADD_PTR(hash,key,e);
   HASH_FIND_PTR(hash, &someaddr, d);
   if (d) printf("found\n");
+
+  /* release memory */
+  HASH_DEL(hash,e);
   free(e);
   return 0;
 }
