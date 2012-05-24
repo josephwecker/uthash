@@ -394,6 +394,47 @@ do {                                                                            
     }                                                                                          \
 } while(0) 
 
+#define LL_REPLACE_ELEM(head, el, add)                                                         \
+do {                                                                                           \
+ LDECLTYPE(head) _tmp;                                                                         \
+ assert(head != NULL);                                                                         \
+ assert(el != NULL);                                                                           \
+ assert(add != NULL);                                                                          \
+ (add)->next = (el)->next;                                                                     \
+ if ((head) == (el)) {                                                                         \
+  (head) = (add);                                                                              \
+ } else {                                                                                      \
+  _tmp = head;                                                                                 \
+  while (_tmp->next && (_tmp->next != (el))) {                                                 \
+   _tmp = _tmp->next;                                                                          \
+  }                                                                                            \
+  if (_tmp->next) {                                                                            \
+    _tmp->next = (add);                                                                        \
+  }                                                                                            \
+ }                                                                                             \
+} while (0)
+
+#define LL_PREPEND_ELEM(head, el, add)                                                         \
+do {                                                                                           \
+ LDECLTYPE(head) _tmp;                                                                         \
+ assert(head != NULL);                                                                         \
+ assert(el != NULL);                                                                           \
+ assert(add != NULL);                                                                          \
+ (add)->next = (el);                                                                           \
+ if ((head) == (el)) {                                                                         \
+  (head) = (add);                                                                              \
+ } else {                                                                                      \
+  _tmp = head;                                                                                 \
+  while (_tmp->next && (_tmp->next != (el))) {                                                 \
+   _tmp = _tmp->next;                                                                          \
+  }                                                                                            \
+  if (_tmp->next) {                                                                            \
+    _tmp->next = (add);                                                                        \
+  }                                                                                            \
+ }                                                                                             \
+} while (0)                                                                                    \
+
+
 /******************************************************************************
  * doubly linked list macros (non-circular)                                   *
  *****************************************************************************/
@@ -468,6 +509,48 @@ do {                                                                            
 #define DL_SEARCH_SCALAR LL_SEARCH_SCALAR
 #define DL_SEARCH LL_SEARCH
 
+#define DL_REPLACE_ELEM(head, el, add)                                                         \
+do {                                                                                           \
+ assert(head != NULL);                                                                         \
+ assert(el != NULL);                                                                           \
+ assert(add != NULL);                                                                          \
+ if ((head) == (el)) {                                                                         \
+  (head) = (add);                                                                              \
+  (add)->next = (el)->next;                                                                    \
+  if ((el)->next == NULL) {                                                                    \
+   (add)->prev = (add);                                                                        \
+  } else {                                                                                     \
+   (add)->prev = (el)->prev;                                                                   \
+   (add)->next->prev = (add);                                                                  \
+  }                                                                                            \
+ } else {                                                                                      \
+  (add)->next = (el)->next;                                                                    \
+  (add)->prev = (el)->prev;                                                                    \
+  (add)->prev->next = (add);                                                                   \
+  if ((el)->next == NULL) {                                                                    \
+   (head)->prev = (add);                                                                       \
+  } else {                                                                                     \
+   (add)->next->prev = (add);                                                                  \
+  }                                                                                            \
+ }                                                                                             \
+} while (0)
+
+#define DL_PREPEND_ELEM(head, el, add)                                                         \
+do {                                                                                           \
+ assert(head != NULL);                                                                         \
+ assert(el != NULL);                                                                           \
+ assert(add != NULL);                                                                          \
+ (add)->next = (el);                                                                           \
+ (add)->prev = (el)->prev;                                                                     \
+ (el)->prev = (add);                                                                           \
+ if ((head) == (el)) {                                                                         \
+  (head) = (add);                                                                              \
+ } else {                                                                                      \
+  (add)->prev->next = (add);                                                                   \
+ }                                                                                             \
+} while (0)                                                                                    \
+
+
 /******************************************************************************
  * circular doubly linked list macros                                         *
  *****************************************************************************/
@@ -517,6 +600,40 @@ do {                                                                            
       if ((cmp(out,elt))==0) break;                                                            \
     }                                                                                          \
 } while(0) 
+
+#define CDL_REPLACE_ELEM(head, el, add)                                                        \
+do {                                                                                           \
+ assert(head != NULL);                                                                         \
+ assert(el != NULL);                                                                           \
+ assert(add != NULL);                                                                          \
+ if ((el)->next == (el)) {                                                                     \
+  (add)->next = (add);                                                                         \
+  (add)->prev = (add);                                                                         \
+  (head) = (add);                                                                              \
+ } else {                                                                                      \
+  (add)->next = (el)->next;                                                                    \
+  (add)->prev = (el)->prev;                                                                    \
+  (add)->next->prev = (add);                                                                   \
+  (add)->prev->next = (add);                                                                   \
+  if ((head) == (el)) {                                                                        \
+   (head) = (add);                                                                             \
+  }                                                                                            \
+ }                                                                                             \
+} while (0)
+
+#define CDL_PREPEND_ELEM(head, el, add)                                                        \
+do {                                                                                           \
+ assert(head != NULL);                                                                         \
+ assert(el != NULL);                                                                           \
+ assert(add != NULL);                                                                          \
+ (add)->next = (el);                                                                           \
+ (add)->prev = (el)->prev;                                                                     \
+ (el)->prev = (add);                                                                           \
+ (add)->prev->next = (add);                                                                    \
+ if ((head) == (el)) {                                                                         \
+  (head) = (add);                                                                              \
+ }                                                                                             \
+} while (0)                                                                                    \
 
 #endif /* UTLIST_H */
 

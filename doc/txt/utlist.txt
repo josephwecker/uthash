@@ -1,7 +1,7 @@
 utlist: linked list macros for C structures
 ===========================================
 Troy D. Hanson <thanson@users.sourceforge.net>
-v1.9.5, November 2011
+v1.9.7, May 2012
 
 include::sflogo.txt[]
 include::topnav_utlist.txt[]
@@ -90,6 +90,8 @@ iterating over them.
 |===============================================================================
 |Singly-linked             | Doubly-linked              | Circular, doubly-linked
 |LL_PREPEND(head,add);     | DL_PREPEND(head,add);      | CDL_PREPEND(head,add;
+|LL_PREPEND_ELEM(head,elt,add) | DL_PREPEND_ELEM(head,elt,add) | CDL_PREPEND_ELEM(head,elt,add) 
+|LL_REPLACE_ELEM(head,elt,add) | DL_REPLACE_ELEM(head,elt,add) | CDL_REPLACE_ELEM(head,elt,add) 
 |LL_APPEND(head,add);      | DL_APPEND(head,add);       | 
 |LL_CONCAT(head1,head2);   | DL_CONCAT(head1,head2);    | 
 |LL_DELETE(head,del);      | DL_DELETE(head,del);       | CDL_DELETE(head,del);
@@ -105,6 +107,9 @@ changing the list head to the new element. 'Append' means to add an element at t
 end of the list, so it becomes the new tail element. 'Concatenate' takes two
 properly constructed lists and appends the second list to the first.  (Visual
 Studio 2008 does not support `LL_CONCAT` and `DL_CONCAT`, but VS2010 is ok.)
+To prepend before an arbitrary element instead of the list head, use the
+`_PREPEND_ELEM` macro family. To 'replace' an arbitary list element with another
+element use the `_REPLACE_ELEM` family of macros.
 
 The 'sort' operation never moves the elements in memory; rather it only adjusts
 the list order by altering the `prev` and `next` pointers in each element. Also
@@ -133,8 +138,8 @@ del::
   A pointer to the list element structure you are deleting from the list.
 elt::
   A pointer that will be assigned to each list element in succession (see
-  example) in the case of iteration macros; also, the output pointer from
-  the search macros.
+  example) in the case of iteration macros; or, the output pointer from
+  the search macros; or the element to be prepended to or replaced.
 like::
   An element pointer, having the same type as `elt`, for which the search macro 
   seeks a match (if found, the match is stored in `elt`). A match is determined

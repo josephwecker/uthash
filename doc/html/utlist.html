@@ -19,8 +19,8 @@ asciidoc.install();
 <h1>utlist: linked list macros for C structures</h1>
 <span id="author">Troy D. Hanson</span><br />
 <span id="email"><tt>&lt;<a href="mailto:thanson@users.sourceforge.net">thanson@users.sourceforge.net</a>&gt;</tt></span><br />
-<span id="revnumber">version 1.9.5,</span>
-<span id="revdate">November 2011</span>
+<span id="revnumber">version 1.9.7,</span>
+<span id="revdate">May 2012</span>
 </div>
 <div id="content">
 <div id="preamble">
@@ -244,6 +244,16 @@ cellspacing="0" cellpadding="4">
 <td align="left" valign="top"><p class="table"><tt>CDL_PREPEND(head,add;</tt></p></td>
 </tr>
 <tr>
+<td align="left" valign="top"><p class="table"><tt>LL_PREPEND_ELEM(head,elt,add)</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>DL_PREPEND_ELEM(head,elt,add)</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>CDL_PREPEND_ELEM(head,elt,add)</tt></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><tt>LL_REPLACE_ELEM(head,elt,add)</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>DL_REPLACE_ELEM(head,elt,add)</tt></p></td>
+<td align="left" valign="top"><p class="table"><tt>CDL_REPLACE_ELEM(head,elt,add)</tt></p></td>
+</tr>
+<tr>
 <td align="left" valign="top"><p class="table"><tt>LL_APPEND(head,add);</tt></p></td>
 <td align="left" valign="top"><p class="table"><tt>DL_APPEND(head,add);</tt></p></td>
 <td align="left" valign="top"><p class="table"><tt></tt></p></td>
@@ -290,7 +300,10 @@ cellspacing="0" cellpadding="4">
 changing the list head to the new element. <em>Append</em> means to add an element at the
 end of the list, so it becomes the new tail element. <em>Concatenate</em> takes two
 properly constructed lists and appends the second list to the first.  (Visual
-Studio 2008 does not support <tt>LL_CONCAT</tt> and <tt>DL_CONCAT</tt>, but VS2010 is ok.)</p></div>
+Studio 2008 does not support <tt>LL_CONCAT</tt> and <tt>DL_CONCAT</tt>, but VS2010 is ok.)
+To prepend before an arbitrary element instead of the list head, use the
+<tt>_PREPEND_ELEM</tt> macro family. To <em>replace</em> an arbitary list element with another
+element use the <tt>_REPLACE_ELEM</tt> family of macros.</p></div>
 <div class="paragraph"><p>The <em>sort</em> operation never moves the elements in memory; rather it only adjusts
 the list order by altering the <tt>prev</tt> and <tt>next</tt> pointers in each element. Also
 the sort operation can change the list head to point to a new element.</p></div>
@@ -336,8 +349,8 @@ elt
 <dd>
 <p>
   A pointer that will be assigned to each list element in succession (see
-  example) in the case of iteration macros; also, the output pointer from
-  the search macros.
+  example) in the case of iteration macros; or, the output pointer from
+  the search macros; or the element to be prepended to or replaced.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -457,8 +470,8 @@ int main(int argc, char *argv[]) {
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Version 1.9.5<br />
-Last updated 2011-11-16 23:21:46 EST
+Version 1.9.7<br />
+Last updated 2012-05-24 00:13:40 EDT
 </div>
 </div>
 </body>
